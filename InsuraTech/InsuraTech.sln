@@ -5,6 +5,10 @@ VisualStudioVersion = 17.13.35818.85 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsuraTech.API", "InsuraTech.API\InsuraTech.API.csproj", "{F8AFF538-AFD9-4562-BE94-9F9E77C0A6B6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsuraTech.Model", "InsuraTech.Model\InsuraTech.Model.csproj", "{E153FA52-2F19-470D-90C7-EA4CCCDFED04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsuraTech.Services", "InsuraTech.Services\InsuraTech.Services.csproj", "{918DF3F8-96E5-410A-A65F-4B0A36272E2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{F8AFF538-AFD9-4562-BE94-9F9E77C0A6B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8AFF538-AFD9-4562-BE94-9F9E77C0A6B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8AFF538-AFD9-4562-BE94-9F9E77C0A6B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E153FA52-2F19-470D-90C7-EA4CCCDFED04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E153FA52-2F19-470D-90C7-EA4CCCDFED04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E153FA52-2F19-470D-90C7-EA4CCCDFED04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E153FA52-2F19-470D-90C7-EA4CCCDFED04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{918DF3F8-96E5-410A-A65F-4B0A36272E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{918DF3F8-96E5-410A-A65F-4B0A36272E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{918DF3F8-96E5-410A-A65F-4B0A36272E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{918DF3F8-96E5-410A-A65F-4B0A36272E2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
