@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace InsuraTech.Services.Migrations
 {
     /// <inheritdoc />
@@ -50,7 +52,8 @@ namespace InsuraTech.Services.Migrations
                 {
                     RoleId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoleName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -65,23 +68,19 @@ namespace InsuraTech.Services.Migrations
                 {
                     UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordSalt = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
-                    table.ForeignKey(
-                        name: "FK_Users_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "RoleId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -216,6 +215,35 @@ namespace InsuraTech.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserRoles",
+                columns: table => new
+                {
+                    UserRoleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    ChangeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRoles", x => x.UserRoleId);
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "RoleId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserRoles_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserFeedbacks",
                 columns: table => new
                 {
@@ -223,8 +251,7 @@ namespace InsuraTech.Services.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     CustomerFeedbackId = table.Column<int>(type: "int", nullable: false),
-                    CustomerFeedbackId1 = table.Column<int>(type: "int", nullable: true),
-                    UserId1 = table.Column<int>(type: "int", nullable: true)
+                    CustomerFeedbackId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -246,11 +273,6 @@ namespace InsuraTech.Services.Migrations
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserFeedbacks_Users_UserId1",
-                        column: x => x.UserId1,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -306,6 +328,38 @@ namespace InsuraTech.Services.Migrations
                         principalTable: "InsurancePackages",
                         principalColumn: "InsurancePackageId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "RoleId", "DeletionTime", "Description", "IsDeleted", "RoleName" },
+                values: new object[,]
+                {
+                    { 1, null, "Administrator with full access to settings, user permissions and platform operations.", false, "Admin" },
+                    { 2, null, "An Insurance Agent manages policies, processes claims, and assists customers with recommendations and approvals.", false, "Agent" },
+                    { 3, null, "Supports insurance agents by handling administrative tasks, managing client inquiries, and processing policy updates", false, "Assistant" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "UserId", "DeletionTime", "Email", "FirstName", "IsDeleted", "LastName", "PasswordHash", "PasswordSalt", "PhoneNumber", "Username" },
+                values: new object[,]
+                {
+                    { 1, null, "1", "1", false, "1", "XVDI7NKoOCtMiSrKR1uSSGWvA7o=", "NHVv+8KhAiQqFlz7k1P53Q==", "1", "1" },
+                    { 2, null, "admin@mail.com", "Admin", false, "Admin", "vjxFUddajZn+mD4TXhrpKJFpwCk=", "BAbir1GLAnT8mlkl48K82Q==", "000000000", "admin" },
+                    { 3, null, "agent@mail.com", "Agent", false, "Agent", "2tC+kGkSwtfK1s76++lFQfVkMBA=", "g8L0JtbZi8CyIwALz6lEjw==", "000000001", "agent" },
+                    { 4, null, "assistant@mail.com", "Assistant", false, "Assistant", "1bwUDDXJ0XBRKYVYycBm+yVzUlQ=", "fQs/0a4aqARNG/avZ7mRlg==", "000000002", "assistant" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserRoles",
+                columns: new[] { "UserRoleId", "ChangeDate", "DeletionTime", "IsDeleted", "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified), null, false, 1, 1 },
+                    { 2, new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified), null, false, 1, 2 },
+                    { 3, new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified), null, false, 2, 3 },
+                    { 4, new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified), null, false, 3, 4 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -374,14 +428,14 @@ namespace InsuraTech.Services.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserFeedbacks_UserId1",
-                table: "UserFeedbacks",
-                column: "UserId1");
+                name: "IX_UserRoles_RoleId",
+                table: "UserRoles",
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_RoleId",
-                table: "Users",
-                column: "RoleId");
+                name: "IX_UserRoles_UserId",
+                table: "UserRoles",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -403,6 +457,9 @@ namespace InsuraTech.Services.Migrations
                 name: "UserFeedbacks");
 
             migrationBuilder.DropTable(
+                name: "UserRoles");
+
+            migrationBuilder.DropTable(
                 name: "ClaimRequests");
 
             migrationBuilder.DropTable(
@@ -412,6 +469,9 @@ namespace InsuraTech.Services.Migrations
                 name: "CustomerFeedbacks");
 
             migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
                 name: "InsurancePolicies");
 
             migrationBuilder.DropTable(
@@ -419,9 +479,6 @@ namespace InsuraTech.Services.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
         }
     }
 }

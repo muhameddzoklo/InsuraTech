@@ -1,6 +1,8 @@
+using InsuraTech.API.Auth;
 using InsuraTech.Services;
 using InsuraTech.Services.Database;
 using Mapster;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -9,8 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddTransient<IInsurancePackageService, InsurancePackageService>();
-
-
+builder.Services.AddTransient<IroleService, RoleService>();
+builder.Services.AddTransient<IUserService, UserService>();
 
 
 
@@ -43,6 +45,10 @@ var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 builder.Services.AddDbContext<InsuraTechContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddMapster();
+
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

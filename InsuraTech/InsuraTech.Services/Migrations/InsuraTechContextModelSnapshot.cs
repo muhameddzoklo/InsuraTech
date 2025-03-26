@@ -289,16 +289,42 @@ namespace InsuraTech.Services.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("RoleName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("RoleId");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = 1,
+                            Description = "Administrator with full access to settings, user permissions and platform operations.",
+                            IsDeleted = false,
+                            RoleName = "Admin"
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            Description = "An Insurance Agent manages policies, processes claims, and assists customers with recommendations and approvals.",
+                            IsDeleted = false,
+                            RoleName = "Agent"
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            Description = "Supports insurance agents by handling administrative tasks, managing client inquiries, and processing policy updates",
+                            IsDeleted = false,
+                            RoleName = "Assistant"
+                        });
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.Transaction", b =>
@@ -351,12 +377,16 @@ namespace InsuraTech.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -366,14 +396,66 @@ namespace InsuraTech.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("RoleId");
-
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            Email = "1",
+                            FirstName = "1",
+                            IsDeleted = false,
+                            LastName = "1",
+                            PasswordHash = "XVDI7NKoOCtMiSrKR1uSSGWvA7o=",
+                            PasswordSalt = "NHVv+8KhAiQqFlz7k1P53Q==",
+                            PhoneNumber = "1",
+                            Username = "1"
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            Email = "admin@mail.com",
+                            FirstName = "Admin",
+                            IsDeleted = false,
+                            LastName = "Admin",
+                            PasswordHash = "vjxFUddajZn+mD4TXhrpKJFpwCk=",
+                            PasswordSalt = "BAbir1GLAnT8mlkl48K82Q==",
+                            PhoneNumber = "000000000",
+                            Username = "admin"
+                        },
+                        new
+                        {
+                            UserId = 3,
+                            Email = "agent@mail.com",
+                            FirstName = "Agent",
+                            IsDeleted = false,
+                            LastName = "Agent",
+                            PasswordHash = "2tC+kGkSwtfK1s76++lFQfVkMBA=",
+                            PasswordSalt = "g8L0JtbZi8CyIwALz6lEjw==",
+                            PhoneNumber = "000000001",
+                            Username = "agent"
+                        },
+                        new
+                        {
+                            UserId = 4,
+                            Email = "assistant@mail.com",
+                            FirstName = "Assistant",
+                            IsDeleted = false,
+                            LastName = "Assistant",
+                            PasswordHash = "1bwUDDXJ0XBRKYVYycBm+yVzUlQ=",
+                            PasswordSalt = "fQs/0a4aqARNG/avZ7mRlg==",
+                            PhoneNumber = "000000002",
+                            Username = "assistant"
+                        });
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.UserFeedback", b =>
@@ -393,9 +475,6 @@ namespace InsuraTech.Services.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
-
                     b.HasKey("UserFeedbackId");
 
                     b.HasIndex("CustomerFeedbackId");
@@ -404,9 +483,73 @@ namespace InsuraTech.Services.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId1");
-
                     b.ToTable("UserFeedbacks");
+                });
+
+            modelBuilder.Entity("InsuraTech.Services.Database.UserRole", b =>
+                {
+                    b.Property<int>("UserRoleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserRoleId"));
+
+                    b.Property<DateTime>("ChangeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserRoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserRoleId = 1,
+                            ChangeDate = new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            RoleId = 1,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            UserRoleId = 2,
+                            ChangeDate = new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            RoleId = 1,
+                            UserId = 2
+                        },
+                        new
+                        {
+                            UserRoleId = 3,
+                            ChangeDate = new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            RoleId = 2,
+                            UserId = 3
+                        },
+                        new
+                        {
+                            UserRoleId = 4,
+                            ChangeDate = new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            RoleId = 3,
+                            UserId = 4
+                        });
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.ClaimRequest", b =>
@@ -510,15 +653,6 @@ namespace InsuraTech.Services.Migrations
                     b.Navigation("paymentMethod");
                 });
 
-            modelBuilder.Entity("InsuraTech.Services.Database.User", b =>
-                {
-                    b.HasOne("InsuraTech.Services.Database.Role", null)
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("InsuraTech.Services.Database.UserFeedback", b =>
                 {
                     b.HasOne("InsuraTech.Services.Database.CustomerFeedback", "CustomerFeedback")
@@ -537,11 +671,26 @@ namespace InsuraTech.Services.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("InsuraTech.Services.Database.User", null)
-                        .WithMany("UserFeedbacks")
-                        .HasForeignKey("UserId1");
-
                     b.Navigation("CustomerFeedback");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("InsuraTech.Services.Database.UserRole", b =>
+                {
+                    b.HasOne("InsuraTech.Services.Database.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InsuraTech.Services.Database.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
 
                     b.Navigation("User");
                 });
@@ -553,12 +702,12 @@ namespace InsuraTech.Services.Migrations
 
             modelBuilder.Entity("InsuraTech.Services.Database.Role", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.User", b =>
                 {
-                    b.Navigation("UserFeedbacks");
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }
