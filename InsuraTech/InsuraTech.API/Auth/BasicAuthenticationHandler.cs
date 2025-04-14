@@ -12,17 +12,17 @@ namespace InsuraTech.API.Auth
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly IUserService _userService;
-        //private readonly IPatientService _patientService;
+        private readonly IClientService _clientService;
 
         public BasicAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
             IUserService userService
-            /*,IPatientService PatientService*/) : base(options, logger, encoder, clock)
+            ,IClientService clientService) : base(options, logger, encoder, clock)
         {
             _userService = userService;
-            //this._patientService = patientService;
+            this._clientService = clientService;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -43,31 +43,30 @@ namespace InsuraTech.API.Auth
 
             if (user == null)
             {
-                return AuthenticateResult.Fail("Auth failed");
-                //potrebna provjera da li je pacijent, te ako nije vracamo fail
-                //var patient = _patientService.Login(username, password);
+                
+                var client = _clientService.Login(username, password);
 
-                //if (patient == null)
-                //{
-                //    return AuthenticateResult.Fail("Auth failed");
-                //}
-                //else
-                //{
-                //    var claims = new List<Claim>()
-                //    {
-                //    new Claim(ClaimTypes.Name, patient.FirstName),
-                //    new Claim(ClaimTypes.NameIdentifier, citalac.Username)
-                //    };
+                if (client == null)
+                {
+                    return AuthenticateResult.Fail("Auth failed");
+                }
+                else
+                {
+                    var claims = new List<Claim>()
+                    {
+                    new Claim(ClaimTypes.Name, client.FirstName),
+                    new Claim(ClaimTypes.NameIdentifier, client.Username)
+                    };
 
-                //    claims.Add(new Claim(ClaimTypes.Role, "Patient"));
+                    claims.Add(new Claim(ClaimTypes.Role, "Client"));
 
-                //    var identity = new ClaimsIdentity(claims, Scheme.Name);
+                    var identity = new ClaimsIdentity(claims, Scheme.Name);
 
-                //    var principal = new ClaimsPrincipal(identity);
+                    var principal = new ClaimsPrincipal(identity);
 
-                //    var ticket = new AuthenticationTicket(principal, Scheme.Name);
-                //    return AuthenticateResult.Success(ticket);
-                //}
+                    var ticket = new AuthenticationTicket(principal, Scheme.Name);
+                    return AuthenticateResult.Success(ticket);
+                }
             }
             else
             {
