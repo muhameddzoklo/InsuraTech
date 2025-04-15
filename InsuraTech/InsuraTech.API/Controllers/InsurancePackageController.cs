@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace InsuraTech.API.Controllers
 {
-    [AllowAnonymous]
+
     public class InsurancePackageController:BaseCRUDControllerAsync<InsurancePackageDTO,InsurancePackageSearchObject,InsurancePackageUpsertRequest,InsurancePackageUpsertRequest>
     {
         

@@ -354,6 +354,16 @@ namespace InsuraTech.Services.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Clients",
+                columns: new[] { "ClientId", "DeletionTime", "Email", "FirstName", "IsDeleted", "LastName", "PasswordHash", "PasswordSalt", "PhoneNumber", "ProfilePicture", "RegistrationDate", "Username" },
+                values: new object[,]
+                {
+                    { 1, null, "client@mail.com", "Client", false, "Client", "uRq1YqSB0lg3cdpu9nd/KzSRItM=", "hJAv+NlOCMXaoDXa+MPk9A==", "000000003", null, new DateTime(2025, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified), "client" },
+                    { 2, null, "client1@mail.com", "Client1", false, "Client1", "tLbv6EHzaanWRumREUrlGSf2XS0=", "oQ3qYpn5T8Z4n5nm5aGrvA==", "000000004", null, new DateTime(2025, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified), "client1" },
+                    { 3, null, "client2@mail.com", "Client2", false, "Client2", "8OB3D2RPgagepehex0hLz6HdM1Q=", "mGr/PGoIDO5ILaJYl3MvJg==", "000000005", null, new DateTime(2025, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified), "client2" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "RoleId", "DeletionTime", "Description", "IsDeleted", "RoleName" },
                 values: new object[,]
@@ -369,9 +379,9 @@ namespace InsuraTech.Services.Migrations
                 values: new object[,]
                 {
                     { 1, null, "1", "1", false, "1", "XVDI7NKoOCtMiSrKR1uSSGWvA7o=", "NHVv+8KhAiQqFlz7k1P53Q==", "1", "1" },
-                    { 2, null, "admin@mail.com", "Admin", false, "Admin", "vjxFUddajZn+mD4TXhrpKJFpwCk=", "BAbir1GLAnT8mlkl48K82Q==", "000000000", "admin" },
-                    { 3, null, "agent@mail.com", "Agent", false, "Agent", "2tC+kGkSwtfK1s76++lFQfVkMBA=", "g8L0JtbZi8CyIwALz6lEjw==", "000000001", "agent" },
-                    { 4, null, "assistant@mail.com", "Assistant", false, "Assistant", "1bwUDDXJ0XBRKYVYycBm+yVzUlQ=", "fQs/0a4aqARNG/avZ7mRlg==", "000000002", "assistant" }
+                    { 2, null, "admin@mail.com", "Admin", false, "Admin", "+zHjeAMut/qVPctS7uaREf4lN1w=", "sOQz4gFWKGh9SeOhqXpqyw==", "000000000", "admin" },
+                    { 3, null, "agent@mail.com", "Agent", false, "Agent", "9hkvRabWkVOkr+Hqr52lzoMKiKo=", "2ICZgybWHKj+fYpTc6/19g==", "000000001", "agent" },
+                    { 4, null, "assistant@mail.com", "Assistant", false, "Assistant", "sfrZuf7hqepHmMV6gt83a/RaB9g=", "Ct53DBogAC4vUxlb2WodgQ==", "000000002", "assistant" }
                 });
 
             migrationBuilder.InsertData(

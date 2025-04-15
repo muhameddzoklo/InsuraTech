@@ -44,9 +44,14 @@ namespace InsuraTech.Services.Database
                 );
             modelBuilder.Entity<User>().HasData(
                 new User { UserId = 1, FirstName = "1", LastName = "1", Username = "1", Email = "1", PhoneNumber = "1", IsDeleted = false, PasswordSalt = "NHVv+8KhAiQqFlz7k1P53Q==", PasswordHash = "XVDI7NKoOCtMiSrKR1uSSGWvA7o=" },
-                new User { UserId = 2, FirstName = "Admin", LastName = "Admin", Username = "admin", Email = "admin@mail.com", PhoneNumber = "000000000", IsDeleted = false, PasswordSalt = "BAbir1GLAnT8mlkl48K82Q==", PasswordHash = "vjxFUddajZn+mD4TXhrpKJFpwCk=" },
-                new User { UserId = 3, FirstName = "Agent", LastName = "Agent", Username = "agent", Email = "agent@mail.com", PhoneNumber = "000000001", IsDeleted = false, PasswordSalt = "g8L0JtbZi8CyIwALz6lEjw==", PasswordHash = "2tC+kGkSwtfK1s76++lFQfVkMBA=" },
-                new User { UserId = 4, FirstName = "Assistant", LastName = "Assistant", Username = "assistant", Email = "assistant@mail.com", PhoneNumber = "000000002", IsDeleted = false, PasswordSalt = "fQs/0a4aqARNG/avZ7mRlg==", PasswordHash = "1bwUDDXJ0XBRKYVYycBm+yVzUlQ=" }
+                new User { UserId = 2, FirstName = "Admin", LastName = "Admin", Username = "admin", Email = "admin@mail.com", PhoneNumber = "000000000", IsDeleted = false, PasswordSalt = "sOQz4gFWKGh9SeOhqXpqyw==", PasswordHash = "+zHjeAMut/qVPctS7uaREf4lN1w=" },
+                new User { UserId = 3, FirstName = "Agent", LastName = "Agent", Username = "agent", Email = "agent@mail.com", PhoneNumber = "000000001", IsDeleted = false, PasswordSalt = "2ICZgybWHKj+fYpTc6/19g==", PasswordHash = "9hkvRabWkVOkr+Hqr52lzoMKiKo=" },
+                new User { UserId = 4, FirstName = "Assistant", LastName = "Assistant", Username = "assistant", Email = "assistant@mail.com", PhoneNumber = "000000002", IsDeleted = false, PasswordSalt = "Ct53DBogAC4vUxlb2WodgQ==", PasswordHash = "sfrZuf7hqepHmMV6gt83a/RaB9g=" }
+                );
+            modelBuilder.Entity<Client>().HasData(
+                new Client { ClientId = 1, FirstName = "Client", LastName = "Client", Username = "client", Email = "client@mail.com", PhoneNumber = "000000003", ProfilePicture = null, RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 03), IsDeleted = false, PasswordSalt = "hJAv+NlOCMXaoDXa+MPk9A==", PasswordHash = "uRq1YqSB0lg3cdpu9nd/KzSRItM=" },
+                new Client { ClientId = 2, FirstName = "Client1", LastName = "Client1", Username = "client1", Email = "client1@mail.com", PhoneNumber = "000000004", ProfilePicture = null, RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 03), IsDeleted = false, PasswordSalt = "oQ3qYpn5T8Z4n5nm5aGrvA==", PasswordHash = "tLbv6EHzaanWRumREUrlGSf2XS0=" },
+                new Client { ClientId = 3, FirstName = "Client2", LastName = "Client2", Username = "client2", Email = "client2@mail.com", PhoneNumber = "000000005", ProfilePicture = null, RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 03), IsDeleted = false, PasswordSalt = "mGr/PGoIDO5ILaJYl3MvJg==", PasswordHash = "8OB3D2RPgagepehex0hLz6HdM1Q=" }
                 );
             modelBuilder.Entity<UserRole>().HasData(
                 new UserRole { UserRoleId = 1, RoleId = 1, UserId = 1, ChangeDate = new DateTime(2025, 3, 23, 22, 48, 41), IsDeleted = false },
@@ -54,6 +59,7 @@ namespace InsuraTech.Services.Database
                 new UserRole { UserRoleId = 3, RoleId = 2, UserId = 3, ChangeDate = new DateTime(2025, 3, 23, 22, 48, 41), IsDeleted = false },
                 new UserRole { UserRoleId = 4, RoleId = 3, UserId = 4, ChangeDate = new DateTime(2025, 3, 23, 22, 48, 41), IsDeleted = false }
                 );
+
 
 
             // Disable cascading delete for all relationships that may cause cycles

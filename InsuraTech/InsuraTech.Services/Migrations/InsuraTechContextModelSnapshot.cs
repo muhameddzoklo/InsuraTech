@@ -111,6 +111,47 @@ namespace InsuraTech.Services.Migrations
                     b.HasKey("ClientId");
 
                     b.ToTable("Clients");
+
+                    b.HasData(
+                        new
+                        {
+                            ClientId = 1,
+                            Email = "client@mail.com",
+                            FirstName = "Client",
+                            IsDeleted = false,
+                            LastName = "Client",
+                            PasswordHash = "uRq1YqSB0lg3cdpu9nd/KzSRItM=",
+                            PasswordSalt = "hJAv+NlOCMXaoDXa+MPk9A==",
+                            PhoneNumber = "000000003",
+                            RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified),
+                            Username = "client"
+                        },
+                        new
+                        {
+                            ClientId = 2,
+                            Email = "client1@mail.com",
+                            FirstName = "Client1",
+                            IsDeleted = false,
+                            LastName = "Client1",
+                            PasswordHash = "tLbv6EHzaanWRumREUrlGSf2XS0=",
+                            PasswordSalt = "oQ3qYpn5T8Z4n5nm5aGrvA==",
+                            PhoneNumber = "000000004",
+                            RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified),
+                            Username = "client1"
+                        },
+                        new
+                        {
+                            ClientId = 3,
+                            Email = "client2@mail.com",
+                            FirstName = "Client2",
+                            IsDeleted = false,
+                            LastName = "Client2",
+                            PasswordHash = "8OB3D2RPgagepehex0hLz6HdM1Q=",
+                            PasswordSalt = "mGr/PGoIDO5ILaJYl3MvJg==",
+                            PhoneNumber = "000000005",
+                            RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified),
+                            Username = "client2"
+                        });
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.CustomerFeedback", b =>
@@ -482,8 +523,8 @@ namespace InsuraTech.Services.Migrations
                             FirstName = "Admin",
                             IsDeleted = false,
                             LastName = "Admin",
-                            PasswordHash = "vjxFUddajZn+mD4TXhrpKJFpwCk=",
-                            PasswordSalt = "BAbir1GLAnT8mlkl48K82Q==",
+                            PasswordHash = "+zHjeAMut/qVPctS7uaREf4lN1w=",
+                            PasswordSalt = "sOQz4gFWKGh9SeOhqXpqyw==",
                             PhoneNumber = "000000000",
                             Username = "admin"
                         },
@@ -494,8 +535,8 @@ namespace InsuraTech.Services.Migrations
                             FirstName = "Agent",
                             IsDeleted = false,
                             LastName = "Agent",
-                            PasswordHash = "2tC+kGkSwtfK1s76++lFQfVkMBA=",
-                            PasswordSalt = "g8L0JtbZi8CyIwALz6lEjw==",
+                            PasswordHash = "9hkvRabWkVOkr+Hqr52lzoMKiKo=",
+                            PasswordSalt = "2ICZgybWHKj+fYpTc6/19g==",
                             PhoneNumber = "000000001",
                             Username = "agent"
                         },
@@ -506,8 +547,8 @@ namespace InsuraTech.Services.Migrations
                             FirstName = "Assistant",
                             IsDeleted = false,
                             LastName = "Assistant",
-                            PasswordHash = "1bwUDDXJ0XBRKYVYycBm+yVzUlQ=",
-                            PasswordSalt = "fQs/0a4aqARNG/avZ7mRlg==",
+                            PasswordHash = "sfrZuf7hqepHmMV6gt83a/RaB9g=",
+                            PasswordSalt = "Ct53DBogAC4vUxlb2WodgQ==",
                             PhoneNumber = "000000002",
                             Username = "assistant"
                         });
