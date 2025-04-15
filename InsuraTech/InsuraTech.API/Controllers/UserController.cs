@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InsuraTech.API.Controllers
 {
-    [AllowAnonymous]
+
     [ApiController]
     public class UserController : BaseCRUDControllerAsync<UserDTO, UserSearchObject, UserInsertRequest, UserUpdateRequest>
     {
@@ -17,7 +17,7 @@ namespace InsuraTech.API.Controllers
         {
         }
 
-        
+        [AllowAnonymous]
         [HttpPost("login")]
         public UserDTO Login(string username, string password)
         {
