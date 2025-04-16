@@ -11,15 +11,22 @@ namespace InsuraTech.Services.Database
     public partial class InsurancePolicy:BaseEntity
     {
         public int InsurancePolicyId { get; set; }
-        public int UserId { get; set; }
-        [ForeignKey("UserId")]
-        public virtual User User { get; set; } = null!;
+
         public int InsurancePackageId { get; set; }
-        [ForeignKey("InsurancePackageId")]
-        public virtual InsurancePackage InsurancePackage { get; set; } = null!;
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
-        public decimal? PremiumAmount { get; set; }
+
+        public InsurancePackage InsurancePackage { get; set; } = null!;
+
+        public int ClientId { get; set; }
+
+        public Client Client { get; set; } = null!;
+
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
+
+        public bool IsActive { get; set; } 
+
+        public ICollection<ClaimRequest> ClaimRequests { get; set; } = new List<ClaimRequest>();
     }
 
 }

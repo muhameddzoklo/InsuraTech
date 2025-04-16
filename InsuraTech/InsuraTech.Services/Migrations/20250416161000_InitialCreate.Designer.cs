@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InsuraTech.Services.Migrations
 {
     [DbContext(typeof(InsuraTechContext))]
-    [Migration("20250415125203_InitialCreate")]
+    [Migration("20250416161000_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -45,6 +45,9 @@ namespace InsuraTech.Services.Migrations
                     b.Property<int>("InsurancePolicyId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("InsurancePolicyId1")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -57,6 +60,8 @@ namespace InsuraTech.Services.Migrations
                     b.HasKey("ClaimRequestId");
 
                     b.HasIndex("InsurancePolicyId");
+
+                    b.HasIndex("InsurancePolicyId1");
 
                     b.ToTable("ClaimRequests");
                 });
@@ -195,13 +200,11 @@ namespace InsuraTech.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InsurancePackageId"));
 
-                    b.Property<string>("CoverageDetails")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
@@ -211,12 +214,41 @@ namespace InsuraTech.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Price")
+                    b.Property<byte[]>("Picture")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("InsurancePackageId");
 
                     b.ToTable("InsurancePackages");
+
+                    b.HasData(
+                        new
+                        {
+                            InsurancePackageId = 1,
+                            Description = "Essential coverage for your vehicle, including third-party liability and collision coverage.",
+                            IsDeleted = false,
+                            Name = "Basic Car Insurance",
+                            Price = 199.99m
+                        },
+                        new
+                        {
+                            InsurancePackageId = 2,
+                            Description = "Extensive protection for your home covering fire, theft, natural disasters, and personal liability.",
+                            IsDeleted = false,
+                            Name = "Comprehensive Home Insurance",
+                            Price = 349.50m
+                        },
+                        new
+                        {
+                            InsurancePackageId = 3,
+                            Description = "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.",
+                            IsDeleted = false,
+                            Name = "Premium Health Insurance",
+                            Price = 499.00m
+                        });
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.InsurancePackageClaim", b =>
@@ -262,32 +294,37 @@ namespace InsuraTech.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InsurancePolicyId"));
 
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("EndDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("InsurancePackageId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("InsurancePackageId1")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<decimal?>("PremiumAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("StartDate")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
 
                     b.HasKey("InsurancePolicyId");
 
+                    b.HasIndex("ClientId");
+
                     b.HasIndex("InsurancePackageId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("InsurancePackageId1");
 
                     b.ToTable("InsurancePolicies");
                 });
@@ -659,6 +696,10 @@ namespace InsuraTech.Services.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("InsuraTech.Services.Database.InsurancePolicy", null)
+                        .WithMany("ClaimRequests")
+                        .HasForeignKey("InsurancePolicyId1");
+
                     b.Navigation("insurancePolicy");
                 });
 
@@ -694,21 +735,25 @@ namespace InsuraTech.Services.Migrations
 
             modelBuilder.Entity("InsuraTech.Services.Database.InsurancePolicy", b =>
                 {
+                    b.HasOne("InsuraTech.Services.Database.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("InsuraTech.Services.Database.InsurancePackage", "InsurancePackage")
                         .WithMany()
                         .HasForeignKey("InsurancePackageId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("InsuraTech.Services.Database.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.HasOne("InsuraTech.Services.Database.InsurancePackage", null)
+                        .WithMany("Policies")
+                        .HasForeignKey("InsurancePackageId1");
+
+                    b.Navigation("Client");
 
                     b.Navigation("InsurancePackage");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.MessageLog", b =>
@@ -797,6 +842,16 @@ namespace InsuraTech.Services.Migrations
             modelBuilder.Entity("InsuraTech.Services.Database.CustomerFeedback", b =>
                 {
                     b.Navigation("UserFeedbacks");
+                });
+
+            modelBuilder.Entity("InsuraTech.Services.Database.InsurancePackage", b =>
+                {
+                    b.Navigation("Policies");
+                });
+
+            modelBuilder.Entity("InsuraTech.Services.Database.InsurancePolicy", b =>
+                {
+                    b.Navigation("ClaimRequests");
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.Role", b =>

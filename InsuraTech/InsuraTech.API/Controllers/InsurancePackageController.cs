@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace InsuraTech.API.Controllers
 {
 
-    public class InsurancePackageController:BaseCRUDControllerAsync<InsurancePackageDTO,InsurancePackageSearchObject,InsurancePackageUpsertRequest,InsurancePackageUpsertRequest>
+    public class InsurancePackageController:BaseCRUDControllerAsync<InsurancePackageDTO,InsurancePackageSearchObject,InsurancePackageInsertRequest,InsurancePackageUpdateRequest>
     {
         
         public InsurancePackageController(IInsurancePackageService service) : base(service)

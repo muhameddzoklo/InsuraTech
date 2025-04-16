@@ -60,6 +60,34 @@ namespace InsuraTech.Services.Database
                 new UserRole { UserRoleId = 4, RoleId = 3, UserId = 4, ChangeDate = new DateTime(2025, 3, 23, 22, 48, 41), IsDeleted = false }
                 );
 
+            modelBuilder.Entity<InsurancePackage>().HasData(
+                new InsurancePackage
+                {
+                    InsurancePackageId = 1,
+                    Name = "Basic Car Insurance",
+                    Description = "Essential coverage for your vehicle, including third-party liability and collision coverage.",
+                    Price = 199.99m,
+                    Picture = null // slike se kasnije mogu dodati kao male slike do 1-2KB
+                },
+                new InsurancePackage
+                {
+                    InsurancePackageId = 2,
+                    Name = "Comprehensive Home Insurance",
+                    Description = "Extensive protection for your home covering fire, theft, natural disasters, and personal liability.",
+                    Price = 349.50m,
+                    Picture = null
+                },
+                new InsurancePackage
+                {
+                    InsurancePackageId = 3,
+                    Name = "Premium Health Insurance",
+                    Description = "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.",
+                    Price = 499.00m,
+                    Picture = null
+                }
+            );
+
+
 
 
             // Disable cascading delete for all relationships that may cause cycles
@@ -124,9 +152,9 @@ namespace InsuraTech.Services.Database
                 .OnDelete(DeleteBehavior.Restrict); // No action on delete
 
             modelBuilder.Entity<InsurancePolicy>()
-                .HasOne(i => i.User)
+                .HasOne(i => i.Client)
                 .WithMany()
-                .HasForeignKey(i => i.UserId)
+                .HasForeignKey(i => i.ClientId)
                 .OnDelete(DeleteBehavior.Restrict); // No action on delete
         }
     }

@@ -12,7 +12,7 @@ using InsuraTech.Services.Database;
 
 namespace InsuraTech.Services
 {
-    public class InsurancePackageService:BaseCRUDServiceAsync<InsurancePackageDTO,InsurancePackageSearchObject,InsurancePackage,InsurancePackageUpsertRequest,InsurancePackageUpsertRequest>,IInsurancePackageService
+    public class InsurancePackageService:BaseCRUDServiceAsync<InsurancePackageDTO,InsurancePackageSearchObject,InsurancePackage,InsurancePackageInsertRequest,InsurancePackageUpdateRequest>,IInsurancePackageService
     {
         public InsurancePackageService(InsuraTechContext context, IMapper mapper):base(context,mapper)
         { 
