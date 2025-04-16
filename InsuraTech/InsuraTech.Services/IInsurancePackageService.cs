@@ -11,7 +11,7 @@ using InsuraTech.Services.Database;
 
 namespace InsuraTech.Services
 {
-    public interface IInsurancePackageService:ICRUDServiceAsync<InsurancePackageDTO,InsurancePackageSearchObject,InsurancePackageUpsertRequest,InsurancePackageUpsertRequest>
+    public interface IInsurancePackageService:ICRUDServiceAsync<InsurancePackageDTO,InsurancePackageSearchObject,InsurancePackageInsertRequest,InsurancePackageUpdateRequest>
     {
     }                            
 }

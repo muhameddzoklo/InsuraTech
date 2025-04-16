@@ -43,9 +43,9 @@ namespace InsuraTech.Services.Migrations
                     InsurancePackageId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    CoverageDetails = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Picture = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -107,6 +107,43 @@ namespace InsuraTech.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "InsurancePolicies",
+                columns: table => new
+                {
+                    InsurancePolicyId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InsurancePackageId = table.Column<int>(type: "int", nullable: false),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    InsurancePackageId1 = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InsurancePolicies", x => x.InsurancePolicyId);
+                    table.ForeignKey(
+                        name: "FK_InsurancePolicies_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InsurancePolicies_InsurancePackages_InsurancePackageId",
+                        column: x => x.InsurancePackageId,
+                        principalTable: "InsurancePackages",
+                        principalColumn: "InsurancePackageId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InsurancePolicies_InsurancePackages_InsurancePackageId1",
+                        column: x => x.InsurancePackageId1,
+                        principalTable: "InsurancePackages",
+                        principalColumn: "InsurancePackageId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CustomerFeedbacks",
                 columns: table => new
                 {
@@ -127,37 +164,6 @@ namespace InsuraTech.Services.Migrations
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "InsurancePolicies",
-                columns: table => new
-                {
-                    InsurancePolicyId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    InsurancePackageId = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    PremiumAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InsurancePolicies", x => x.InsurancePolicyId);
-                    table.ForeignKey(
-                        name: "FK_InsurancePolicies_InsurancePackages_InsurancePackageId",
-                        column: x => x.InsurancePackageId,
-                        principalTable: "InsurancePackages",
-                        principalColumn: "InsurancePackageId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_InsurancePolicies_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -267,6 +273,37 @@ namespace InsuraTech.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ClaimRequests",
+                columns: table => new
+                {
+                    ClaimRequestId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InsurancePolicyId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EstimatedAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubmittedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    InsurancePolicyId1 = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClaimRequests", x => x.ClaimRequestId);
+                    table.ForeignKey(
+                        name: "FK_ClaimRequests_InsurancePolicies_InsurancePolicyId",
+                        column: x => x.InsurancePolicyId,
+                        principalTable: "InsurancePolicies",
+                        principalColumn: "InsurancePolicyId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ClaimRequests_InsurancePolicies_InsurancePolicyId1",
+                        column: x => x.InsurancePolicyId1,
+                        principalTable: "InsurancePolicies",
+                        principalColumn: "InsurancePolicyId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserFeedbacks",
                 columns: table => new
                 {
@@ -295,31 +332,6 @@ namespace InsuraTech.Services.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClaimRequests",
-                columns: table => new
-                {
-                    ClaimRequestId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    InsurancePolicyId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EstimatedAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SubmittedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClaimRequests", x => x.ClaimRequestId);
-                    table.ForeignKey(
-                        name: "FK_ClaimRequests_InsurancePolicies_InsurancePolicyId",
-                        column: x => x.InsurancePolicyId,
-                        principalTable: "InsurancePolicies",
-                        principalColumn: "InsurancePolicyId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -364,6 +376,16 @@ namespace InsuraTech.Services.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "InsurancePackages",
+                columns: new[] { "InsurancePackageId", "DeletionTime", "Description", "IsDeleted", "Name", "Picture", "Price" },
+                values: new object[,]
+                {
+                    { 1, null, "Essential coverage for your vehicle, including third-party liability and collision coverage.", false, "Basic Car Insurance", null, 199.99m },
+                    { 2, null, "Extensive protection for your home covering fire, theft, natural disasters, and personal liability.", false, "Comprehensive Home Insurance", null, 349.50m },
+                    { 3, null, "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.", false, "Premium Health Insurance", null, 499.00m }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "RoleId", "DeletionTime", "Description", "IsDeleted", "RoleName" },
                 values: new object[,]
@@ -401,6 +423,11 @@ namespace InsuraTech.Services.Migrations
                 column: "InsurancePolicyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClaimRequests_InsurancePolicyId1",
+                table: "ClaimRequests",
+                column: "InsurancePolicyId1");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CustomerFeedbacks_UserId",
                 table: "CustomerFeedbacks",
                 column: "UserId");
@@ -416,14 +443,19 @@ namespace InsuraTech.Services.Migrations
                 column: "InsurancePackageId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InsurancePolicies_ClientId",
+                table: "InsurancePolicies",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InsurancePolicies_InsurancePackageId",
                 table: "InsurancePolicies",
                 column: "InsurancePackageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InsurancePolicies_UserId",
+                name: "IX_InsurancePolicies_InsurancePackageId1",
                 table: "InsurancePolicies",
-                column: "UserId");
+                column: "InsurancePackageId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MessageLogs_UserId",
@@ -475,9 +507,6 @@ namespace InsuraTech.Services.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Clients");
-
-            migrationBuilder.DropTable(
                 name: "InsurancePackageClaims");
 
             migrationBuilder.DropTable(
@@ -511,10 +540,13 @@ namespace InsuraTech.Services.Migrations
                 name: "InsurancePolicies");
 
             migrationBuilder.DropTable(
-                name: "InsurancePackages");
+                name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Clients");
+
+            migrationBuilder.DropTable(
+                name: "InsurancePackages");
         }
     }
 }

@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_desktop/providers/auth_provider.dart';
+import 'package:insuratech_desktop/providers/insurance_package_provider.dart';
 import 'package:insuratech_desktop/providers/users_provider.dart';
-import 'package:insuratech_desktop/screens/placeholder_screen.dart';
+import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UsersProvider()),
+        ChangeNotifierProvider(create: (_) => InsurancePackageProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -151,33 +161,37 @@ class _LoginPageState extends State<LoginPage> {
                         foregroundColor: Colors.white,
                       ),
                       onPressed: () async {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              var provider = UsersProvider();
-                              AuthProvider.username = _usernameController.text;
-                              AuthProvider.password = _passwordController.text;
+                        if (_formKey.currentState?.validate() ?? false) {
+                          var provider = UsersProvider();
+                          AuthProvider.username = _usernameController.text;
+                          AuthProvider.password = _passwordController.text;
 
-                              try {
-                                var user = await provider.login(
-                                    AuthProvider.username!,
-                                    AuthProvider.password!);
+                          try {
+                            var user = await provider.login(
+                              AuthProvider.username!,
+                              AuthProvider.password!,
+                            );
 
-                                AuthProvider.userId = user.userId;
+                            AuthProvider.userId = user.userId;
 
-                                if (user.userRoles != null) {
-                                  AuthProvider.userRoles =
-                                      user.userRoles;
-                                }
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => PlaceholderListScreen()));
-                              } on Exception catch (e) {
-                                QuickAlert.show(
-                                    context: context,
-                                    type: QuickAlertType.warning,
-                                    text: "Invalid username or password.",
-                                    title: "Error");
-                              }
+                            if (user.userRoles != null) {
+                              AuthProvider.userRoles = user.userRoles;
                             }
-                          },
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => InsurancePackageScreen(),
+                              ),
+                            );
+                          } on Exception catch (e) {
+                            QuickAlert.show(
+                              context: context,
+                              type: QuickAlertType.warning,
+                              text: "Invalid username or password.",
+                              title: "Error",
+                            );
+                          }
+                        }
+                      },
                       child: const Text(
                         "Sign In",
                         style: TextStyle(fontSize: 18),

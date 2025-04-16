@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
+import 'package:insuratech_desktop/screens/placeholder_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   final String title;
@@ -14,14 +16,13 @@ class _MasterScreenState extends State<MasterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF6D4C41), // Tamnija maroon pozadina
+      backgroundColor: const Color(0xFF6D4C41),
       body: Row(
         children: [
-          // Sidebar sa poboljšanim dizajnom
           Container(
             width: 250,
             decoration: BoxDecoration(
-              color: const Color(0xFF8D6E63), // Svjetlija maroon
+              color: const Color(0xFF8D6E63),
               borderRadius: const BorderRadius.only(
                 topRight: Radius.circular(25),
                 bottomRight: Radius.circular(25),
@@ -49,26 +50,23 @@ class _MasterScreenState extends State<MasterScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _buildSidebarItem(context, "Korisnici", Icons.people),
-                _buildSidebarItem(context, "Termini", Icons.event),
-                _buildSidebarItem(context, "Statistika", Icons.bar_chart),
-                _buildSidebarItem(context, "Recepti", Icons.receipt),
-                _buildSidebarItem(context, "Obavještenja", Icons.notifications),
+                _buildSidebarItem(context, "Packages", Icons.inventory, const InsurancePackageScreen()),
+                _buildSidebarItem(context, "Termini", Icons.event, const PlaceholderListScreen()),
+                _buildSidebarItem(context, "Statistika", Icons.bar_chart, const PlaceholderListScreen()),
+                _buildSidebarItem(context, "Recepti", Icons.receipt, const PlaceholderListScreen()),
+                _buildSidebarItem(context, "Obavještenja", Icons.notifications, const PlaceholderListScreen()),
               ],
             ),
           ),
-          
-          // Main Content
           Expanded(
             child: Column(
               children: [
-                // Top Bar
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   height: 60,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF5D4037),
-                    borderRadius: const BorderRadius.only(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF5D4037),
+                    borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(15),
                     ),
                   ),
@@ -98,8 +96,6 @@ class _MasterScreenState extends State<MasterScreen> {
                     ],
                   ),
                 ),
-
-                // Main Content Area
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.all(20),
@@ -115,14 +111,16 @@ class _MasterScreenState extends State<MasterScreen> {
     );
   }
 
-  Widget _buildSidebarItem(BuildContext context, String title, IconData icon) {
+  Widget _buildSidebarItem(BuildContext context, String title, IconData icon, Widget screen) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(15),
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
             child: Row(
