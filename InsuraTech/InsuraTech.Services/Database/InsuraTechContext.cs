@@ -67,7 +67,8 @@ namespace InsuraTech.Services.Database
                     Name = "Basic Car Insurance",
                     Description = "Essential coverage for your vehicle, including third-party liability and collision coverage.",
                     Price = 199.99m,
-                    Picture = null // slike se kasnije mogu dodati kao male slike do 1-2KB
+                    Picture = null, // slike se kasnije mogu dodati kao male slike do 1-2KB
+                    StateMachine = "active"
                 },
                 new InsurancePackage
                 {
@@ -75,7 +76,8 @@ namespace InsuraTech.Services.Database
                     Name = "Comprehensive Home Insurance",
                     Description = "Extensive protection for your home covering fire, theft, natural disasters, and personal liability.",
                     Price = 349.50m,
-                    Picture = null
+                    Picture = null, // slike se kasnije mogu dodati kao male slike do 1-2KB
+                    StateMachine = "active"
                 },
                 new InsurancePackage
                 {
@@ -83,7 +85,8 @@ namespace InsuraTech.Services.Database
                     Name = "Premium Health Insurance",
                     Description = "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.",
                     Price = 499.00m,
-                    Picture = null
+                    Picture = null,
+                    StateMachine = "draft"
                 }
             );
 

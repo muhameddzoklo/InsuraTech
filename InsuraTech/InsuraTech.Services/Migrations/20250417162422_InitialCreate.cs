@@ -46,6 +46,7 @@ namespace InsuraTech.Services.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Picture = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    StateMachine = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -377,12 +378,12 @@ namespace InsuraTech.Services.Migrations
 
             migrationBuilder.InsertData(
                 table: "InsurancePackages",
-                columns: new[] { "InsurancePackageId", "DeletionTime", "Description", "IsDeleted", "Name", "Picture", "Price" },
+                columns: new[] { "InsurancePackageId", "DeletionTime", "Description", "IsDeleted", "Name", "Picture", "Price", "StateMachine" },
                 values: new object[,]
                 {
-                    { 1, null, "Essential coverage for your vehicle, including third-party liability and collision coverage.", false, "Basic Car Insurance", null, 199.99m },
-                    { 2, null, "Extensive protection for your home covering fire, theft, natural disasters, and personal liability.", false, "Comprehensive Home Insurance", null, 349.50m },
-                    { 3, null, "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.", false, "Premium Health Insurance", null, 499.00m }
+                    { 1, null, "Essential coverage for your vehicle, including third-party liability and collision coverage.", false, "Basic Car Insurance", null, 199.99m, "active" },
+                    { 2, null, "Extensive protection for your home covering fire, theft, natural disasters, and personal liability.", false, "Comprehensive Home Insurance", null, 349.50m, "active" },
+                    { 3, null, "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.", false, "Premium Health Insurance", null, 499.00m, "draft" }
                 });
 
             migrationBuilder.InsertData(
