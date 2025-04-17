@@ -217,6 +217,10 @@ namespace InsuraTech.Services.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("StateMachine")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("InsurancePackageId");
 
                     b.ToTable("InsurancePackages");
@@ -228,7 +232,8 @@ namespace InsuraTech.Services.Migrations
                             Description = "Essential coverage for your vehicle, including third-party liability and collision coverage.",
                             IsDeleted = false,
                             Name = "Basic Car Insurance",
-                            Price = 199.99m
+                            Price = 199.99m,
+                            StateMachine = "active"
                         },
                         new
                         {
@@ -236,7 +241,8 @@ namespace InsuraTech.Services.Migrations
                             Description = "Extensive protection for your home covering fire, theft, natural disasters, and personal liability.",
                             IsDeleted = false,
                             Name = "Comprehensive Home Insurance",
-                            Price = 349.50m
+                            Price = 349.50m,
+                            StateMachine = "active"
                         },
                         new
                         {
@@ -244,7 +250,8 @@ namespace InsuraTech.Services.Migrations
                             Description = "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.",
                             IsDeleted = false,
                             Name = "Premium Health Insurance",
-                            Price = 499.00m
+                            Price = 499.00m,
+                            StateMachine = "draft"
                         });
                 });
 

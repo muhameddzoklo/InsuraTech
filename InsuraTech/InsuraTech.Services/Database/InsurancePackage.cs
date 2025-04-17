@@ -18,6 +18,7 @@ namespace InsuraTech.Services.Database
         public decimal Price { get; set; }
 
         public byte[]? Picture { get; set; }
+        public string StateMachine { get; set; } = null!;
 
         public ICollection<InsurancePolicy> Policies { get; set; } = new List<InsurancePolicy>();
     }

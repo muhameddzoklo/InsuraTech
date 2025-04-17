@@ -9,23 +9,97 @@ using InsuraTech.Model.Requests;
 using InsuraTech.Model.SearchObjects;
 using InsuraTech.Services.BaseServices;
 using InsuraTech.Services.Database;
+using Microsoft.Extensions.Logging;
+using InsuraTech.Services.InsurancePackageStateMachine;
 
 namespace InsuraTech.Services
 {
-    public class InsurancePackageService:BaseCRUDServiceAsync<InsurancePackageDTO,InsurancePackageSearchObject,InsurancePackage,InsurancePackageInsertRequest,InsurancePackageUpdateRequest>,IInsurancePackageService
+    public class InsurancePackageService : BaseCRUDService<InsurancePackageDTO, InsurancePackageSearchObject, InsurancePackage, InsurancePackageInsertRequest, InsurancePackageUpdateRequest>, IInsurancePackageService
     {
-        public InsurancePackageService(InsuraTechContext context, IMapper mapper):base(context,mapper)
-        { 
+        ILogger<InsurancePackageService> _logger;
+        public BaseInsurancePackageState BaseInsurancePackageState { get; set; }
+        public InsurancePackageService(InsuraTechContext context, IMapper mapper, BaseInsurancePackageState baseInsurancePackageState, ILogger<InsurancePackageService> logger)
+        : base(context, mapper)
+        {
+            BaseInsurancePackageState = baseInsurancePackageState;
+            _logger = logger;
         }
+
         public override IQueryable<InsurancePackage> AddFilter(InsurancePackageSearchObject search, IQueryable<InsurancePackage> query)
         {
+            var filteredQuery = base.AddFilter(search, query);
 
-            if (!string.IsNullOrEmpty(search?.InsurancePackageNameGTE))
+            if (!string.IsNullOrWhiteSpace(search?.InsurancePackageNameGTE))
             {
-                query = query.Where(x => x.Name.ToLower().StartsWith(search.InsurancePackageNameGTE));
+                filteredQuery = filteredQuery.Where(x => x.Name.Contains(search.InsurancePackageNameGTE));
             }
-            query = query.Where(x => !x.IsDeleted);
-            return query;
+            if (search?.RetrieveAll==true)
+            {
+                filteredQuery = filteredQuery.Where(x => !x.IsDeleted);
+                return filteredQuery;
+            }
+            filteredQuery = filteredQuery.Where(x => !x.IsDeleted).Where(x=>x.StateMachine=="active");
+
+            return filteredQuery;
+        }
+
+        public override InsurancePackageDTO Insert(InsurancePackageInsertRequest request)
+        {
+            var state = BaseInsurancePackageState.CreateState("initial");
+            return state.Insert(request);
+        }
+
+        public override InsurancePackageDTO Update(int id, InsurancePackageUpdateRequest request)
+        {
+            var entity = GetById(id);
+            var state = BaseInsurancePackageState.CreateState(entity.StateMachine);
+            return state.Update(id, request);
+
+        }
+        public override void Delete(int id)
+        {
+            var entity = GetById(id);
+            var state = BaseInsurancePackageState.CreateState(entity.StateMachine);
+            state.Delete(id);
+        }
+
+        public InsurancePackageDTO Activate(int id)
+        {
+            var entity = GetById(id);
+            var state = BaseInsurancePackageState.CreateState(entity.StateMachine);
+            return state.Activate(id);
+        }
+
+        public InsurancePackageDTO Edit(int id)
+        {
+            var entity = GetById(id);
+            var state = BaseInsurancePackageState.CreateState(entity.StateMachine);
+            return state.Edit(id);
+        }
+
+        public InsurancePackageDTO Hide(int id)
+        {
+            var entity = GetById(id);
+            var state = BaseInsurancePackageState.CreateState(entity.StateMachine);
+            return state.Hide(id);
+        }
+
+        public List<string> AllowedActions(int id)
+        {
+            _logger.LogInformation($"Allowed actions called for: {id}");
+
+            if (id <= 0)
+            {
+                var state = BaseInsurancePackageState.CreateState("initial");
+                return state.AllowedActions(null);
+            }
+            else
+            {
+                var entity = Context.InsurancePackages.Find(id);
+                var state = BaseInsurancePackageState.CreateState(entity.StateMachine);
+                return state.AllowedActions(entity);
+            }
         }
     }
+
 }
