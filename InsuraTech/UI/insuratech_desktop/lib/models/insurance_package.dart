@@ -1,4 +1,3 @@
-
 import 'package:json_annotation/json_annotation.dart';
 part 'insurance_package.g.dart';
 
@@ -9,6 +8,7 @@ class InsurancePackage {
   String? description;
   double? price;
   String? picture;
+  String? stateMachine;
   InsurancePackage();
 
   factory InsurancePackage.fromJson(Map<String, dynamic> json) =>

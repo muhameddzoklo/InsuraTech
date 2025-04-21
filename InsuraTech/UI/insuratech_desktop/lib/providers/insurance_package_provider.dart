@@ -12,4 +12,20 @@ class InsurancePackageProvider extends BaseProvider<InsurancePackage> {
     // TODO: implement fromJson
     return InsurancePackage.fromJson(data);
   }
+    Future ChangeState(int id, String state) async {
+    var endpoint = "InsurancePackage/${id}/$state";
+    var baseUrl = BaseProvider.baseUrl;
+    var url = "$baseUrl$endpoint";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+
+    var response = await http.put(uri, headers: headers);
+    print("$uri");
+    if (isValidResponse(response)) {
+      if (response.body.isEmpty)
+        return fromJson({}); // or return null if allowed
+      var data = jsonDecode(response.body);
+      return fromJson(data);
+    }
+  }
 }

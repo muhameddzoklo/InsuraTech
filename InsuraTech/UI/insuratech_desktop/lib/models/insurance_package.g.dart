@@ -12,7 +12,8 @@ InsurancePackage _$InsurancePackageFromJson(Map<String, dynamic> json) =>
       ..name = json['name'] as String?
       ..description = json['description'] as String?
       ..price = (json['price'] as num?)?.toDouble()
-      ..picture = json['picture'] as String?;
+      ..picture = json['picture'] as String?
+      ..stateMachine = json['stateMachine'] as String?;
 
 Map<String, dynamic> _$InsurancePackageToJson(InsurancePackage instance) =>
     <String, dynamic>{
@@ -21,4 +22,5 @@ Map<String, dynamic> _$InsurancePackageToJson(InsurancePackage instance) =>
       'description': instance.description,
       'price': instance.price,
       'picture': instance.picture,
+      'stateMachine': instance.stateMachine,
     };
