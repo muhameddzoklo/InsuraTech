@@ -47,8 +47,15 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
         _packages = packagesResult.resultList;
         _filteredPackages = _packages;
       });
-    } catch (e) {
-      print('Error fetching packages: $e');
+    } on Exception catch (e) {
+      if (mounted) {
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          title: 'Failed',
+          text: 'Error: ${e.toString()}',
+        );
+      }
     } finally {
       setState(() => _isLoading = false);
     }
@@ -191,8 +198,15 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                         title: 'Success',
                         text: 'Package Edited successfully',
                       );
-                  } catch (e) {
-                    print("Error updating package: $e");
+                  } on Exception catch (e) {
+                    if (mounted) {
+                      QuickAlert.show(
+                        context: context,
+                        type: QuickAlertType.error,
+                        title: 'Failed',
+                        text: 'Error: ${e.toString()}',
+                      );
+                    }
                   }
                 }
               },
@@ -326,8 +340,15 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                           title: 'Success',
                           text: 'Package Added successfully',
                           );
-                    } catch (e) {
-                      print("Error adding package: $e");
+                    } on Exception catch (e) {
+                      if (mounted) {
+                        QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.error,
+                          title: 'Failed',
+                          text: 'Error: ${e.toString()}',
+                        );
+                      }
                     }
                   }
                 },
@@ -485,8 +506,13 @@ class InsurancePackageCard extends StatelessWidget {
                                   title: 'Success',
                                   text: 'Package activated successfully',
                                 );
-                              } catch (e) {
-                                print("Error activating package: $e");
+                              } on Exception catch (e) {
+                                  QuickAlert.show(
+                                    context: context,
+                                    type: QuickAlertType.error,
+                                    title: 'Failed',
+                                    text: 'Error: ${e.toString()}',
+                                  );
                               }
                             },
                             icon: const Icon(Icons.check_circle),
@@ -549,9 +575,14 @@ class InsurancePackageCard extends StatelessWidget {
                                               listen: false,
                                             ).ChangeState(package.insurancePackageId!, "hide");
                                             onRefresh();
-                                          } catch (e) {
-                                            print("Error hiding package: $e");
-                                          }
+                                          } on Exception catch (e) {
+                                              QuickAlert.show(
+                                                context: context,
+                                                type: QuickAlertType.error,
+                                                title: 'Failed',
+                                                text: 'Error: ${e.toString()}',
+                                              );
+                                            }
                                         },
                                         icon: const Icon(Icons.check, size: 18),
                                         label: const Text("Yes"),
@@ -639,9 +670,14 @@ class InsurancePackageCard extends StatelessWidget {
                                               title: 'Success',
                                               text: 'Package deleted successfully',
                                             );
-                                          } catch (e) {
-                                            print("Error deleting package: $e");
-                                          }
+                                          }on Exception catch (e) {
+                                            QuickAlert.show(
+                                              context: context,
+                                              type: QuickAlertType.error,
+                                              title: 'Failed',
+                                              text: 'Error: ${e.toString()}',
+                                            );
+                                        }
                                         },
                                         icon: const Icon(Icons.check, size: 18),
                                         label: const Text("Yes"),
@@ -680,9 +716,14 @@ class InsurancePackageCard extends StatelessWidget {
                                   listen: false,
                                 ).ChangeState(package.insurancePackageId!, "edit");
                                 onRefresh();
-                              } catch (e) {
-                                print("Error editing package: $e");
-                              }
+                              } on Exception catch (e) {
+                                    QuickAlert.show(
+                                      context: context,
+                                      type: QuickAlertType.error,
+                                      title: 'Failed',
+                                      text: 'Error: ${e.toString()}',
+                                    );
+                                  }
                             },
                             icon: const Icon(Icons.update),
                             label: const Text("Edit"),

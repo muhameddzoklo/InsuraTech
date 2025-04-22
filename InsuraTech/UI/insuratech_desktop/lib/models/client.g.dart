@@ -1,32 +1,31 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user.dart';
+part of 'client.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-User _$UserFromJson(Map<String, dynamic> json) =>
-    User()
-      ..userId = (json['userId'] as num?)?.toInt()
+Client _$ClientFromJson(Map<String, dynamic> json) =>
+    Client()
+      ..clientId = (json['clientId'] as num?)?.toInt()
       ..firstName = json['firstName'] as String?
       ..lastName = json['lastName'] as String?
       ..email = json['email'] as String?
       ..phoneNumber = json['phoneNumber'] as String?
       ..username = json['username'] as String?
       ..isActive = json['isActive'] as bool?
-      ..userRoles =
-          (json['userRoles'] as List<dynamic>?)
-              ?.map((e) => UserRole.fromJson(e as Map<String, dynamic>))
-              .toList();
+      ..profilePicture = json['profilePicture'] as String?
+      ..registrationDate = json['registrationDate'] as String?;
 
-Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-  'userId': instance.userId,
+Map<String, dynamic> _$ClientToJson(Client instance) => <String, dynamic>{
+  'clientId': instance.clientId,
   'firstName': instance.firstName,
   'lastName': instance.lastName,
   'email': instance.email,
   'phoneNumber': instance.phoneNumber,
   'username': instance.username,
   'isActive': instance.isActive,
-  'userRoles': instance.userRoles,
+  'profilePicture': instance.profilePicture,
+  'registrationDate': instance.registrationDate,
 };
