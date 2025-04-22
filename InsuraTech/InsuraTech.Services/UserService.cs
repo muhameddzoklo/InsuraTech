@@ -77,6 +77,7 @@ namespace InsuraTech.Services
             string newPass = Helpers.Helper.GenerateRandomString(8);
             entity.PasswordSalt = Helpers.Helper.GenerateSalt();
             entity.PasswordHash = Helpers.Helper.GenerateHash(entity.PasswordSalt, newPass);
+            entity.IsActive = true;
 
             //await rabbitMqService.SendAnEmail(new EmailDTO
             //{
@@ -136,7 +137,7 @@ namespace InsuraTech.Services
 
             var hash = Helpers.Helper.GenerateHash(entity.PasswordSalt, password);
 
-            if (hash != entity.PasswordHash)
+            if (hash != entity.PasswordHash || !entity.IsActive || entity.IsDeleted)
             {
                 return null;
             }

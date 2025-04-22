@@ -24,5 +24,6 @@ namespace InsuraTech.Services.Database
         public string PasswordSalt { get; set; } = null!;
         public byte[]? ProfilePicture { get; set; }
         public DateTime RegistrationDate { get; set; }
+        public bool IsActive { get; set; }
     }
 }

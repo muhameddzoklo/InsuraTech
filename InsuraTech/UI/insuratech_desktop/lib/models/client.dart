@@ -1,22 +1,23 @@
-import 'package:insuratech_desktop/models/user_role.dart';
 import 'package:json_annotation/json_annotation.dart';
-part 'user.g.dart';
+part 'client.g.dart';
 
 @JsonSerializable()
-class User {
-  int? userId;
+class Client {
+  int? clientId;
   String? firstName;
   String? lastName;
   String? email;
   String? phoneNumber;
   String? username;
   bool? isActive;
-  List<UserRole>? userRoles;
+  String? profilePicture;
+  String? registrationDate;
 
-  User();
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  Client();
+
+  factory Client.fromJson(Map<String, dynamic> json) => _$ClientFromJson(json);
 
   /// Connect the generated [_$PersonToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$UserToJson(this);
+  Map<String, dynamic> toJson() => _$ClientToJson(this);
 }

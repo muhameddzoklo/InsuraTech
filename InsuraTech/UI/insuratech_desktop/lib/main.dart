@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_desktop/providers/auth_provider.dart';
+import 'package:insuratech_desktop/providers/clients_provider.dart';
 import 'package:insuratech_desktop/providers/insurance_package_provider.dart';
+import 'package:insuratech_desktop/providers/roles_provider.dart';
 import 'package:insuratech_desktop/providers/users_provider.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
 import 'package:quickalert/models/quickalert_type.dart';
@@ -13,6 +15,8 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => UsersProvider()),
         ChangeNotifierProvider(create: (_) => InsurancePackageProvider()),
+        ChangeNotifierProvider(create: (_) => ClientsProvider()),
+        ChangeNotifierProvider(create: (_) => RolesProvider()),
       ],
       child: const MyApp(),
     ),

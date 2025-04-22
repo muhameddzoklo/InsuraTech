@@ -79,6 +79,7 @@ namespace InsuraTech.Services
             {
                 entity.ProfilePicture = null;
             }
+            entity.IsActive = true; 
             entity.RegistrationDate = DateTime.Now;
             entity.PasswordSalt = Helpers.Helper.GenerateSalt();
             entity.PasswordHash = Helpers.Helper.GenerateHash(entity.PasswordSalt, request.Password);
@@ -128,10 +129,11 @@ namespace InsuraTech.Services
 
             var hash = Helpers.Helper.GenerateHash(entity.PasswordSalt, password);
 
-            if (hash != entity.PasswordHash)
+            if (hash != entity.PasswordHash || !entity.IsActive || entity.IsDeleted)
             {
                 return null;
             }
+
 
             return this.Mapper.Map<ClientDTO>(entity);
         }

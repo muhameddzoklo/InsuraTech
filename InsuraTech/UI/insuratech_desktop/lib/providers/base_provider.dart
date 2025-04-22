@@ -13,18 +13,21 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   BaseProvider(String endpoint) {
     _endpoint = endpoint;
-    baseUrl = const String.fromEnvironment("baseUrl",
-        defaultValue: "http://localhost:5273/api/");
+    baseUrl = const String.fromEnvironment(
+      "baseUrl",
+      defaultValue: "http://localhost:5273/api/",
+    );
   }
 
-  Future<SearchResult<T>> get(
-      {dynamic filter,
-      int? page,
-      int? pageSize,
-      bool? retrieveAll,
-      String? orderBy,
-      String? sortDirection,
-      String? includeTables}) async {
+  Future<SearchResult<T>> get({
+    dynamic filter,
+    int? page,
+    int? pageSize,
+    bool? retrieveAll,
+    String? orderBy,
+    String? sortDirection,
+    String? includeTables,
+  }) async {
     var url = "$baseUrl$_endpoint";
 
     Map<String, dynamic> queryParams = {};
@@ -68,12 +71,10 @@ abstract class BaseProvider<T> with ChangeNotifier {
       for (var item in data['resultList']) {
         result.resultList.add(fromJson(item));
       }
-
       return result;
     } else {
       throw new Exception("Unknown error");
     }
-    // print("response: ${response.request} ${response.statusCode}, ${response.body}");
   }
 
   Future<T> getById(int id) async {
@@ -85,23 +86,17 @@ abstract class BaseProvider<T> with ChangeNotifier {
     var response = await http.get(uri, headers: headers);
     if (isValidResponse(response)) {
       var data = jsonDecode(response.body);
-
-      // var result = data as T;
       return fromJson(data);
-      // return result;
     } else {
       throw new Exception("Unknown error");
     }
-    // print("response: ${response.request} ${response.statusCode}, ${response.body}");
   }
 
   Future<T> insert(dynamic request) async {
     var url = "$baseUrl$_endpoint";
     var uri = Uri.parse(url);
     var headers = createHeaders();
-    // print(request);
     var jsonRequest = jsonEncode(request);
-    // print(jsonRequest);
     var response = await http.post(uri, headers: headers, body: jsonRequest);
 
     if (isValidResponse(response)) {
@@ -118,7 +113,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
     var headers = createHeaders();
 
     var jsonRequest = jsonEncode(request);
-    // print(jsonRequest);
     var response = await http.put(uri, headers: headers, body: jsonRequest);
 
     if (isValidResponse(response)) {
@@ -157,10 +151,12 @@ abstract class BaseProvider<T> with ChangeNotifier {
             errorResponse['errors'] != null &&
             errorResponse['errors']['userError'] != null) {
           throw UserFriendlyException(
-              errorResponse['errors']['userError'].join(', '));
+            errorResponse['errors']['userError'].join(', '),
+          );
         } else {
           throw UserFriendlyException(
-              "Something bad happened, please try again");
+            "Something bad happened, please try again",
+          );
         }
       } catch (e) {
         if (e is UserFriendlyException) {
@@ -182,14 +178,17 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
     var headers = {
       "Content-Type": "application/json",
-      "Authorization": basicAuth
+      "Authorization": basicAuth,
     };
 
     return headers;
   }
 
-  String getQueryString(Map params,
-      {String prefix = '&', bool inRecursion = false}) {
+  String getQueryString(
+    Map params, {
+    String prefix = '&',
+    bool inRecursion = false,
+  }) {
     String query = '';
     params.forEach((key, value) {
       if (inRecursion) {
@@ -212,8 +211,11 @@ abstract class BaseProvider<T> with ChangeNotifier {
       } else if (value is List || value is Map) {
         if (value is List) value = value.asMap();
         value.forEach((k, v) {
-          query +=
-              getQueryString({k: v}, prefix: '$prefix$key', inRecursion: true);
+          query += getQueryString(
+            {k: v},
+            prefix: '$prefix$key',
+            inRecursion: true,
+          );
         });
       }
     });

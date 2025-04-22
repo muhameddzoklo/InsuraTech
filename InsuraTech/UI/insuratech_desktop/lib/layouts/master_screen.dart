@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
 import 'package:insuratech_desktop/screens/placeholder_screen.dart';
+import 'package:insuratech_desktop/screens/users_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   final String title;
@@ -51,7 +52,7 @@ class _MasterScreenState extends State<MasterScreen> {
                 ),
                 const SizedBox(height: 20),
                 _buildSidebarItem(context, "Packages", Icons.inventory, const InsurancePackageScreen()),
-                _buildSidebarItem(context, "Termini", Icons.event, const PlaceholderListScreen()),
+                _buildSidebarItem(context, "Users", Icons.event, const UsersScreen()),
                 _buildSidebarItem(context, "Statistika", Icons.bar_chart, const PlaceholderListScreen()),
                 _buildSidebarItem(context, "Recepti", Icons.receipt, const PlaceholderListScreen()),
                 _buildSidebarItem(context, "Obavještenja", Icons.notifications, const PlaceholderListScreen()),

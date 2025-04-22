@@ -83,6 +83,9 @@ namespace InsuraTech.Services.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -123,6 +126,7 @@ namespace InsuraTech.Services.Migrations
                             ClientId = 1,
                             Email = "client@mail.com",
                             FirstName = "Client",
+                            IsActive = true,
                             IsDeleted = false,
                             LastName = "Client",
                             PasswordHash = "uRq1YqSB0lg3cdpu9nd/KzSRItM=",
@@ -136,6 +140,7 @@ namespace InsuraTech.Services.Migrations
                             ClientId = 2,
                             Email = "client1@mail.com",
                             FirstName = "Client1",
+                            IsActive = true,
                             IsDeleted = false,
                             LastName = "Client1",
                             PasswordHash = "tLbv6EHzaanWRumREUrlGSf2XS0=",
@@ -149,6 +154,7 @@ namespace InsuraTech.Services.Migrations
                             ClientId = 3,
                             Email = "client2@mail.com",
                             FirstName = "Client2",
+                            IsActive = true,
                             IsDeleted = false,
                             LastName = "Client2",
                             PasswordHash = "8OB3D2RPgagepehex0hLz6HdM1Q=",
@@ -521,6 +527,9 @@ namespace InsuraTech.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -553,6 +562,7 @@ namespace InsuraTech.Services.Migrations
                             UserId = 1,
                             Email = "1",
                             FirstName = "1",
+                            IsActive = true,
                             IsDeleted = false,
                             LastName = "1",
                             PasswordHash = "XVDI7NKoOCtMiSrKR1uSSGWvA7o=",
@@ -565,6 +575,7 @@ namespace InsuraTech.Services.Migrations
                             UserId = 2,
                             Email = "admin@mail.com",
                             FirstName = "Admin",
+                            IsActive = true,
                             IsDeleted = false,
                             LastName = "Admin",
                             PasswordHash = "+zHjeAMut/qVPctS7uaREf4lN1w=",
@@ -577,6 +588,7 @@ namespace InsuraTech.Services.Migrations
                             UserId = 3,
                             Email = "agent@mail.com",
                             FirstName = "Agent",
+                            IsActive = true,
                             IsDeleted = false,
                             LastName = "Agent",
                             PasswordHash = "9hkvRabWkVOkr+Hqr52lzoMKiKo=",
@@ -589,6 +601,7 @@ namespace InsuraTech.Services.Migrations
                             UserId = 4,
                             Email = "assistant@mail.com",
                             FirstName = "Assistant",
+                            IsActive = true,
                             IsDeleted = false,
                             LastName = "Assistant",
                             PasswordHash = "sfrZuf7hqepHmMV6gt83a/RaB9g=",
