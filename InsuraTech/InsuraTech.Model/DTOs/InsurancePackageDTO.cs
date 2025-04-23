@@ -17,7 +17,6 @@ namespace InsuraTech.Model.DTOs
         public byte[]? Picture { get; set; }
 
         public string? StateMachine { get; set; }
-
-        //public ICollection<InsurancePolicy> Policies { get; set; } = new List<InsurancePolicy>();
+        public int DurationDays { get; set; }
     }
 }

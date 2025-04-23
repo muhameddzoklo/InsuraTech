@@ -21,7 +21,6 @@ namespace InsuraTech.Services.Database
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<ClaimRequest> ClaimRequests { get; set; }
         public DbSet<Client> Clients { get; set; }
-        public DbSet<InsurancePackageClaim> InsurancePackageClaims { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,8 +37,8 @@ namespace InsuraTech.Services.Database
                 new User { UserId = 4, FirstName = "Assistant", LastName = "Assistant", Username = "assistant", Email = "assistant@mail.com", PhoneNumber = "000000002", IsDeleted = false, PasswordSalt = "Ct53DBogAC4vUxlb2WodgQ==", PasswordHash = "sfrZuf7hqepHmMV6gt83a/RaB9g=", IsActive = true }
                 );
             modelBuilder.Entity<Client>().HasData(
-                new Client { ClientId = 1, FirstName = "Client", LastName = "Client", Username = "client", Email = "client@mail.com", PhoneNumber = "000000003", ProfilePicture = null, RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 03), IsDeleted = false, PasswordSalt = "hJAv+NlOCMXaoDXa+MPk9A==", PasswordHash = "uRq1YqSB0lg3cdpu9nd/KzSRItM=", IsActive = true },
-                new Client { ClientId = 2, FirstName = "Client1", LastName = "Client1", Username = "client1", Email = "client1@mail.com", PhoneNumber = "000000004", ProfilePicture = null, RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 03), IsDeleted = false, PasswordSalt = "oQ3qYpn5T8Z4n5nm5aGrvA==", PasswordHash = "tLbv6EHzaanWRumREUrlGSf2XS0=", IsActive = true },
+                new Client { ClientId = 1, FirstName = "Client", LastName = "Client", Username = "client", Email = "client@mail.com", PhoneNumber = "000000003", ProfilePicture = null, RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 03), IsDeleted = false, PasswordSalt = "mGr/PGoIDO5ILaJYl3MvJg==", PasswordHash = "8OB3D2RPgagepehex0hLz6HdM1Q=", IsActive = true },
+                new Client { ClientId = 2, FirstName = "Client1", LastName = "Client1", Username = "client1", Email = "client1@mail.com", PhoneNumber = "000000004", ProfilePicture = null, RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 03), IsDeleted = false, PasswordSalt = "mGr/PGoIDO5ILaJYl3MvJg==", PasswordHash = "8OB3D2RPgagepehex0hLz6HdM1Q=", IsActive = true },
                 new Client { ClientId = 3, FirstName = "Client2", LastName = "Client2", Username = "client2", Email = "client2@mail.com", PhoneNumber = "000000005", ProfilePicture = null, RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 03), IsDeleted = false, PasswordSalt = "mGr/PGoIDO5ILaJYl3MvJg==", PasswordHash = "8OB3D2RPgagepehex0hLz6HdM1Q=", IsActive = true }
                 );
             modelBuilder.Entity<UserRole>().HasData(
@@ -50,9 +49,16 @@ namespace InsuraTech.Services.Database
                 );
 
             modelBuilder.Entity<InsurancePackage>().HasData(
-                new InsurancePackage { InsurancePackageId = 1, Name = "Basic Car Insurance", Description = "Essential coverage for your vehicle, including third-party liability and collision coverage.", Price = 199.99m, Picture = null, StateMachine = "active" },
-                new InsurancePackage { InsurancePackageId = 2, Name = "Comprehensive Home Insurance", Description = "Extensive protection for your home covering fire, theft, natural disasters, and personal liability.", Price = 349.50m, Picture = null, StateMachine = "active" },
-                new InsurancePackage { InsurancePackageId = 3, Name = "Premium Health Insurance", Description = "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.", Price = 499.00m, Picture = null, StateMachine = "draft" }
+                new InsurancePackage { InsurancePackageId = 1, Name = "Basic Car Insurance", Description = "Essential coverage for your vehicle, including third-party liability and collision coverage.", Price = 199.99m, Picture = null, StateMachine = "active" ,DurationDays = 365 },
+                new InsurancePackage { InsurancePackageId = 2, Name = "Comprehensive Home Insurance", Description = "Extensive protection for your home covering fire, theft, natural disasters, and personal liability.", Price = 349.50m, Picture = null, StateMachine = "active",DurationDays = 90 },
+                new InsurancePackage { InsurancePackageId = 3, Name = "Premium Health Insurance", Description = "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.", Price = 499.00m, Picture = null, StateMachine = "draft",DurationDays = 180 }
+            );
+            modelBuilder.Entity<InsurancePolicy>().HasData(
+             new InsurancePolicy { InsurancePolicyId = 1, InsurancePackageId = 1, ClientId = 1, StartDate = new DateTime(2025, 1, 1), EndDate = new DateTime(2026, 1, 1), IsActive = true, IsDeleted = false },
+             new InsurancePolicy { InsurancePolicyId = 2, InsurancePackageId = 2, ClientId = 1, StartDate = new DateTime(2025, 2, 15), EndDate = new DateTime(2025, 5, 15), IsActive = true, IsDeleted = false },
+             new InsurancePolicy { InsurancePolicyId = 3, InsurancePackageId = 3, ClientId = 2, StartDate = new DateTime(2025, 3, 1), EndDate = new DateTime(2025, 8, 28), IsActive = true, IsDeleted = false },
+             new InsurancePolicy { InsurancePolicyId = 4, InsurancePackageId = 1, ClientId = 2, StartDate = new DateTime(2025, 4, 1), EndDate = new DateTime(2026, 4, 1), IsActive = false, IsDeleted = false },
+             new InsurancePolicy { InsurancePolicyId = 5, InsurancePackageId = 2, ClientId = 3, StartDate = new DateTime(2025, 5, 20), EndDate = new DateTime(2025, 8, 18), IsActive = true, IsDeleted = false }
             );
 
             modelBuilder.Entity<UserRole>()
@@ -67,19 +73,7 @@ namespace InsuraTech.Services.Database
                 .HasForeignKey(ur => ur.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Disable cascading delete for all relationships that may cause cycles
-            modelBuilder.Entity<InsurancePackageClaim>()
-                .HasOne(i => i.InsurancePackage)
-                .WithMany()
-                .HasForeignKey(i => i.InsurancePackageId)
-                .OnDelete(DeleteBehavior.Restrict); // No action on delete
-
-            modelBuilder.Entity<InsurancePackageClaim>()
-                .HasOne(i => i.ClaimRequest)
-                .WithMany()
-                .HasForeignKey(i => i.ClaimRequestId)
-                .OnDelete(DeleteBehavior.Restrict); // No action on delete
-
+           
             modelBuilder.Entity<ClaimRequest>()
                 .HasOne(c => c.insurancePolicy)
                 .WithMany()
@@ -129,10 +123,11 @@ namespace InsuraTech.Services.Database
                 .OnDelete(DeleteBehavior.Restrict); // No action on delete
 
             modelBuilder.Entity<InsurancePolicy>()
-                .HasOne(i => i.Client)
-                .WithMany()
-                .HasForeignKey(i => i.ClientId)
-                .OnDelete(DeleteBehavior.Restrict); // No action on delete
+                .HasOne(i => i.InsurancePackage)
+                .WithMany(x => x.Policies)
+                .HasForeignKey(i => i.InsurancePackageId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

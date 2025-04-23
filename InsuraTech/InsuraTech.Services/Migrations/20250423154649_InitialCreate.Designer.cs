@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InsuraTech.Services.Migrations
 {
     [DbContext(typeof(InsuraTechContext))]
-    [Migration("20250421111637_InitialCreate")]
+    [Migration("20250423154649_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -37,9 +37,10 @@ namespace InsuraTech.Services.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("EstimatedAmount")
+                    b.Property<decimal>("EstimatedAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("InsurancePolicyId")
@@ -51,7 +52,8 @@ namespace InsuraTech.Services.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("StateMachine")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("SubmittedAt")
@@ -132,8 +134,8 @@ namespace InsuraTech.Services.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             LastName = "Client",
-                            PasswordHash = "uRq1YqSB0lg3cdpu9nd/KzSRItM=",
-                            PasswordSalt = "hJAv+NlOCMXaoDXa+MPk9A==",
+                            PasswordHash = "8OB3D2RPgagepehex0hLz6HdM1Q=",
+                            PasswordSalt = "mGr/PGoIDO5ILaJYl3MvJg==",
                             PhoneNumber = "000000003",
                             RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified),
                             Username = "client"
@@ -146,8 +148,8 @@ namespace InsuraTech.Services.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             LastName = "Client1",
-                            PasswordHash = "tLbv6EHzaanWRumREUrlGSf2XS0=",
-                            PasswordSalt = "oQ3qYpn5T8Z4n5nm5aGrvA==",
+                            PasswordHash = "8OB3D2RPgagepehex0hLz6HdM1Q=",
+                            PasswordSalt = "mGr/PGoIDO5ILaJYl3MvJg==",
                             PhoneNumber = "000000004",
                             RegistrationDate = new DateTime(2025, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified),
                             Username = "client1"
@@ -213,6 +215,9 @@ namespace InsuraTech.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("DurationDays")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -239,6 +244,7 @@ namespace InsuraTech.Services.Migrations
                         {
                             InsurancePackageId = 1,
                             Description = "Essential coverage for your vehicle, including third-party liability and collision coverage.",
+                            DurationDays = 365,
                             IsDeleted = false,
                             Name = "Basic Car Insurance",
                             Price = 199.99m,
@@ -248,6 +254,7 @@ namespace InsuraTech.Services.Migrations
                         {
                             InsurancePackageId = 2,
                             Description = "Extensive protection for your home covering fire, theft, natural disasters, and personal liability.",
+                            DurationDays = 90,
                             IsDeleted = false,
                             Name = "Comprehensive Home Insurance",
                             Price = 349.50m,
@@ -257,46 +264,12 @@ namespace InsuraTech.Services.Migrations
                         {
                             InsurancePackageId = 3,
                             Description = "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.",
+                            DurationDays = 180,
                             IsDeleted = false,
                             Name = "Premium Health Insurance",
                             Price = 499.00m,
                             StateMachine = "draft"
                         });
-                });
-
-            modelBuilder.Entity("InsuraTech.Services.Database.InsurancePackageClaim", b =>
-                {
-                    b.Property<int>("InsurancePackageClaimId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InsurancePackageClaimId"));
-
-                    b.Property<decimal?>("ClaimAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("ClaimDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ClaimRequestId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("InsurancePackageId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.HasKey("InsurancePackageClaimId");
-
-                    b.HasIndex("ClaimRequestId");
-
-                    b.HasIndex("InsurancePackageId");
-
-                    b.ToTable("InsurancePackageClaims");
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.InsurancePolicy", b =>
@@ -319,9 +292,6 @@ namespace InsuraTech.Services.Migrations
                     b.Property<int>("InsurancePackageId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("InsurancePackageId1")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -337,9 +307,59 @@ namespace InsuraTech.Services.Migrations
 
                     b.HasIndex("InsurancePackageId");
 
-                    b.HasIndex("InsurancePackageId1");
-
                     b.ToTable("InsurancePolicies");
+
+                    b.HasData(
+                        new
+                        {
+                            InsurancePolicyId = 1,
+                            ClientId = 1,
+                            EndDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsurancePackageId = 1,
+                            IsActive = true,
+                            IsDeleted = false,
+                            StartDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            InsurancePolicyId = 2,
+                            ClientId = 1,
+                            EndDate = new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsurancePackageId = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            StartDate = new DateTime(2025, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            InsurancePolicyId = 3,
+                            ClientId = 2,
+                            EndDate = new DateTime(2025, 8, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsurancePackageId = 3,
+                            IsActive = true,
+                            IsDeleted = false,
+                            StartDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            InsurancePolicyId = 4,
+                            ClientId = 2,
+                            EndDate = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsurancePackageId = 1,
+                            IsActive = false,
+                            IsDeleted = false,
+                            StartDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            InsurancePolicyId = 5,
+                            ClientId = 3,
+                            EndDate = new DateTime(2025, 8, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsurancePackageId = 2,
+                            IsActive = true,
+                            IsDeleted = false,
+                            StartDate = new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.MessageLog", b =>
@@ -734,42 +754,19 @@ namespace InsuraTech.Services.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("InsuraTech.Services.Database.InsurancePackageClaim", b =>
-                {
-                    b.HasOne("InsuraTech.Services.Database.ClaimRequest", "ClaimRequest")
-                        .WithMany()
-                        .HasForeignKey("ClaimRequestId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("InsuraTech.Services.Database.InsurancePackage", "InsurancePackage")
-                        .WithMany()
-                        .HasForeignKey("InsurancePackageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ClaimRequest");
-
-                    b.Navigation("InsurancePackage");
-                });
-
             modelBuilder.Entity("InsuraTech.Services.Database.InsurancePolicy", b =>
                 {
                     b.HasOne("InsuraTech.Services.Database.Client", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("InsuraTech.Services.Database.InsurancePackage", "InsurancePackage")
-                        .WithMany()
+                        .WithMany("Policies")
                         .HasForeignKey("InsurancePackageId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("InsuraTech.Services.Database.InsurancePackage", null)
-                        .WithMany("Policies")
-                        .HasForeignKey("InsurancePackageId1");
 
                     b.Navigation("Client");
 

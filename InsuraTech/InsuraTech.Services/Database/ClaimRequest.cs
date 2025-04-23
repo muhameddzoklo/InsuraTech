@@ -14,9 +14,10 @@ namespace InsuraTech.Services.Database
         public int InsurancePolicyId { get; set; }
         [ForeignKey("InsurancePolicyId")]
         public virtual InsurancePolicy insurancePolicy { get; set; } = null!;
-        public string? Description { get; set; }
-        public decimal? EstimatedAmount { get; set; }
-        public string? Status { get; set; }
+        public string Description { get; set; } =null!;
+        [Required]
+        public decimal EstimatedAmount { get; set; }
+        public string StateMachine { get; set; } = null!;
         public DateTime? SubmittedAt { get; set; }
         }
 

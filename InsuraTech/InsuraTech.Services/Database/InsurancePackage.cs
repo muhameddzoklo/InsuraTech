@@ -19,6 +19,8 @@ namespace InsuraTech.Services.Database
 
         public byte[]? Picture { get; set; }
         public string StateMachine { get; set; } = null!;
+        [Required]
+        public int DurationDays { get; set; }
 
         public ICollection<InsurancePolicy> Policies { get; set; } = new List<InsurancePolicy>();
     }

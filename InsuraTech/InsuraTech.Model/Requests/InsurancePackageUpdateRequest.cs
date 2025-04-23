@@ -13,5 +13,6 @@ namespace InsuraTech.Model.Requests
         public decimal? Price { get; set; }
 
         public byte[]? Picture { get; set; }
+        public int DurationDays { get; set; }
     }
 }

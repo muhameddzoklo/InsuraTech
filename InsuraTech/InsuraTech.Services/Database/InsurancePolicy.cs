@@ -13,19 +13,18 @@ namespace InsuraTech.Services.Database
         public int InsurancePolicyId { get; set; }
 
         public int InsurancePackageId { get; set; }
-
-        public InsurancePackage InsurancePackage { get; set; } = null!;
+        [ForeignKey("InsurancePackageId")]
+        public virtual InsurancePackage InsurancePackage { get; set; } = null!;
 
         public int ClientId { get; set; }
-
-        public Client Client { get; set; } = null!;
+        [ForeignKey("ClientId")]
+        public virtual Client Client { get; set; } = null!;
 
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
 
-        public bool IsActive { get; set; } 
-
+        public bool IsActive { get; set; }
         public ICollection<ClaimRequest> ClaimRequests { get; set; } = new List<ClaimRequest>();
     }
 

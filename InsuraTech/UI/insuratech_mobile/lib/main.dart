@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
 import 'package:insuratech_mobile/providers/clients_provider.dart';
-import 'package:insuratech_mobile/screens/placeholder_screen.dart';
+import 'package:insuratech_mobile/screens/insurance_package_screen.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
@@ -44,7 +45,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -57,11 +57,15 @@ class _LoginPageState extends State<LoginPage> {
           ),
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 40,
+              ),
               child: Container(
-                width: MediaQuery.of(context).size.width < 400
-                  ? MediaQuery.of(context).size.width * 0.9
-                  : 350,
+                width:
+                    MediaQuery.of(context).size.width < 400
+                        ? MediaQuery.of(context).size.width * 0.9
+                        : 350,
                 decoration: BoxDecoration(
                   color: Colors.brown.shade50,
                   borderRadius: BorderRadius.circular(30),
@@ -73,7 +77,10 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 25),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 40,
+                  horizontal: 25,
+                ),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -100,7 +107,9 @@ class _LoginPageState extends State<LoginPage> {
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(color: Colors.brown.shade300),
+                            borderSide: BorderSide(
+                              color: Colors.brown.shade300,
+                            ),
                           ),
                         ),
                         validator: (value) {
@@ -116,7 +125,10 @@ class _LoginPageState extends State<LoginPage> {
                         obscureText: _obscurePassword,
                         decoration: InputDecoration(
                           labelText: "Password",
-                          prefixIcon: const Icon(Icons.lock, color: Colors.brown),
+                          prefixIcon: const Icon(
+                            Icons.lock,
+                            color: Colors.brown,
+                          ),
                           suffixIcon: IconButton(
                             onPressed: () {
                               setState(() {
@@ -134,7 +146,9 @@ class _LoginPageState extends State<LoginPage> {
                           fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(color: Colors.brown.shade300),
+                            borderSide: BorderSide(
+                              color: Colors.brown.shade300,
+                            ),
                           ),
                         ),
                         validator: (value) {
@@ -156,32 +170,37 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         onPressed: () async {
                           if (_formKey.currentState?.validate() ?? false) {
-                              var provider = ClientProvider();
-                              AuthProvider.username = _usernameController.text;
-                              AuthProvider.password = _passwordController.text;
+                            var provider = ClientProvider();
+                            AuthProvider.username = _usernameController.text;
+                            AuthProvider.password = _passwordController.text;
 
-                              try {
-                                var client = await provider.login(
-                                  AuthProvider.username!,
-                                  AuthProvider.password!,
-                                );
+                            try {
+                              var client = await provider.login(
+                                AuthProvider.username!,
+                                AuthProvider.password!,
+                              );
 
-                                AuthProvider.clientId = client.clientId;
+                              AuthProvider.clientId = client.clientId;
 
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => PlaceholderScreen(),
-                                  ),
-                                );
-                              } on Exception catch (_) {
-                                QuickAlert.show(
-                                  context: context,
-                                  type: QuickAlertType.warning,
-                                  text: "Invalid username or password.",
-                                  title: "Error",
-                                );
-                              }
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => MasterScreen(
+                                        appBarTitle: "Packages",
+                                        child: InsurancePackageScreen(),
+                                        showBackButton: false,
+                                      ),
+                                ),
+                              );
+                            } on Exception catch (_) {
+                              QuickAlert.show(
+                                context: context,
+                                type: QuickAlertType.warning,
+                                text: "Invalid username or password.",
+                                title: "Error",
+                              );
                             }
+                          }
                         },
                         child: const Text(
                           "Sign In",
