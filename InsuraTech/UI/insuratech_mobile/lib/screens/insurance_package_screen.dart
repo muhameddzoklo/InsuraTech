@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/models/insurance_package.dart';
+import 'package:insuratech_mobile/providers/insurance_package_provider.dart';
 import 'package:insuratech_mobile/screens/insurance_package_details_screen.dart';
 
 class InsurancePackageScreen extends StatefulWidget {
@@ -12,62 +14,59 @@ class InsurancePackageScreen extends StatefulWidget {
 }
 
 class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
-  final List<InsurancePackage> _packages = [
-    InsurancePackage()
-      ..insurancePackageId = 1
-      ..name = "Basic Health"
-      ..description = "Covers basic health issues."
-      ..price = 199.99
-      ..picture = null,
-    InsurancePackage()
-      ..insurancePackageId = 2
-      ..name = "Premium Plan"
-      ..description = "All-inclusive health coverage with dental and vision."
-      ..price = 499.99
-      ..picture = null,
-    InsurancePackage()
-      ..insurancePackageId = 3
-      ..name = "Family Plan"
-      ..description = "Covers the whole family with additional benefits."
-      ..price = 299.99
-      ..picture = null,
-  ];
-
+  late InsurancePackageProvider _insurancePackageProvider;
+  List<InsurancePackage> _packages = [];
   String searchQuery = '';
+  bool isLoading = true;
 
   @override
-  Widget build(BuildContext context) {
-    final filteredPackages =
-        _packages
-            .where(
-              (p) => p.name!.toLowerCase().contains(searchQuery.toLowerCase()),
-            )
-            .toList();
-
-    return Material(
-      // Fix: Wrapping in Material
-      color: Colors.transparent,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'Search Packages',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) => setState(() => searchQuery = value),
-            ),
-            const SizedBox(height: 20),
-            ...filteredPackages
-                .map((package) => _buildPackageCard(package))
-                .toList(),
-          ],
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    _insurancePackageProvider = InsurancePackageProvider();
+    _loadPackages();
   }
+
+  Future<void> _loadPackages() async {
+    try {
+      final result = await _insurancePackageProvider.get(retrieveAll: true);
+      setState(() {
+        _packages = result.resultList;
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching packages: $e");
+      setState(() => isLoading = false);
+    }
+  }
+
+@override
+Widget build(BuildContext context) {
+  final filteredPackages = _packages
+      .where((p) =>
+          (p.name ?? '').toLowerCase().contains(searchQuery.toLowerCase()))
+      .toList();
+
+  return isLoading
+      ? const Center(child: CircularProgressIndicator())
+      : SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Search Packages',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) => setState(() => searchQuery = value),
+              ),
+              const SizedBox(height: 20),
+              ...filteredPackages.map(_buildPackageCard).toList(),
+            ],
+          ),
+        );
+}
+
 
   Widget _buildPackageCard(InsurancePackage package) {
     Uint8List? imageBytes;
@@ -121,6 +120,17 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                 color: Colors.green,
               ),
             ),
+            if (package.durationDays != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  "Duration: ${package.durationDays} days",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerRight,
