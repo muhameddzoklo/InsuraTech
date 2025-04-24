@@ -9,6 +9,7 @@ class InsurancePackage {
   double? price;
   String? picture;
   String? stateMachine;
+  int? durationDays;
   InsurancePackage();
 
   factory InsurancePackage.fromJson(Map<String, dynamic> json) =>
