@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InsuraTech.Services.Migrations
 {
     [DbContext(typeof(InsuraTechContext))]
-    [Migration("20250423154649_InitialCreate")]
+    [Migration("20250427155149_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -33,6 +33,9 @@ namespace InsuraTech.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClaimRequestId"));
 
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
@@ -46,13 +49,10 @@ namespace InsuraTech.Services.Migrations
                     b.Property<int>("InsurancePolicyId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("InsurancePolicyId1")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("StateMachine")
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -62,8 +62,6 @@ namespace InsuraTech.Services.Migrations
                     b.HasKey("ClaimRequestId");
 
                     b.HasIndex("InsurancePolicyId");
-
-                    b.HasIndex("InsurancePolicyId1");
 
                     b.ToTable("ClaimRequests");
                 });
@@ -289,6 +287,9 @@ namespace InsuraTech.Services.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("HasActiveClaimRequest")
+                        .HasColumnType("bit");
+
                     b.Property<int>("InsurancePackageId")
                         .HasColumnType("int");
 
@@ -315,6 +316,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePolicyId = 1,
                             ClientId = 1,
                             EndDate = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HasActiveClaimRequest = false,
                             InsurancePackageId = 1,
                             IsActive = true,
                             IsDeleted = false,
@@ -325,6 +327,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePolicyId = 2,
                             ClientId = 1,
                             EndDate = new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HasActiveClaimRequest = false,
                             InsurancePackageId = 2,
                             IsActive = true,
                             IsDeleted = false,
@@ -335,6 +338,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePolicyId = 3,
                             ClientId = 2,
                             EndDate = new DateTime(2025, 8, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HasActiveClaimRequest = false,
                             InsurancePackageId = 3,
                             IsActive = true,
                             IsDeleted = false,
@@ -345,6 +349,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePolicyId = 4,
                             ClientId = 2,
                             EndDate = new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HasActiveClaimRequest = false,
                             InsurancePackageId = 1,
                             IsActive = false,
                             IsDeleted = false,
@@ -355,6 +360,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePolicyId = 5,
                             ClientId = 3,
                             EndDate = new DateTime(2025, 8, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HasActiveClaimRequest = false,
                             InsurancePackageId = 2,
                             IsActive = true,
                             IsDeleted = false,
@@ -731,14 +737,10 @@ namespace InsuraTech.Services.Migrations
             modelBuilder.Entity("InsuraTech.Services.Database.ClaimRequest", b =>
                 {
                     b.HasOne("InsuraTech.Services.Database.InsurancePolicy", "insurancePolicy")
-                        .WithMany()
-                        .HasForeignKey("InsurancePolicyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("InsuraTech.Services.Database.InsurancePolicy", null)
                         .WithMany("ClaimRequests")
-                        .HasForeignKey("InsurancePolicyId1");
+                        .HasForeignKey("InsurancePolicyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("insurancePolicy");
                 });

@@ -42,12 +42,8 @@ namespace InsuraTech.Services
             }
 
             query = query.Where(x => !x.IsDeleted).Include(x=>x.Client).Include(x=>x.InsurancePackage);
-            return query;
-        }
-        public void CheckExpiery(DateTime currentDate)
-        {
             var expiredPolicies = Context.InsurancePolicies
-                .Where(x => x.EndDate < currentDate && x.IsActive)
+                .Where(x => x.EndDate < DateTime.Now && x.IsActive)
                 .ToList();
 
             foreach (var policy in expiredPolicies)
@@ -59,8 +55,14 @@ namespace InsuraTech.Services
             {
                 Context.SaveChanges();
             }
+
+            return query;
         }
 
+        public override async Task BeforeInsertAsync(InsurancePolicyInsertRequest request, InsurancePolicy entity, CancellationToken cancellationToken = default) 
+        {
+            entity.IsActive = true;
+        }
 
     }
 }

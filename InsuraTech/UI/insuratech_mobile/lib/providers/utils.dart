@@ -15,6 +15,16 @@ String formatDate(DateTime date) {
   return DateFormat('dd.MM.yyyy.').format(date);
 }
 
+String formatDateString(String? dateString) {
+  if (dateString == null || dateString.isEmpty) return '-';
+  try {
+    final date = DateTime.parse(dateString);
+    return DateFormat('dd.MM.yyyy.').format(date);
+  } catch (e) {
+    return '-';
+  }
+}
+
 Image imageFromString(String input) {
   return Image.memory(base64Decode(input));
 }

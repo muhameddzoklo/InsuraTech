@@ -25,6 +25,7 @@ namespace InsuraTech.Services.Database
         public DateTime EndDate { get; set; }
 
         public bool IsActive { get; set; }
+        public bool HasActiveClaimRequest { get; set; }
         public ICollection<ClaimRequest> ClaimRequests { get; set; } = new List<ClaimRequest>();
     }
 

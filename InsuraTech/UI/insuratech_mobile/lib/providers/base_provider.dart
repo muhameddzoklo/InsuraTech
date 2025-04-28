@@ -13,18 +13,21 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
   BaseProvider(String endpoint) {
     _endpoint = endpoint;
-    baseUrl = const String.fromEnvironment("baseUrl",
-        defaultValue: "http://10.0.2.2:5273/api/");
+    baseUrl = const String.fromEnvironment(
+      "baseUrl",
+      defaultValue: "http://10.0.2.2:5273/api/",
+    );
   }
 
-  Future<SearchResult<T>> get(
-      {dynamic filter,
-      int? page,
-      int? pageSize,
-      bool? retrieveAll,
-      String? orderBy,
-      String? sortDirection,
-      String? includeTables}) async {
+  Future<SearchResult<T>> get({
+    dynamic filter,
+    int? page,
+    int? pageSize,
+    bool? retrieveAll,
+    String? orderBy,
+    String? sortDirection,
+    String? includeTables,
+  }) async {
     var url = "$baseUrl$_endpoint";
 
     Map<String, dynamic> queryParams = {};
@@ -41,20 +44,23 @@ abstract class BaseProvider<T> with ChangeNotifier {
       queryParams['retrieveAll'] = retrieveAll;
     }
     if (orderBy != null) {
-      queryParams['orderBy'] = orderBy;
-    }
-    if (sortDirection != null) {
-      queryParams['sortDirection'] = sortDirection;
-    }
+  queryParams['OrderBy'] = orderBy; // <<< VELIKA slova
+}
+if (sortDirection != null) {
+  queryParams['SortDirection'] = sortDirection; // <<< VELIKA slova
+}
+
     if (includeTables != null) {
       queryParams['includeTables'] = includeTables;
     }
     if (queryParams.isNotEmpty) {
       var queryString = getQueryString(queryParams);
-      url = "$url?$queryString";
+      url = "$url${queryString.replaceFirst('&', '?')}";
+
     }
 
     var uri = Uri.parse(url);
+    print(uri);
     var headers = createHeaders();
 
     var response = await http.get(uri, headers: headers);
@@ -150,10 +156,12 @@ abstract class BaseProvider<T> with ChangeNotifier {
             errorResponse['errors'] != null &&
             errorResponse['errors']['userError'] != null) {
           throw UserFriendlyException(
-              errorResponse['errors']['userError'].join(', '));
+            errorResponse['errors']['userError'].join(', '),
+          );
         } else {
           throw UserFriendlyException(
-              "Something bad happened, please try again");
+            "Something bad happened, please try again",
+          );
         }
       } catch (e) {
         if (e is UserFriendlyException) {
@@ -173,14 +181,17 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
     var headers = {
       "Content-Type": "application/json",
-      "Authorization": basicAuth
+      "Authorization": basicAuth,
     };
 
     return headers;
   }
 
-  String getQueryString(Map params,
-      {String prefix = '&', bool inRecursion = false}) {
+  String getQueryString(
+    Map params, {
+    String prefix = '&',
+    bool inRecursion = false,
+  }) {
     String query = '';
     params.forEach((key, value) {
       if (inRecursion) {
@@ -203,8 +214,11 @@ abstract class BaseProvider<T> with ChangeNotifier {
       } else if (value is List || value is Map) {
         if (value is List) value = value.asMap();
         value.forEach((k, v) {
-          query +=
-              getQueryString({k: v}, prefix: '$prefix$key', inRecursion: true);
+          query += getQueryString(
+            {k: v},
+            prefix: '$prefix$key',
+            inRecursion: true,
+          );
         });
       }
     });

@@ -54,11 +54,11 @@ namespace InsuraTech.Services.Database
                 new InsurancePackage { InsurancePackageId = 3, Name = "Premium Health Insurance", Description = "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.", Price = 499.00m, Picture = null, StateMachine = "draft",DurationDays = 180 }
             );
             modelBuilder.Entity<InsurancePolicy>().HasData(
-             new InsurancePolicy { InsurancePolicyId = 1, InsurancePackageId = 1, ClientId = 1, StartDate = new DateTime(2025, 1, 1), EndDate = new DateTime(2026, 1, 1), IsActive = true, IsDeleted = false },
-             new InsurancePolicy { InsurancePolicyId = 2, InsurancePackageId = 2, ClientId = 1, StartDate = new DateTime(2025, 2, 15), EndDate = new DateTime(2025, 5, 15), IsActive = true, IsDeleted = false },
-             new InsurancePolicy { InsurancePolicyId = 3, InsurancePackageId = 3, ClientId = 2, StartDate = new DateTime(2025, 3, 1), EndDate = new DateTime(2025, 8, 28), IsActive = true, IsDeleted = false },
-             new InsurancePolicy { InsurancePolicyId = 4, InsurancePackageId = 1, ClientId = 2, StartDate = new DateTime(2025, 4, 1), EndDate = new DateTime(2026, 4, 1), IsActive = false, IsDeleted = false },
-             new InsurancePolicy { InsurancePolicyId = 5, InsurancePackageId = 2, ClientId = 3, StartDate = new DateTime(2025, 5, 20), EndDate = new DateTime(2025, 8, 18), IsActive = true, IsDeleted = false }
+             new InsurancePolicy { InsurancePolicyId = 1, InsurancePackageId = 1, ClientId = 1, StartDate = new DateTime(2025, 1, 1), EndDate = new DateTime(2026, 1, 1), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false },
+             new InsurancePolicy { InsurancePolicyId = 2, InsurancePackageId = 2, ClientId = 1, StartDate = new DateTime(2025, 2, 15), EndDate = new DateTime(2025, 5, 15), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false },
+             new InsurancePolicy { InsurancePolicyId = 3, InsurancePackageId = 3, ClientId = 2, StartDate = new DateTime(2025, 3, 1), EndDate = new DateTime(2025, 8, 28), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false },
+             new InsurancePolicy { InsurancePolicyId = 4, InsurancePackageId = 1, ClientId = 2, StartDate = new DateTime(2025, 4, 1), EndDate = new DateTime(2026, 4, 1), IsActive = false, IsDeleted = false, HasActiveClaimRequest = false },
+             new InsurancePolicy { InsurancePolicyId = 5, InsurancePackageId = 2, ClientId = 3, StartDate = new DateTime(2025, 5, 20), EndDate = new DateTime(2025, 8, 18), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false }
             );
 
             modelBuilder.Entity<UserRole>()
@@ -72,14 +72,7 @@ namespace InsuraTech.Services.Database
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
-
            
-            modelBuilder.Entity<ClaimRequest>()
-                .HasOne(c => c.insurancePolicy)
-                .WithMany()
-                .HasForeignKey(c => c.InsurancePolicyId)
-                .OnDelete(DeleteBehavior.Restrict); // No action on delete
-
             modelBuilder.Entity<UserFeedback>()
                 .HasOne(uf => uf.User)
                 .WithMany()
