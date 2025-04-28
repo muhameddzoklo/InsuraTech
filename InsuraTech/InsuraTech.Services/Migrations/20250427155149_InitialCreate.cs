@@ -121,6 +121,7 @@ namespace InsuraTech.Services.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    HasActiveClaimRequest = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -278,10 +279,10 @@ namespace InsuraTech.Services.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     InsurancePolicyId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EstimatedAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    StateMachine = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SubmittedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    InsurancePolicyId1 = table.Column<int>(type: "int", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -293,12 +294,7 @@ namespace InsuraTech.Services.Migrations
                         column: x => x.InsurancePolicyId,
                         principalTable: "InsurancePolicies",
                         principalColumn: "InsurancePolicyId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ClaimRequests_InsurancePolicies_InsurancePolicyId1",
-                        column: x => x.InsurancePolicyId1,
-                        principalTable: "InsurancePolicies",
-                        principalColumn: "InsurancePolicyId");
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -376,14 +372,14 @@ namespace InsuraTech.Services.Migrations
 
             migrationBuilder.InsertData(
                 table: "InsurancePolicies",
-                columns: new[] { "InsurancePolicyId", "ClientId", "DeletionTime", "EndDate", "InsurancePackageId", "IsActive", "IsDeleted", "StartDate" },
+                columns: new[] { "InsurancePolicyId", "ClientId", "DeletionTime", "EndDate", "HasActiveClaimRequest", "InsurancePackageId", "IsActive", "IsDeleted", "StartDate" },
                 values: new object[,]
                 {
-                    { 1, 1, null, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, true, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 1, null, new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, true, false, new DateTime(2025, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, 2, null, new DateTime(2025, 8, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, true, false, new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, 2, null, new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, false, false, new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, 3, null, new DateTime(2025, 8, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, true, false, new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, 1, null, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 1, true, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 1, null, new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 2, true, false, new DateTime(2025, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, 2, null, new DateTime(2025, 8, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 3, true, false, new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, 2, null, new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 1, false, false, new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, 3, null, new DateTime(2025, 8, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 2, true, false, new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -401,11 +397,6 @@ namespace InsuraTech.Services.Migrations
                 name: "IX_ClaimRequests_InsurancePolicyId",
                 table: "ClaimRequests",
                 column: "InsurancePolicyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ClaimRequests_InsurancePolicyId1",
-                table: "ClaimRequests",
-                column: "InsurancePolicyId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CustomerFeedbacks_UserId",

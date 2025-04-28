@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace InsuraTech.API.Controllers
 {
     [ApiController]
-    public class InsurancePolicyController : BaseCRUDControllerAsync<InsurancePolicyDTO, InsurancePolicySearchObject, InsurancePolicyInsertRequest, InsurancePolicyUpdateRequest>
+    public class ClaimRequestController : BaseCRUDControllerAsync<ClaimRequestDTO, ClaimRequestSearchObject, ClaimRequestInsertRequest, ClaimRequestUpdateRequest>
     {
-        public InsurancePolicyController(IInsurancePolicyService service) : base(service)
+        public ClaimRequestController(IClaimRequestService service) : base(service)
         {
         }
 

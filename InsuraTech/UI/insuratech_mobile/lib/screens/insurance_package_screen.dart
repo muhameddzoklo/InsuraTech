@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/models/insurance_package.dart';
 import 'package:insuratech_mobile/providers/insurance_package_provider.dart';
 import 'package:insuratech_mobile/screens/insurance_package_details_screen.dart';
@@ -39,16 +38,20 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
     }
   }
 
-@override
-Widget build(BuildContext context) {
-  final filteredPackages = _packages
-      .where((p) =>
-          (p.name ?? '').toLowerCase().contains(searchQuery.toLowerCase()))
-      .toList();
+  @override
+  Widget build(BuildContext context) {
+    final filteredPackages =
+        _packages
+            .where(
+              (p) => (p.name ?? '').toLowerCase().contains(
+                searchQuery.toLowerCase(),
+              ),
+            )
+            .toList();
 
-  return isLoading
-      ? const Center(child: CircularProgressIndicator())
-      : SingleChildScrollView(
+    return isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
@@ -65,8 +68,7 @@ Widget build(BuildContext context) {
             ],
           ),
         );
-}
-
+  }
 
   Widget _buildPackageCard(InsurancePackage package) {
     Uint8List? imageBytes;

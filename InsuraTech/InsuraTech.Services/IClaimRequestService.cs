@@ -10,8 +10,8 @@ using InsuraTech.Services.BaseServices;
 
 namespace InsuraTech.Services
 {
-    public interface IInsurancePolicyService : ICRUDServiceAsync<InsurancePolicyDTO, InsurancePolicySearchObject, InsurancePolicyInsertRequest, InsurancePolicyUpdateRequest>
+    public interface IClaimRequestService : ICRUDServiceAsync<ClaimRequestDTO, ClaimRequestSearchObject, ClaimRequestInsertRequest, ClaimRequestUpdateRequest>
     {
- 
+
     }
 }

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/models/insurance_package.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
+import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
+import 'package:insuratech_mobile/screens/insurance_package_screen.dart';
+import 'package:provider/provider.dart';
 
 class CreateInsurancePolicyScreen extends StatelessWidget {
   final InsurancePackage package;
@@ -83,10 +86,39 @@ class CreateInsurancePolicyScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: () {
-                  print("Client ID: $clientId");
-                  // TODO: Send InsurancePolicyInsertRequest here
-                },
+                onPressed: () async {
+  try {
+    final insurancePolicyProvider = Provider.of<InsurancePolicyProvider>(context, listen: false);
+
+    final request = {
+      'insurancePackageId': package.insurancePackageId!,
+      'clientId': clientId,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
+    };
+
+    await insurancePolicyProvider.insert(request);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Policy created successfully!')),
+    );
+
+   Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => MasterScreen(
+                                        appBarTitle: "Packages",
+                                        child: InsurancePackageScreen(),
+                                      ),
+                                ),
+                              );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: ${e.toString()}')),
+    );
+  }
+},
+
               ),
             ),
             const SizedBox(height: 20),

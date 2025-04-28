@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/create_insurance_policy_screen.dart';
-import 'package:intl/intl.dart';
 import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/models/insurance_package.dart';
 
@@ -61,17 +60,17 @@ class _InsurancePackageDetailsScreenState
       });
       return;
     }
-Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (_) => CreateInsurancePolicyScreen(
-      package: widget.package,
-      startDate: _startDate!,
-      endDate: _endDate!,
-    ),
-  ),
-);
-
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (_) => CreateInsurancePolicyScreen(
+              package: widget.package,
+              startDate: _startDate!,
+              endDate: _endDate!,
+            ),
+      ),
+    );
   }
 
   @override
@@ -144,7 +143,7 @@ Navigator.push(
             ),
             if (_startDate != null)
               Padding(
-                padding: const EdgeInsets.only(top: 15, left:12),
+                padding: const EdgeInsets.only(top: 15, left: 12),
                 child: Text(
                   "Policy valid: ${formatDate(_startDate!)} -> ${formatDate(_endDate!)}",
                   style: const TextStyle(
@@ -158,7 +157,11 @@ Navigator.push(
                 padding: const EdgeInsets.only(top: 10, left: 12),
                 child: Row(
                   children: [
-                    const Icon(Icons.warning_amber, size: 18, color: Colors.redAccent),
+                    const Icon(
+                      Icons.warning_amber,
+                      size: 18,
+                      color: Colors.redAccent,
+                    ),
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
