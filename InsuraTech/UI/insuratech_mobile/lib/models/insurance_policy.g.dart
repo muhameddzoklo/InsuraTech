@@ -23,7 +23,8 @@ InsurancePolicy _$InsurancePolicyFromJson(Map<String, dynamic> json) =>
       ..client =
           json['client'] == null
               ? null
-              : Client.fromJson(json['client'] as Map<String, dynamic>);
+              : Client.fromJson(json['client'] as Map<String, dynamic>)
+      ..hasActiveClaimRequest = json['hasActiveClaimRequest'] as bool?;
 
 Map<String, dynamic> _$InsurancePolicyToJson(InsurancePolicy instance) =>
     <String, dynamic>{
@@ -35,4 +36,5 @@ Map<String, dynamic> _$InsurancePolicyToJson(InsurancePolicy instance) =>
       'isActive': instance.isActive,
       'insurancePackage': instance.insurancePackage,
       'client': instance.client,
+      'hasActiveClaimRequest': instance.hasActiveClaimRequest,
     };

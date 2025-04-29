@@ -13,6 +13,7 @@ class InsurancePolicy {
   bool? isActive;
   InsurancePackage? insurancePackage;
   Client? client;
+  bool? hasActiveClaimRequest;
 
   InsurancePolicy();
 

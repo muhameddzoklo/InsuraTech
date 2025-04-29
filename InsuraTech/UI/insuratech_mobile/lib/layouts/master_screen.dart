@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/main.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
+import 'package:insuratech_mobile/screens/claim_requests_screen.dart';
 import 'package:insuratech_mobile/screens/insurance_package_screen.dart';
 import 'package:insuratech_mobile/screens/my_insurance_policies_screen.dart';
 
@@ -29,6 +30,7 @@ class _MasterScreenState extends State<MasterScreen> {
     {"icon": Icons.policy, "label": "Packages", "screen": const InsurancePackageScreen()},
     {"icon": Icons.account_circle, "label": "Profile", "screen": Placeholder()},
     {"icon": Icons.assignment, "label": "My Policies", "screen": const MyInsurancePoliciesScreen()},
+    {"icon": Icons.description, "label": "My Claims", "screen": const ClaimRequestScreen()},
 
   ];
 

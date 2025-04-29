@@ -44,11 +44,11 @@ abstract class BaseProvider<T> with ChangeNotifier {
       queryParams['retrieveAll'] = retrieveAll;
     }
     if (orderBy != null) {
-  queryParams['OrderBy'] = orderBy; // <<< VELIKA slova
-}
-if (sortDirection != null) {
-  queryParams['SortDirection'] = sortDirection; // <<< VELIKA slova
-}
+      queryParams['OrderBy'] = orderBy; // <<< VELIKA slova
+    }
+    if (sortDirection != null) {
+      queryParams['SortDirection'] = sortDirection; // <<< VELIKA slova
+    }
 
     if (includeTables != null) {
       queryParams['includeTables'] = includeTables;
@@ -56,7 +56,6 @@ if (sortDirection != null) {
     if (queryParams.isNotEmpty) {
       var queryString = getQueryString(queryParams);
       url = "$url${queryString.replaceFirst('&', '?')}";
-
     }
 
     var uri = Uri.parse(url);
