@@ -42,9 +42,12 @@ namespace InsuraTech.Services
                 query = query.Where(x => x.insurancePolicy.InsurancePackageId == search.InsurancePackageId);
             }
 
-            query = query.Where(x => !x.IsDeleted).Include(x=> x.insurancePolicy).ThenInclude(u => u.Client).Include(p=>p.insurancePolicy.InsurancePackage);
-           
-            
+            query = query
+                    .Where(x => !x.IsDeleted)
+                    .Include(x => x.insurancePolicy)
+                        .ThenInclude(u => u.Client)
+                    .Include(x => x.insurancePolicy)
+                        .ThenInclude(p => p.InsurancePackage);
             return query;
         }
 

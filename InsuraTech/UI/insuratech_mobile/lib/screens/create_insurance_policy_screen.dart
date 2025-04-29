@@ -4,8 +4,10 @@ import 'package:insuratech_mobile/models/insurance_package.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
 import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
-import 'package:insuratech_mobile/screens/insurance_package_screen.dart';
+import 'package:insuratech_mobile/screens/my_insurance_policies_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class CreateInsurancePolicyScreen extends StatelessWidget {
   final InsurancePackage package;
@@ -87,38 +89,47 @@ class CreateInsurancePolicyScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () async {
-  try {
-    final insurancePolicyProvider = Provider.of<InsurancePolicyProvider>(context, listen: false);
+                  try {
+                    final insurancePolicyProvider =
+                        Provider.of<InsurancePolicyProvider>(
+                          context,
+                          listen: false,
+                        );
 
-    final request = {
-      'insurancePackageId': package.insurancePackageId!,
-      'clientId': clientId,
-      'startDate': startDate.toIso8601String(),
-      'endDate': endDate.toIso8601String(),
-    };
+                    final request = {
+                      'insurancePackageId': package.insurancePackageId!,
+                      'clientId': clientId,
+                      'startDate': startDate.toIso8601String(),
+                      'endDate': endDate.toIso8601String(),
+                    };
 
-    await insurancePolicyProvider.insert(request);
+                    await insurancePolicyProvider.insert(request);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Policy created successfully!')),
-    );
-
-   Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => MasterScreen(
-                                        appBarTitle: "Packages",
-                                        child: InsurancePackageScreen(),
-                                      ),
-                                ),
-                              );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: ${e.toString()}')),
-    );
-  }
-},
-
+                    QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.success,
+                    title: 'Success',
+                    text: 'Policy created successfully',
+                    );
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder:
+                            (context) => MasterScreen(
+                              appBarTitle: "My Policies",
+                              showBackButton: false,
+                              child: MyInsurancePoliciesScreen(),
+                            ),
+                      ),
+                    );
+                  } catch (e) {
+                    QuickAlert.show(
+                    context: context,
+                    type: QuickAlertType.error,
+                    title: 'Error',
+                    text: e.toString(),
+                    );
+                  }
+                },
               ),
             ),
             const SizedBox(height: 20),
