@@ -105,12 +105,6 @@ class CreateInsurancePolicyScreen extends StatelessWidget {
 
                     await insurancePolicyProvider.insert(request);
 
-                    QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.success,
-                    title: 'Success',
-                    text: 'Policy created successfully',
-                    );
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder:
@@ -121,13 +115,9 @@ class CreateInsurancePolicyScreen extends StatelessWidget {
                             ),
                       ),
                     );
+                    showSuccessAlert(context, "Policy created successfully");
                   } catch (e) {
-                    QuickAlert.show(
-                    context: context,
-                    type: QuickAlertType.error,
-                    title: 'Error',
-                    text: e.toString(),
-                    );
+                    showErrorAlert(context, "Policy not created: ${e.toString()}");
                   }
                 },
               ),

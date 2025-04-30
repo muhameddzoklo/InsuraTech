@@ -114,6 +114,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
   Future<T> update(int id, [dynamic request]) async {
     var url = "$baseUrl$_endpoint/$id";
     var uri = Uri.parse(url);
+    print(request);
     var headers = createHeaders();
 
     var jsonRequest = jsonEncode(request);

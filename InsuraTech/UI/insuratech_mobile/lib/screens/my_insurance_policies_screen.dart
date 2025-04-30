@@ -71,6 +71,10 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                 itemBuilder: (context, index) {
                   final policy = _policies[index];
                   final bool isActive = policy.isActive ?? false;
+                  final startDate =
+                      policy.startDate != null
+                          ? DateTime.tryParse(policy.startDate!)
+                          : null;
 
                   return Card(
                     margin: const EdgeInsets.only(bottom: 16),
@@ -96,7 +100,9 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                                 style: _infoStyle,
                               ),
                               const SizedBox(height: 12),
-                              if (isActive)
+                              if (policy.isActive == true &&
+                                  startDate != null &&
+                                  startDate.isBefore(DateTime.now()))
                                 Center(
                                   child:
                                       policy.hasActiveClaimRequest == true
@@ -113,7 +119,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                                                 237,
                                               ).withOpacity(0.8),
                                               borderRadius:
-                                                  BorderRadius.circular(12),
+                                                  BorderRadius.circular(20),
                                               border: Border.all(
                                                 color: const Color.fromARGB(
                                                   255,
@@ -168,6 +174,44 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                                             ),
                                           ),
                                 )
+                              else if (isActive &&
+                                  startDate != null &&
+                                  startDate.isAfter(DateTime.now()))
+                                Center(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blueGrey.withOpacity(
+                                            0.8,
+                                          ), // Orange background with opacity
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                          border: Border.all(
+                                            color:
+                                                Colors
+                                                    .blueGrey, // Orange border
+                                            width: 1.5,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Policy starts from ${formatDateString(policy.startDate)}',
+                                          style: const TextStyle(
+                                            color: Colors.white, // White text
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
                               else
                                 Center(
                                   child: Row(
@@ -175,49 +219,13 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                                     children: [
                                       ElevatedButton.icon(
                                         onPressed: () async {
-                                          final confirm = await showDialog<
-                                            bool
-                                          >(
-                                            context: context,
-                                            builder:
-                                                (context) => AlertDialog(
-                                                  title: const Text(
-                                                    "Confirm Deletion",
-                                                  ),
-                                                  content: const Text(
-                                                    "Are you sure you want to delete this policy?",
-                                                  ),
-                                                  actionsAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  actions: [
-                                                    ElevatedButton(
-                                                      onPressed:
-                                                          () => Navigator.of(
-                                                            context,
-                                                          ).pop(false),
-                                                      child: const Text(
-                                                        "Cancel",
-                                                      ),
-                                                    ),
-                                                    ElevatedButton(
-                                                      onPressed:
-                                                          () => Navigator.of(
-                                                            context,
-                                                          ).pop(true),
-                                                      style:
-                                                          ElevatedButton.styleFrom(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .redAccent,
-                                                          ),
-                                                      child: const Text(
-                                                        "Delete",
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                          );
+                                          final confirm =
+                                              await showCustomConfirmDialog(
+                                                context,
+                                                title: 'Confirm Deletion',
+                                                text:
+                                                    'Are you sure you want to delete this policy?',
+                                              );
 
                                           if (confirm == true) {
                                             try {
@@ -234,7 +242,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                                                 type: QuickAlertType.success,
                                                 title: 'Success',
                                                 text:
-                                                    'Policy deleted successfuly',
+                                                    'Policy deleted successfully',
                                               );
                                               _fetchPolicies();
                                             } catch (e) {
