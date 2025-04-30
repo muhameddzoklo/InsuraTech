@@ -112,6 +112,7 @@ namespace InsuraTech.Services
                 entity.PasswordSalt = Helpers.Helper.GenerateSalt();
                 entity.PasswordHash = Helpers.Helper.GenerateHash(entity.PasswordSalt, request.Password);
             }
+            
         }
         public override async Task<ClientDTO> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {

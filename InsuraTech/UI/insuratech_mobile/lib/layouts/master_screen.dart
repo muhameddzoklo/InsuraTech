@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/main.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
+import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/claim_requests_screen.dart';
 import 'package:insuratech_mobile/screens/insurance_package_screen.dart';
 import 'package:insuratech_mobile/screens/my_insurance_policies_screen.dart';
+import 'package:insuratech_mobile/screens/my_profile_screen.dart';
 
 
 class MasterScreen extends StatefulWidget {
@@ -26,9 +28,8 @@ class _MasterScreenState extends State<MasterScreen> {
   int? _selectedIndex;
 
   final List<Map<String, dynamic>> _menuItems = [
-    {"icon": Icons.home, "label": "Home", "screen": Placeholder()},
     {"icon": Icons.policy, "label": "Packages", "screen": const InsurancePackageScreen()},
-    {"icon": Icons.account_circle, "label": "Profile", "screen": Placeholder()},
+    {"icon": Icons.account_circle, "label": "My Profile", "screen": MyProfileScreen()},
     {"icon": Icons.assignment, "label": "My Policies", "screen": const MyInsurancePoliciesScreen()},
     {"icon": Icons.description, "label": "My Claims", "screen": const ClaimRequestScreen()},
 
@@ -110,26 +111,16 @@ class _MasterScreenState extends State<MasterScreen> {
     );
   }
   void _confirmLogout(BuildContext context) async {
-  final confirm = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("Confirm Logout"),
-      content: const Text("Are you sure you want to log out?"),
-      actionsAlignment: MainAxisAlignment.spaceEvenly,
-      actions: [
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade600),
-          child: const Text("Cancel", style: TextStyle(color: Colors.white)),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          child: const Text("Logout", style: TextStyle(color: Colors.white)),
-        ),
-      ],
-    ),
-  );
+  final confirm = await showCustomConfirmDialog(
+  context,
+  title: 'Confirm Logout',
+  text: 'Are you sure you want to log out?',
+  confirmBtnText: 'Logout',
+  cancelBtnText: 'Cancel',
+  confirmBtnColor: Colors.red,
+  cancelBorderColor: Colors.grey.shade600,
+);
+
 
   if (confirm == true) {
     // Clear credentials

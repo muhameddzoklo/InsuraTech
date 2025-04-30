@@ -1,4 +1,6 @@
+
 import 'package:json_annotation/json_annotation.dart';
+
 part 'client.g.dart';
 
 @JsonSerializable()
@@ -9,13 +11,14 @@ class Client {
   String? email;
   String? phoneNumber;
   String? username;
-  String? profilePicture;
   String? registrationDate;
+  String? profilePicture;
 
   Client();
 
   factory Client.fromJson(Map<String, dynamic> json) =>
       _$ClientFromJson(json);
 
-      Map<String, dynamic> toJson() => _$ClientToJson(this);
+  /// Connect the generated [_$PersonToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$ClientToJson(this);
 }
