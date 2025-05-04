@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/providers/claim_request_provider.dart';
 import 'package:insuratech_mobile/models/claim_request.dart';
+import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:provider/provider.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
-
 class ClaimRequestScreen extends StatefulWidget {
   const ClaimRequestScreen({super.key});
 
@@ -15,7 +13,7 @@ class ClaimRequestScreen extends StatefulWidget {
 class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
   List<ClaimRequest> _claimRequests = [];
   bool _isLoading = true;
-  Set<int> _expandedCards = {}; // Track koje kartice su proširene
+  Set<int> _expandedCards = {};
 
   @override
   void initState() {
@@ -33,13 +31,7 @@ class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      setState(() => _isLoading = false);
-      QuickAlert.show(
-      context: context,
-      type: QuickAlertType.error,
-      title: 'Error',
-      text: 'Error fetching claims',
-      );
+      showErrorAlert(context, "Error fetching claim requests: ${e.toString()}");
     }
   }
 

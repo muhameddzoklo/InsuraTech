@@ -18,7 +18,7 @@ class MyProfileScreen extends StatefulWidget {
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
   Client? _client;
-  Uint8List? _previewImage; // Dodano za prikaz slike
+  Uint8List? _previewImage;
   bool _isLoading = true;
 
   @override
@@ -41,7 +41,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         try {
           imageBytes = base64Decode(result.profilePicture!);
         } catch (e) {
-          debugPrint('Greška pri dekodiranju slike: $e');
+          showErrorAlert(context, "Error decoding picture: ${e.toString()}");
         }
       }
 
@@ -52,9 +52,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       });
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading profile: ${e.toString()}')),
-      );
+      showErrorAlert(context, "Error loading profile: ${e.toString()}");
     }
   }
 

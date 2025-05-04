@@ -6,8 +6,6 @@ import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/my_insurance_policies_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class CreateInsurancePolicyScreen extends StatelessWidget {
   final InsurancePackage package;

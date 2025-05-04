@@ -3,9 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/models/insurance_package.dart';
 import 'package:insuratech_mobile/providers/insurance_package_provider.dart';
+import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/insurance_package_details_screen.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class InsurancePackageScreen extends StatefulWidget {
   const InsurancePackageScreen({super.key});
@@ -36,12 +35,7 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
       });
     } catch (e) {
       setState(() => isLoading = false);
-      QuickAlert.show(
-      context: context,
-      type: QuickAlertType.error,
-      title: 'Error',
-      text: 'Error catching packages',
-      );
+      showErrorAlert(context, "Error catching packages: ${e.toString()}");
     }
   }
 
