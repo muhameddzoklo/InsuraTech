@@ -8,6 +8,7 @@ import 'package:insuratech_mobile/main.dart';
 import 'package:insuratech_mobile/models/client.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
 import 'package:insuratech_mobile/providers/client_provider.dart';
+import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/my_profile_screen.dart';
 import 'package:provider/provider.dart';
 import '../layouts/master_screen.dart';
@@ -47,7 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       try {
         _imageBytes = base64Decode(widget.client.profilePicture!);
       } catch (e) {
-        debugPrint('Greška pri dekodiranju slike: $e');
+       showErrorAlert(context, "Error deconing picture: ${e.toString()}");
       }
     }
   }
@@ -257,26 +258,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       await clientProvider.update(widget.client.clientId!, request);
       if (_changePassword) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Password changed. Please log in again."),
-          ),
-        );
-
+        
+       
         AuthProvider.username = null;
         AuthProvider.password = null;
         AuthProvider.clientId = null;
-
-        // Return to login
+        
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const LoginPage()),
           (route) => false,
         );
+        showSuccessAlert(context, "Password changed. Please log in again");
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully!')),
-        );
-
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder:
@@ -287,11 +280,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
           ),
         );
+        showSuccessAlert(context, "Profile updated successfully");
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      showErrorAlert(context, "Error: ${e.toString()}");
     }
   }
 }

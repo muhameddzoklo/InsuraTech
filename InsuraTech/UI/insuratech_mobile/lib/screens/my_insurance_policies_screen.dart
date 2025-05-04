@@ -8,8 +8,6 @@ import 'package:insuratech_mobile/screens/renew_insurance_policy_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/models/insurance_policy.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class MyInsurancePoliciesScreen extends StatefulWidget {
   const MyInsurancePoliciesScreen({super.key});
@@ -47,12 +45,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
       });
     } catch (e) {
       setState(() => _isLoading = false);
-      QuickAlert.show(
-        context: context,
-        type: QuickAlertType.error,
-        title: 'Error',
-        text: 'Failed to load policies',
-      );
+      showErrorAlert(context, "Failed to load policies: ${e.toString()}");
     }
   }
 
@@ -237,21 +230,10 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                                                   .delete(
                                                     policy.insurancePolicyId!,
                                                   );
-                                              QuickAlert.show(
-                                                context: context,
-                                                type: QuickAlertType.success,
-                                                title: 'Success',
-                                                text:
-                                                    'Policy deleted successfully',
-                                              );
+                                              showSuccessAlert(context, "Policy deleted successfully");
                                               _fetchPolicies();
                                             } catch (e) {
-                                              QuickAlert.show(
-                                                context: context,
-                                                type: QuickAlertType.error,
-                                                title: 'Error',
-                                                text: 'Failed to delete policy',
-                                              );
+                                              showErrorAlert(context, "Failed to delete policy: ${e.toString()}");
                                             }
                                           }
                                         },
@@ -431,13 +413,9 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                             ),
                       ),
                     );
+                    showSuccessAlert(context, "Request created successfully");
                   } catch (e) {
-                    QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.error,
-                      title: 'Error',
-                      text: e.toString(),
-                    );
+                    showErrorAlert(context, "Fail to caim request: ${e.toString()}");
                   }
                 }
               },
