@@ -48,7 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       try {
         _imageBytes = base64Decode(widget.client.profilePicture!);
       } catch (e) {
-       showErrorAlert(context, "Error deconing picture: ${e.toString()}");
+        showErrorAlert(context, "Error deconing picture: ${e.toString()}");
       }
     }
   }
@@ -130,16 +130,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               TextFormField(
                 initialValue: _phone,
                 decoration: const InputDecoration(labelText: "Phone Number"),
-                validator:(value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Enter phone number';
-                        }
-                        final regex = RegExp(r'^\d{9}$');
-                        if (!regex.hasMatch(value)) {
-                          return 'Enter exactly 9 digits';
-                        }
-                        return null;
-                      },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter phone number';
+                  }
+                  final regex = RegExp(r'^\d{9,10}$');
+                  if (!regex.hasMatch(value)) {
+                    return 'Enter exactly 9 or 10 digits';
+                  }
+                  return null;
+                },
                 onSaved: (value) => _phone = value!,
               ),
               const SizedBox(height: 24),
@@ -157,7 +157,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 TextFormField(
                   controller: _currentPasswordController,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: "Current Password"),
+                  decoration: const InputDecoration(
+                    labelText: "Current Password",
+                  ),
                   validator: (value) {
                     if (_changePassword && (value == null || value.isEmpty)) {
                       return 'Current password is required';
@@ -186,7 +188,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: "Confirm New Password"),
+                  decoration: const InputDecoration(
+                    labelText: "Confirm New Password",
+                  ),
                   validator: (value) {
                     if (_changePassword) {
                       if (value == null || value.isEmpty) {
@@ -249,7 +253,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       request["passwordConfirmation"] = confirmPassword;
     }
 
-
     try {
       final clientProvider = Provider.of<ClientProvider>(
         context,
@@ -258,12 +261,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       await clientProvider.update(widget.client.clientId!, request);
       if (_changePassword) {
-        
-       
         AuthProvider.username = null;
         AuthProvider.password = null;
         AuthProvider.clientId = null;
-        
+
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const LoginPage()),
           (route) => false,

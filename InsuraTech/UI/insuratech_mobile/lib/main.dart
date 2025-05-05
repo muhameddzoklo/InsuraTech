@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
@@ -9,6 +7,7 @@ import 'package:insuratech_mobile/providers/insurance_package_provider.dart';
 import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/insurance_package_screen.dart';
+import 'package:insuratech_mobile/screens/register_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -208,13 +207,33 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               );
                             } on Exception catch (_) {
-                              showErrorAlert(context, "Invalid username or password");
+                              showErrorAlert(
+                                context,
+                                "Invalid username or password",
+                              );
                             }
                           }
                         },
                         child: const Text(
                           "Sign In",
                           style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const RegisterScreen(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          "Don't have an account? Register here",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
                     ],
