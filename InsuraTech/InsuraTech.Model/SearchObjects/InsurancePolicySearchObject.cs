@@ -10,6 +10,7 @@ namespace InsuraTech.Model.SearchObjects
 
         public DateTime? EndDateLTE { get; set; }
         public string? ClientUsernameGTE { get; set; }
+        public string? ClientUsername { get; set; }
         public int InsurancePackageId { get; set; } 
     }
 }

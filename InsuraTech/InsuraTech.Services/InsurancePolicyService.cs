@@ -55,7 +55,10 @@ namespace InsuraTech.Services
             {
                 Context.SaveChanges();
             }
-
+            if (!string.IsNullOrEmpty(search?.ClientUsername))
+            {
+                query = query.Where(x => x.Client.Username == search.ClientUsername);
+            }
             return query;
         }
 

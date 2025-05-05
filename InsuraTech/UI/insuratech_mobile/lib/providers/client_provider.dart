@@ -12,6 +12,22 @@ class ClientProvider extends BaseProvider<Client> {
     return Client.fromJson(data);
   }
 
+  Future<Client> register(Map<String, dynamic> request) async {
+    var url = "${BaseProvider.baseUrl}Client/Register";
+    var uri = Uri.parse(url);
+    var jsonRequest = jsonEncode(request);
+    var headers = {"Content-Type": "application/json"};
+
+    var response = await http.post(uri, headers: headers, body: jsonRequest);
+
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      return fromJson(data);
+    } else {
+      throw Exception("Registration failed");
+    }
+  }
+
   Future<Client> login(String username, String password) async {
     var url =
         "${BaseProvider.baseUrl}Client/Login?username=${username}&password=${password}";

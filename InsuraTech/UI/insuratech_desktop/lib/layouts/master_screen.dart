@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:insuratech_desktop/screens/claim_requests_screen.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
 import 'package:insuratech_desktop/screens/placeholder_screen.dart';
 import 'package:insuratech_desktop/screens/users_screen.dart';
@@ -33,7 +34,7 @@ class _MasterScreenState extends State<MasterScreen> {
                   color: Colors.black.withOpacity(0.2),
                   blurRadius: 10,
                   offset: const Offset(3, 0),
-                )
+                ),
               ],
             ),
             child: Column(
@@ -51,11 +52,42 @@ class _MasterScreenState extends State<MasterScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _buildSidebarItem(context, "Packages", Icons.inventory, const InsurancePackageScreen()),
-                _buildSidebarItem(context, "Users", Icons.event, const UsersScreen()),
-                _buildSidebarItem(context, "Statistika", Icons.bar_chart, const PlaceholderListScreen()),
-                _buildSidebarItem(context, "Recepti", Icons.receipt, const PlaceholderListScreen()),
-                _buildSidebarItem(context, "Obavještenja", Icons.notifications, const PlaceholderListScreen()),
+                _buildSidebarItem(
+                  context,
+                  "Packages",
+                  Icons.inventory,
+                  const InsurancePackageScreen(),
+                ),
+                _buildSidebarItem(
+                  context,
+                  "Users",
+                  Icons.event,
+                  const UsersScreen(),
+                ),
+                _buildSidebarItem(
+                  context,
+                  "Claim Requests",
+                  Icons.description,
+                  const ClaimRequestsScreen(),
+                ),
+                _buildSidebarItem(
+                  context,
+                  "Statistika",
+                  Icons.bar_chart,
+                  const PlaceholderListScreen(),
+                ),
+                _buildSidebarItem(
+                  context,
+                  "Recepti",
+                  Icons.receipt,
+                  const PlaceholderListScreen(),
+                ),
+                _buildSidebarItem(
+                  context,
+                  "Obavještenja",
+                  Icons.notifications,
+                  const PlaceholderListScreen(),
+                ),
               ],
             ),
           ),
@@ -85,11 +117,17 @@ class _MasterScreenState extends State<MasterScreen> {
                       Row(
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.notifications, color: Colors.white),
+                            icon: const Icon(
+                              Icons.notifications,
+                              color: Colors.white,
+                            ),
                             onPressed: () {},
                           ),
                           IconButton(
-                            icon: const Icon(Icons.account_circle, color: Colors.white),
+                            icon: const Icon(
+                              Icons.account_circle,
+                              color: Colors.white,
+                            ),
                             onPressed: () {},
                           ),
                         ],
@@ -112,7 +150,12 @@ class _MasterScreenState extends State<MasterScreen> {
     );
   }
 
-  Widget _buildSidebarItem(BuildContext context, String title, IconData icon, Widget screen) {
+  Widget _buildSidebarItem(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Widget screen,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Material(
@@ -120,7 +163,9 @@ class _MasterScreenState extends State<MasterScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(15),
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => screen));
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),

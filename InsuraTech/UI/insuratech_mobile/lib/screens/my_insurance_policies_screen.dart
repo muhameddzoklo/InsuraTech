@@ -36,7 +36,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
       var searchResult = await insurancePolicyProvider.get(
         orderBy: "IsActive",
         sortDirection: "desc",
-        filter: {"ClientUsernameGTE": AuthProvider.username},
+        filter: {"ClientUsername": AuthProvider.username},
       );
 
       setState(() {
@@ -230,10 +230,16 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                                                   .delete(
                                                     policy.insurancePolicyId!,
                                                   );
-                                              showSuccessAlert(context, "Policy deleted successfully");
+                                              showSuccessAlert(
+                                                context,
+                                                "Policy deleted successfully",
+                                              );
                                               _fetchPolicies();
                                             } catch (e) {
-                                              showErrorAlert(context, "Failed to delete policy: ${e.toString()}");
+                                              showErrorAlert(
+                                                context,
+                                                "Failed to delete policy: ${e.toString()}",
+                                              );
                                             }
                                           }
                                         },
@@ -415,7 +421,10 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                     );
                     showSuccessAlert(context, "Request created successfully");
                   } catch (e) {
-                    showErrorAlert(context, "Fail to caim request: ${e.toString()}");
+                    showErrorAlert(
+                      context,
+                      "Fail to caim request: ${e.toString()}",
+                    );
                   }
                 }
               },

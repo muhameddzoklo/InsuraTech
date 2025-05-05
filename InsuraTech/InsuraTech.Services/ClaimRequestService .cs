@@ -41,6 +41,10 @@ namespace InsuraTech.Services
             {
                 query = query.Where(x => x.insurancePolicy.InsurancePackageId == search.InsurancePackageId);
             }
+            if (search?.Username != null)
+            {
+                query = query.Where(x => x.insurancePolicy.Client.Username == search.Username);
+            }
 
             query = query
                     .Where(x => !x.IsDeleted)
@@ -48,6 +52,7 @@ namespace InsuraTech.Services
                         .ThenInclude(u => u.Client)
                     .Include(x => x.insurancePolicy)
                         .ThenInclude(p => p.InsurancePackage);
+           
             return query;
         }
 

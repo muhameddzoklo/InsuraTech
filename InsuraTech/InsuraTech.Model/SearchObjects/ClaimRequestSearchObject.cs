@@ -6,6 +6,7 @@ namespace InsuraTech.Model.SearchObjects
 {
     public class ClaimRequestSearchObject:BaseSearchObject
     {
+        public string? Username { get; set; }
         public string? UsernameGTE { get; set; }
         public int? InsurancePackageId { get; set; }
         public DateTime? StartDate { get; set; }
