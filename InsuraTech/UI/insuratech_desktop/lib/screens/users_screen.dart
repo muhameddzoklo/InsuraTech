@@ -6,9 +6,8 @@ import 'package:insuratech_desktop/models/role.dart';
 import 'package:insuratech_desktop/providers/users_provider.dart';
 import 'package:insuratech_desktop/providers/clients_provider.dart';
 import 'package:insuratech_desktop/providers/roles_provider.dart';
+import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:provider/provider.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -42,15 +41,8 @@ class _UsersScreenState extends State<UsersScreen> {
         listen: false,
       ).get(retrieveAll: true);
       if (mounted) setState(() => roles = result.resultList);
-    } on Exception catch (e) {
-      if (mounted) {
-        QuickAlert.show(
-          context: context,
-          type: QuickAlertType.error,
-          title: 'Failed',
-          text: 'Error: ${e.toString()}',
-        );
-      }
+    } catch (e) {
+      showErrorAlert(context, "error fetching roles ${e.toString()}");
     }
   }
 
@@ -115,9 +107,9 @@ class _UsersScreenState extends State<UsersScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Enter phone number';
                         }
-                        final regex = RegExp(r'^\d{9}$');
+                        final regex = RegExp(r'^\d{9,10}$');
                         if (!regex.hasMatch(value)) {
-                          return 'Enter exactly 9 digits';
+                          return 'Enter exactly 9 or 10 digits';
                         }
                         return null;
                       },
@@ -178,21 +170,12 @@ class _UsersScreenState extends State<UsersScreen> {
                     ).insert(request);
                     Navigator.pop(context);
                     _loadEmployees();
-                    QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.success,
-                      title: 'Success',
-                      text: 'Employee Added successfully',
+                    showSuccessAlert(context, "Employee Added successfully");
+                  } catch (e) {
+                    showErrorAlert(
+                      context,
+                      "Error creating Employee ${e.toString()}",
                     );
-                  } on Exception catch (e) {
-                    if (mounted) {
-                      QuickAlert.show(
-                        context: context,
-                        type: QuickAlertType.error,
-                        title: 'Failed',
-                        text: 'Error: ${e.toString()}',
-                      );
-                    }
                   }
                 }
               },
@@ -202,222 +185,242 @@ class _UsersScreenState extends State<UsersScreen> {
       },
     );
   }
+
   void _showUpdateUserDialog(User user) {
-  final _formKey = GlobalKey<FormState>();
-  String firstName = user.firstName ?? '';
-  String lastName = user.lastName ?? '';
-  String phoneNumber = user.phoneNumber ?? '';
-  bool isActive = user.isActive ?? true;
+    final _formKey = GlobalKey<FormState>();
+    String firstName = user.firstName ?? '';
+    String lastName = user.lastName ?? '';
+    String phoneNumber = user.phoneNumber ?? '';
+    bool isActive = user.isActive ?? true;
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setModalState) => AlertDialog(
-          title: const Text("Update Employee"),
-          content: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: SizedBox(
-                width: 400, 
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextFormField(
-                      initialValue: firstName,
-                      decoration: const InputDecoration(labelText: 'First Name'),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'Enter first name' : null,
-                      onSaved: (value) => firstName = value!,
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder:
+              (context, setModalState) => AlertDialog(
+                title: const Text("Update Employee"),
+                content: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: SizedBox(
+                      width: 400,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextFormField(
+                            initialValue: firstName,
+                            decoration: const InputDecoration(
+                              labelText: 'First Name',
+                            ),
+                            validator:
+                                (value) =>
+                                    value == null || value.isEmpty
+                                        ? 'Enter first name'
+                                        : null,
+                            onSaved: (value) => firstName = value!,
+                          ),
+                          TextFormField(
+                            initialValue: lastName,
+                            decoration: const InputDecoration(
+                              labelText: 'Last Name',
+                            ),
+                            validator:
+                                (value) =>
+                                    value == null || value.isEmpty
+                                        ? 'Enter last name'
+                                        : null,
+                            onSaved: (value) => lastName = value!,
+                          ),
+                          TextFormField(
+                            initialValue: phoneNumber,
+                            decoration: const InputDecoration(
+                              labelText: 'Phone Number',
+                            ),
+                            validator:
+                                (value) =>
+                                    value == null || value.isEmpty
+                                        ? 'Enter phone number'
+                                        : null,
+                            onSaved: (value) => phoneNumber = value!,
+                          ),
+                          const SizedBox(height: 10),
+                          SwitchListTile(
+                            title: Text(isActive ? "Active" : "Inactive"),
+                            value: isActive,
+                            onChanged: (value) {
+                              setModalState(() {
+                                isActive = value;
+                              });
+                            },
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ],
+                      ),
                     ),
-                    TextFormField(
-                      initialValue: lastName,
-                      decoration: const InputDecoration(labelText: 'Last Name'),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'Enter last name' : null,
-                      onSaved: (value) => lastName = value!,
-                    ),
-                    TextFormField(
-                      initialValue: phoneNumber,
-                      decoration: const InputDecoration(labelText: 'Phone Number'),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'Enter phone number' : null,
-                      onSaved: (value) => phoneNumber = value!,
-                    ),
-                    const SizedBox(height: 10),
-                    SwitchListTile(
-                      title:  Text(isActive?"Active":"Inactive"),
-                      value: isActive,
-                      onChanged: (value) {
-                        setModalState(() {
-                          isActive = value;
-                        });
-                      },
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              child: const Text("Cancel"),
-              onPressed: () => Navigator.pop(context),
-            ),
-            ElevatedButton(
-              child: const Text("Update"),
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
+                actions: [
+                  ElevatedButton(
+                    child: const Text("Cancel"),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  ElevatedButton(
+                    child: const Text("Update"),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
 
-                  final request = {
-                    "firstName": firstName,
-                    "lastName": lastName,
-                    "phoneNumber": phoneNumber,
-                    "isActive": isActive,
-                  };
+                        final request = {
+                          "firstName": firstName,
+                          "lastName": lastName,
+                          "phoneNumber": phoneNumber,
+                          "isActive": isActive,
+                        };
 
-                  try {
-                    await Provider.of<UsersProvider>(
-                      context,
-                      listen: false,
-                    ).update(user.userId!, request);
-                    Navigator.pop(context);
-                    _loadEmployees();
-                  QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.success,
-                      title: 'Success',
-                      text: 'Employee Updated successfully',
-                    );
-                  } on Exception catch (e) {
-                      if (mounted) {
-                        QuickAlert.show(
-                          context: context,
-                          type: QuickAlertType.error,
-                          title: 'Failed',
-                          text: 'Error: ${e.toString()}',
-                        );
+                        try {
+                          await Provider.of<UsersProvider>(
+                            context,
+                            listen: false,
+                          ).update(user.userId!, request);
+                          Navigator.pop(context);
+                          _loadEmployees();
+                          showSuccessAlert(
+                            context,
+                            "Employee Updated successfully",
+                          );
+                        } catch (e) {
+                          showErrorAlert(
+                            context,
+                            "Error updating Employee ${e.toString()}",
+                          );
+                        }
                       }
-                    }
-                }
-              },
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
+                    },
+                  ),
+                ],
+              ),
+        );
+      },
+    );
+  }
 
-void _showUpdateClientDialog(Client client) {
-  final _formKey = GlobalKey<FormState>();
-  String firstName = client.firstName ?? '';
-  String lastName = client.lastName ?? '';
-  String phoneNumber = client.phoneNumber ?? '';
-  bool isActive = client.isActive ?? true;
+  void _showUpdateClientDialog(Client client) {
+    final _formKey = GlobalKey<FormState>();
+    String firstName = client.firstName ?? '';
+    String lastName = client.lastName ?? '';
+    String phoneNumber = client.phoneNumber ?? '';
+    bool isActive = client.isActive ?? true;
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setModalState) => AlertDialog(
-          title: const Text("Update Client"),
-          content: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: SizedBox(
-                width: 400,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextFormField(
-                      initialValue: firstName,
-                      decoration: const InputDecoration(labelText: 'First Name'),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'Enter first name' : null,
-                      onSaved: (value) => firstName = value!,
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder:
+              (context, setModalState) => AlertDialog(
+                title: const Text("Update Client"),
+                content: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: SizedBox(
+                      width: 400,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextFormField(
+                            initialValue: firstName,
+                            decoration: const InputDecoration(
+                              labelText: 'First Name',
+                            ),
+                            validator:
+                                (value) =>
+                                    value == null || value.isEmpty
+                                        ? 'Enter first name'
+                                        : null,
+                            onSaved: (value) => firstName = value!,
+                          ),
+                          TextFormField(
+                            initialValue: lastName,
+                            decoration: const InputDecoration(
+                              labelText: 'Last Name',
+                            ),
+                            validator:
+                                (value) =>
+                                    value == null || value.isEmpty
+                                        ? 'Enter last name'
+                                        : null,
+                            onSaved: (value) => lastName = value!,
+                          ),
+                          TextFormField(
+                            initialValue: phoneNumber,
+                            decoration: const InputDecoration(
+                              labelText: 'Phone Number',
+                            ),
+                            validator:
+                                (value) =>
+                                    value == null || value.isEmpty
+                                        ? 'Enter phone number'
+                                        : null,
+                            onSaved: (value) => phoneNumber = value!,
+                          ),
+                          const SizedBox(height: 10),
+                          SwitchListTile(
+                            title: Text(isActive ? "Active" : "Inactive"),
+                            value: isActive,
+                            onChanged: (value) {
+                              setModalState(() {
+                                isActive = value;
+                              });
+                            },
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ],
+                      ),
                     ),
-                    TextFormField(
-                      initialValue: lastName,
-                      decoration: const InputDecoration(labelText: 'Last Name'),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'Enter last name' : null,
-                      onSaved: (value) => lastName = value!,
-                    ),
-                    TextFormField(
-                      initialValue: phoneNumber,
-                      decoration: const InputDecoration(labelText: 'Phone Number'),
-                      validator: (value) =>
-                          value == null || value.isEmpty ? 'Enter phone number' : null,
-                      onSaved: (value) => phoneNumber = value!,
-                    ),
-                    const SizedBox(height: 10),
-                    SwitchListTile(
-                      title:  Text(isActive?"Active":"Inactive"),
-                      value: isActive,
-                      onChanged: (value) {
-                        setModalState(() {
-                          isActive = value;
-                        });
-                      },
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              child: const Text("Cancel"),
-              onPressed: () => Navigator.pop(context),
-            ),
-            ElevatedButton(
-              child: const Text("Update"),
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  final request = {
-                    "firstName": firstName,
-                    "lastName": lastName,
-                    "phoneNumber": phoneNumber,
-                    "isActive": isActive,
-                  };
-                  try {
-                    await Provider.of<ClientsProvider>(
-                      context,
-                      listen: false,
-                    ).update(client.clientId!, request);
-                    Navigator.pop(context);
-                    _loadClients();
-                    QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.success,
-                      title: 'Success',
-                      text: 'Client Updated successfully',
-                    );
-                  } on Exception catch (e) {
-                      if (mounted) {
-                        QuickAlert.show(
-                          context: context,
-                          type: QuickAlertType.error,
-                          title: 'Failed',
-                          text: 'Error: ${e.toString()}',
-                        );
+                actions: [
+                  ElevatedButton(
+                    child: const Text("Cancel"),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  ElevatedButton(
+                    child: const Text("Update"),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        final request = {
+                          "firstName": firstName,
+                          "lastName": lastName,
+                          "phoneNumber": phoneNumber,
+                          "isActive": isActive,
+                        };
+                        try {
+                          await Provider.of<ClientsProvider>(
+                            context,
+                            listen: false,
+                          ).update(client.clientId!, request);
+                          Navigator.pop(context);
+                          _loadClients();
+                          showSuccessAlert(
+                            context,
+                            "Client Updated successfully",
+                          );
+                        } catch (e) {
+                          showErrorAlert(
+                            context,
+                            "Error updating client ${e.toString()} ",
+                          );
+                        }
                       }
-                    }
-                }
-              },
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
+                    },
+                  ),
+                ],
+              ),
+        );
+      },
+    );
+  }
 
   Future<void> _loadEmployees() async {
     setState(() => isLoading = true);
@@ -430,14 +433,7 @@ void _showUpdateClientDialog(Client client) {
         setState(() => employees = result.resultList);
       }
     } on Exception catch (e) {
-      if (mounted) {
-        QuickAlert.show(
-          context: context,
-          type: QuickAlertType.error,
-          title: 'Failed',
-          text: 'Error: ${e.toString()}',
-        );
-      }
+      showErrorAlert(context, "Error fetching Employees ${e.toString()}");
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
@@ -457,14 +453,7 @@ void _showUpdateClientDialog(Client client) {
         });
       }
     } on Exception catch (e) {
-      if (mounted) {
-        QuickAlert.show(
-          context: context,
-          type: QuickAlertType.error,
-          title: 'Failed',
-          text: 'Error: ${e.toString()}',
-        );
-      }
+      showErrorAlert(context, "Error fetching clients ${e.toString()}");
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
@@ -520,7 +509,7 @@ void _showUpdateClientDialog(Client client) {
                           icon: const Icon(Icons.add),
                           label: const Text("Add Employee"),
                           style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                            backgroundColor: Colors.green,
                           ),
                         ),
                     ],
@@ -588,7 +577,10 @@ void _showUpdateClientDialog(Client client) {
                                                 Icons.edit,
                                                 color: Colors.blue,
                                               ),
-                                              onPressed: ()=>_showUpdateUserDialog(user),
+                                              onPressed:
+                                                  () => _showUpdateUserDialog(
+                                                    user,
+                                                  ),
                                             ),
                                             IconButton(
                                               icon: const Icon(
@@ -599,69 +591,115 @@ void _showUpdateClientDialog(Client client) {
                                                 showDialog(
                                                   context: context,
                                                   barrierDismissible: false,
-                                                  builder: (context) => AlertDialog(
-                                                    title: const Text("Are you sure?"),
-                                                    content: const Text("Do you want to delete this client?"),
-                                                    actionsAlignment: MainAxisAlignment.center,
-                                                    actions: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        height: 30,
-                                                        child: TextButton(
-                                                          onPressed: () => Navigator.of(context).pop(),
-                                                          style: TextButton.styleFrom(
-                                                            backgroundColor: Colors.red,
-                                                            foregroundColor: Colors.white,
-                                                            shape: RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(15),
-                                                            ),
-                                                            minimumSize: const Size.fromHeight(40),
-                                                          ),
-                                                          child: const Text("No"),
+                                                  builder:
+                                                      (context) => AlertDialog(
+                                                        title: const Text(
+                                                          "Are you sure?",
                                                         ),
-                                                      ),
-                                                      const SizedBox(width: 10),
-                                                      SizedBox(
-                                                        width: 100,
-                                                        height: 30,
-                                                        child: ElevatedButton.icon(
-                                                          onPressed: () async {
-                                                            Navigator.of(context).pop();
-                                                            try {
-                                                              await Provider.of<UsersProvider>(
-                                                                context,
-                                                                listen: false,
-                                                              ).delete(user.userId!);
-                                                               _loadEmployees();
-                                                              QuickAlert.show(
-                                                                context: context,
-                                                                type: QuickAlertType.success,
-                                                                title: 'Success',
-                                                                text: 'Employee deleted successfully',
-                                                              );
-                                                            }on Exception catch (e) {
-                                                              QuickAlert.show(
-                                                                context: context,
-                                                                type: QuickAlertType.error,
-                                                                title: 'Failed',
-                                                                text: 'Error: ${e.toString()}',
-                                                              );
-                                                           }
-                                                          },
-                                                          icon: const Icon(Icons.check, size: 18),
-                                                          label: const Text("Yes"),
-                                                          style: ElevatedButton.styleFrom(
-                                                            backgroundColor: const Color.fromARGB(255, 36, 131, 7),
-                                                            foregroundColor: Colors.white,
-                                                            shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(15),
-                                                            ),
-                                                            minimumSize: const Size.fromHeight(40),
-                                                          ),
+                                                        content: const Text(
+                                                          "Do you want to delete this client?",
                                                         ),
+                                                        actionsAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        actions: [
+                                                          SizedBox(
+                                                            width: 100,
+                                                            height: 30,
+                                                            child: TextButton(
+                                                              onPressed:
+                                                                  () =>
+                                                                      Navigator.of(
+                                                                        context,
+                                                                      ).pop(),
+                                                              style: TextButton.styleFrom(
+                                                                backgroundColor:
+                                                                    Colors.red,
+                                                                foregroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        15,
+                                                                      ),
+                                                                ),
+                                                                minimumSize:
+                                                                    const Size.fromHeight(
+                                                                      40,
+                                                                    ),
+                                                              ),
+                                                              child: const Text(
+                                                                "No",
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 100,
+                                                            height: 30,
+                                                            child: ElevatedButton.icon(
+                                                              onPressed: () async {
+                                                                Navigator.of(
+                                                                  context,
+                                                                ).pop();
+                                                                try {
+                                                                  await Provider.of<
+                                                                    UsersProvider
+                                                                  >(
+                                                                    context,
+                                                                    listen:
+                                                                        false,
+                                                                  ).delete(
+                                                                    user.userId!,
+                                                                  );
+                                                                  _loadEmployees();
+                                                                  showSuccessAlert(
+                                                                    context,
+                                                                    "Employee deleted successfully",
+                                                                  );
+                                                                } catch (e) {
+                                                                  showErrorAlert(
+                                                                    context,
+                                                                    "Error deleting employee ${e.toString()}",
+                                                                  );
+                                                                }
+                                                              },
+                                                              icon: const Icon(
+                                                                Icons.check,
+                                                                size: 18,
+                                                              ),
+                                                              label: const Text(
+                                                                "Yes",
+                                                              ),
+                                                              style: ElevatedButton.styleFrom(
+                                                                backgroundColor:
+                                                                    const Color.fromARGB(
+                                                                      255,
+                                                                      36,
+                                                                      131,
+                                                                      7,
+                                                                    ),
+                                                                foregroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        15,
+                                                                      ),
+                                                                ),
+                                                                minimumSize:
+                                                                    const Size.fromHeight(
+                                                                      40,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
-                                                    ],
-                                                  ),
                                                 );
                                               },
                                             ),
@@ -697,7 +735,10 @@ void _showUpdateClientDialog(Client client) {
                                                 Icons.edit,
                                                 color: Colors.blue,
                                               ),
-                                              onPressed:()=> _showUpdateClientDialog(client),
+                                              onPressed:
+                                                  () => _showUpdateClientDialog(
+                                                    client,
+                                                  ),
                                             ),
                                             IconButton(
                                               icon: const Icon(
@@ -708,70 +749,117 @@ void _showUpdateClientDialog(Client client) {
                                                 showDialog(
                                                   context: context,
                                                   barrierDismissible: false,
-                                                  builder: (context) => AlertDialog(
-                                                    title: const Text("Are you sure?"),
-                                                    content: const Text("Do you want to delete this client?"),
-                                                    actionsAlignment: MainAxisAlignment.center,
-                                                    actions: [
-                                                      SizedBox(
-                                                        width: 100,
-                                                        height: 30,
-                                                        child: TextButton(
-                                                          onPressed: () => Navigator.of(context).pop(),
-                                                          style: TextButton.styleFrom(
-                                                            backgroundColor: Colors.red,
-                                                            foregroundColor: Colors.white,
-                                                            shape: RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.circular(15),
-                                                            ),
-                                                            minimumSize: const Size.fromHeight(40),
-                                                          ),
-                                                          child: const Text("No"),
+                                                  builder:
+                                                      (context) => AlertDialog(
+                                                        title: const Text(
+                                                          "Are you sure?",
                                                         ),
-                                                      ),
-                                                      const SizedBox(width: 10),
-                                                      SizedBox(
-                                                        width: 100,
-                                                        height: 30,
-                                                        child: ElevatedButton.icon(
-                                                          onPressed: () async {
-                                                            Navigator.of(context).pop();
-                                                            try {
-                                                              await Provider.of<ClientsProvider>(
-                                                                context,
-                                                                listen: false,
-                                                              ).delete(client.clientId!);
-                                                              
-                                                               _loadClients();
-                                                              QuickAlert.show(
-                                                                context: context,
-                                                                type: QuickAlertType.success,
-                                                                title: 'Success',
-                                                                text: 'Client deleted successfully',
-                                                              );
-                                                            }on Exception catch (e) {
-                                                              QuickAlert.show(
-                                                                context: context,
-                                                                type: QuickAlertType.error,
-                                                                title: 'Failed',
-                                                                text: 'Error: ${e.toString()}',
-                                                              );
-                                                          }
-                                                          },
-                                                          icon: const Icon(Icons.check, size: 18),
-                                                          label: const Text("Yes"),
-                                                          style: ElevatedButton.styleFrom(
-                                                            backgroundColor: const Color.fromARGB(255, 36, 131, 7),
-                                                            foregroundColor: Colors.white,
-                                                            shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(15),
-                                                            ),
-                                                            minimumSize: const Size.fromHeight(40),
-                                                          ),
+                                                        content: const Text(
+                                                          "Do you want to delete this client?",
                                                         ),
+                                                        actionsAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        actions: [
+                                                          SizedBox(
+                                                            width: 100,
+                                                            height: 30,
+                                                            child: TextButton(
+                                                              onPressed:
+                                                                  () =>
+                                                                      Navigator.of(
+                                                                        context,
+                                                                      ).pop(),
+                                                              style: TextButton.styleFrom(
+                                                                backgroundColor:
+                                                                    Colors.red,
+                                                                foregroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        15,
+                                                                      ),
+                                                                ),
+                                                                minimumSize:
+                                                                    const Size.fromHeight(
+                                                                      40,
+                                                                    ),
+                                                              ),
+                                                              child: const Text(
+                                                                "No",
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 100,
+                                                            height: 30,
+                                                            child: ElevatedButton.icon(
+                                                              onPressed: () async {
+                                                                Navigator.of(
+                                                                  context,
+                                                                ).pop();
+                                                                try {
+                                                                  await Provider.of<
+                                                                    ClientsProvider
+                                                                  >(
+                                                                    context,
+                                                                    listen:
+                                                                        false,
+                                                                  ).delete(
+                                                                    client
+                                                                        .clientId!,
+                                                                  );
+
+                                                                  _loadClients();
+                                                                  showSuccessAlert(
+                                                                    context,
+                                                                    "Client deleted successfully",
+                                                                  );
+                                                                } catch (e) {
+                                                                  showErrorAlert(
+                                                                    context,
+                                                                    "Error deleting client ${e.toString()}",
+                                                                  );
+                                                                }
+                                                              },
+                                                              icon: const Icon(
+                                                                Icons.check,
+                                                                size: 18,
+                                                              ),
+                                                              label: const Text(
+                                                                "Yes",
+                                                              ),
+                                                              style: ElevatedButton.styleFrom(
+                                                                backgroundColor:
+                                                                    const Color.fromARGB(
+                                                                      255,
+                                                                      36,
+                                                                      131,
+                                                                      7,
+                                                                    ),
+                                                                foregroundColor:
+                                                                    Colors
+                                                                        .white,
+                                                                shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        15,
+                                                                      ),
+                                                                ),
+                                                                minimumSize:
+                                                                    const Size.fromHeight(
+                                                                      40,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
-                                                    ],
-                                                  ),
                                                 );
                                               },
                                             ),

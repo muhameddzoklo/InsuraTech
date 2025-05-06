@@ -12,7 +12,8 @@ class InsurancePackageProvider extends BaseProvider<InsurancePackage> {
     // TODO: implement fromJson
     return InsurancePackage.fromJson(data);
   }
-    Future ChangeState(int id, String state) async {
+
+  Future ChangeState(int id, String state) async {
     var endpoint = "InsurancePackage/${id}/$state";
     var baseUrl = BaseProvider.baseUrl;
     var url = "$baseUrl$endpoint";
