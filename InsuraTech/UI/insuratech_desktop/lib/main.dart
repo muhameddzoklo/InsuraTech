@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:insuratech_desktop/models/claim_request.dart';
 import 'package:insuratech_desktop/providers/auth_provider.dart';
+import 'package:insuratech_desktop/providers/claim_request_provider.dart';
 import 'package:insuratech_desktop/providers/clients_provider.dart';
 import 'package:insuratech_desktop/providers/insurance_package_provider.dart';
 import 'package:insuratech_desktop/providers/roles_provider.dart';
@@ -17,6 +19,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => InsurancePackageProvider()),
         ChangeNotifierProvider(create: (_) => ClientsProvider()),
         ChangeNotifierProvider(create: (_) => RolesProvider()),
+        ChangeNotifierProvider(create: (_) => ClaimRequestProvider()),
       ],
       child: const MyApp(),
     ),

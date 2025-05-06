@@ -8,9 +8,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:insuratech_desktop/layouts/master_screen.dart';
 import 'package:insuratech_desktop/models/insurance_package.dart';
 import 'package:insuratech_desktop/providers/insurance_package_provider.dart';
+import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:provider/provider.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class InsurancePackageScreen extends StatefulWidget {
   const InsurancePackageScreen({super.key});
@@ -45,15 +44,8 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
         _packages = packagesResult.resultList;
         _filteredPackages = _packages;
       });
-    } on Exception catch (e) {
-      if (mounted) {
-        QuickAlert.show(
-          context: context,
-          type: QuickAlertType.error,
-          title: 'Failed',
-          text: 'Error: ${e.toString()}',
-        );
-      }
+    } catch (e) {
+      showErrorAlert(context, "Failed fetching packages  ${e.toString()}");
     } finally {
       setState(() => _isLoading = false);
     }
@@ -230,21 +222,15 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                           ).update(package.insurancePackageId!, request);
                           Navigator.pop(context);
                           _fetchPackages();
-                          QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.success,
-                            title: 'Success',
-                            text: 'Package Edited successfully',
+                          showSuccessAlert(
+                            context,
+                            "Package Edited successfully",
                           );
-                        } on Exception catch (e) {
-                          if (mounted) {
-                            QuickAlert.show(
-                              context: context,
-                              type: QuickAlertType.error,
-                              title: 'Failed',
-                              text: 'Error: ${e.toString()}',
-                            );
-                          }
+                        } catch (e) {
+                          showErrorAlert(
+                            context,
+                            "Error updating package ${e.toString()} ",
+                          );
                         }
                       }
                     },
@@ -310,14 +296,15 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                                       : null,
                           onSaved: (value) => price = double.parse(value!),
                         ),
-                        
+
                         TextFormField(
-                          decoration: const InputDecoration(labelText: 'Duration days'),
+                          decoration: const InputDecoration(
+                            labelText: 'Duration days',
+                          ),
                           keyboardType: TextInputType.number,
                           validator:
                               (value) =>
-                                  value == null ||
-                                          int.tryParse(value) == null
+                                  value == null || int.tryParse(value) == null
                                       ? 'Enter valid number'
                                       : null,
                           onSaved: (value) => durationDays = int.parse(value!),
@@ -395,21 +382,15 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                           ).insert(request);
                           Navigator.pop(context);
                           _fetchPackages();
-                          QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.success,
-                            title: 'Success',
-                            text: 'Package Added successfully',
+                          showSuccessAlert(
+                            context,
+                            "Package Added successfully",
                           );
-                        } on Exception catch (e) {
-                          if (mounted) {
-                            QuickAlert.show(
-                              context: context,
-                              type: QuickAlertType.error,
-                              title: 'Failed',
-                              text: 'Error: ${e.toString()}',
-                            );
-                          }
+                        } catch (e) {
+                          showErrorAlert(
+                            context,
+                            "Error creating package ${e.toString()} ",
+                          );
                         }
                       }
                     },
@@ -540,14 +521,11 @@ class InsurancePackageCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                      "Duration: ${package.durationDays?.toString() ?? ''} days",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10,),
+                    "Duration: ${package.durationDays?.toString() ?? ''} days",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
                   if (isActive)
-                  
                     Text(
                       "${package.price?.toStringAsFixed(2) ?? ''}",
                       style: const TextStyle(
@@ -571,18 +549,14 @@ class InsurancePackageCard extends StatelessWidget {
                                   "activate",
                                 );
                                 onRefresh();
-                                QuickAlert.show(
-                                  context: context,
-                                  type: QuickAlertType.success,
-                                  title: 'Success',
-                                  text: 'Package activated successfully',
+                                showSuccessAlert(
+                                  context,
+                                  "Package activated successfully",
                                 );
-                              } on Exception catch (e) {
-                                QuickAlert.show(
-                                  context: context,
-                                  type: QuickAlertType.error,
-                                  title: 'Failed',
-                                  text: 'Error: ${e.toString()}',
+                              } catch (e) {
+                                showErrorAlert(
+                                  context,
+                                  "Error editing package ${e.toString()} ",
                                 );
                               }
                             },
@@ -667,13 +641,10 @@ class InsurancePackageCard extends StatelessWidget {
                                                   "hide",
                                                 );
                                                 onRefresh();
-                                              } on Exception catch (e) {
-                                                QuickAlert.show(
-                                                  context: context,
-                                                  type: QuickAlertType.error,
-                                                  title: 'Failed',
-                                                  text:
-                                                      'Error: ${e.toString()}',
+                                              } catch (e) {
+                                                showErrorAlert(
+                                                  context,
+                                                  "Error editing package ${e.toString()} ",
                                                 );
                                               }
                                             },
@@ -780,20 +751,14 @@ class InsurancePackageCard extends StatelessWidget {
                                                   package.insurancePackageId!,
                                                 );
                                                 onRefresh();
-                                                QuickAlert.show(
-                                                  context: context,
-                                                  type: QuickAlertType.success,
-                                                  title: 'Success',
-                                                  text:
-                                                      'Package deleted successfully',
+                                                showSuccessAlert(
+                                                  context,
+                                                  "Package deleted successfully",
                                                 );
-                                              } on Exception catch (e) {
-                                                QuickAlert.show(
-                                                  context: context,
-                                                  type: QuickAlertType.error,
-                                                  title: 'Failed',
-                                                  text:
-                                                      'Error: ${e.toString()}',
+                                              } catch (e) {
+                                                showErrorAlert(
+                                                  context,
+                                                  "Error deliting package ${e.toString()} ",
                                                 );
                                               }
                                             },
@@ -848,12 +813,10 @@ class InsurancePackageCard extends StatelessWidget {
                                   "edit",
                                 );
                                 onRefresh();
-                              } on Exception catch (e) {
-                                QuickAlert.show(
-                                  context: context,
-                                  type: QuickAlertType.error,
-                                  title: 'Failed',
-                                  text: 'Error: ${e.toString()}',
+                              } catch (e) {
+                                showErrorAlert(
+                                  context,
+                                  "Error editing package ${e.toString()} ",
                                 );
                               }
                             },
