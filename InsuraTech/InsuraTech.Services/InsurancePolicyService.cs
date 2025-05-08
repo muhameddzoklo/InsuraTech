@@ -65,6 +65,7 @@ namespace InsuraTech.Services
         public override async Task BeforeInsertAsync(InsurancePolicyInsertRequest request, InsurancePolicy entity, CancellationToken cancellationToken = default) 
         {
             entity.IsActive = true;
+            entity.IsNotificationSent = false;
         }
 
     }

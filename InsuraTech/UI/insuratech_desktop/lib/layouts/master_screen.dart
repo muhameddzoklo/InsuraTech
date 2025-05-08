@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_desktop/screens/claim_requests_screen.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
+import 'package:insuratech_desktop/screens/notify_clients_screen.dart';
 import 'package:insuratech_desktop/screens/placeholder_screen.dart';
 import 'package:insuratech_desktop/screens/users_screen.dart';
 
@@ -84,9 +85,9 @@ class _MasterScreenState extends State<MasterScreen> {
                 ),
                 _buildSidebarItem(
                   context,
-                  "Obavještenja",
+                  "Notify clients",
                   Icons.notifications,
-                  const PlaceholderListScreen(),
+                  const NotifyClientsScreen(),
                 ),
               ],
             ),

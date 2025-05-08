@@ -11,6 +11,7 @@ class InsurancePolicy {
   String? startDate;
   String? endDate;
   bool? isActive;
+  bool? isNotificationSent;
   InsurancePackage? insurancePackage;
   Client? client;
   bool? hasActiveClaimRequest;

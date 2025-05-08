@@ -122,6 +122,7 @@ namespace InsuraTech.Services.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     HasActiveClaimRequest = table.Column<bool>(type: "bit", nullable: false),
+                    IsNotificationSent = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -182,30 +183,6 @@ namespace InsuraTech.Services.Migrations
                     table.PrimaryKey("PK_MessageLogs", x => x.MessageLogId);
                     table.ForeignKey(
                         name: "FK_MessageLogs_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Notifications",
-                columns: table => new
-                {
-                    NotificationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsRead = table.Column<bool>(type: "bit", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notifications", x => x.NotificationId);
-                    table.ForeignKey(
-                        name: "FK_Notifications_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -298,6 +275,37 @@ namespace InsuraTech.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notifications",
+                columns: table => new
+                {
+                    NotificationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    InsurancePolicyId = table.Column<int>(type: "int", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsRead = table.Column<bool>(type: "bit", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.NotificationId);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Notifications_InsurancePolicies_InsurancePolicyId",
+                        column: x => x.InsurancePolicyId,
+                        principalTable: "InsurancePolicies",
+                        principalColumn: "InsurancePolicyId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserFeedbacks",
                 columns: table => new
                 {
@@ -372,14 +380,14 @@ namespace InsuraTech.Services.Migrations
 
             migrationBuilder.InsertData(
                 table: "InsurancePolicies",
-                columns: new[] { "InsurancePolicyId", "ClientId", "DeletionTime", "EndDate", "HasActiveClaimRequest", "InsurancePackageId", "IsActive", "IsDeleted", "StartDate" },
+                columns: new[] { "InsurancePolicyId", "ClientId", "DeletionTime", "EndDate", "HasActiveClaimRequest", "InsurancePackageId", "IsActive", "IsDeleted", "IsNotificationSent", "StartDate" },
                 values: new object[,]
                 {
-                    { 1, 1, null, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 1, true, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 1, null, new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 2, true, false, new DateTime(2025, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, 2, null, new DateTime(2025, 8, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 3, true, false, new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, 2, null, new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 1, false, false, new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, 3, null, new DateTime(2025, 8, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 2, true, false, new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, 1, null, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 1, true, false, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 1, null, new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 2, true, false, false, new DateTime(2025, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, 2, null, new DateTime(2025, 8, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 3, true, false, false, new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, 2, null, new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 1, false, false, false, new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, 3, null, new DateTime(2025, 8, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 2, true, false, false, new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -419,9 +427,14 @@ namespace InsuraTech.Services.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_UserId",
+                name: "IX_Notifications_ClientId",
                 table: "Notifications",
-                column: "UserId");
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_InsurancePolicyId",
+                table: "Notifications",
+                column: "InsurancePolicyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_PaymentMethodId",

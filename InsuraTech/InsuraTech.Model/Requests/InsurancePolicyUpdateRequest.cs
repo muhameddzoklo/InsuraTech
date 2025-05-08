@@ -12,5 +12,6 @@ namespace InsuraTech.Model.Requests
         public DateTime? EndDate { get; set; }
 
         public bool? HasClaimRequest { get; set; }
+        public bool? IsNotificationSent { get; set; }
     }
 }

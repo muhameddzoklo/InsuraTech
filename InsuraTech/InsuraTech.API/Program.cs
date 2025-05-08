@@ -17,6 +17,7 @@ builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IClientService, ClientService>();
 builder.Services.AddTransient<IInsurancePolicyService, InsurancePolicyService>();
 builder.Services.AddTransient<IClaimRequestService, ClaimRequestService>();
+builder.Services.AddTransient<INotificationService, NotificationService>();
 
 builder.Services.AddTransient<BaseInsurancePackageState>();
 builder.Services.AddTransient<InitialInsurancePackageState>();
