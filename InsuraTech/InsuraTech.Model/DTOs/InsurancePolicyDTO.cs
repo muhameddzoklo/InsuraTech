@@ -15,6 +15,7 @@ namespace InsuraTech.Model.DTOs
 
         public bool IsActive { get; set; }
         public bool HasActiveClaimRequest { get; set; }
+        public bool IsNotificationSent { get; set; }
         public InsurancePackageDTO InsurancePackage { get; set; }
         public ClientDTO Client { get; set; }
        // public ICollection<ClaimRequestDTO> ClaimRequests { get; set; } = new List<ClaimRequestDTO>();

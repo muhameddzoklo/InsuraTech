@@ -4,6 +4,8 @@ import 'package:insuratech_desktop/providers/auth_provider.dart';
 import 'package:insuratech_desktop/providers/claim_request_provider.dart';
 import 'package:insuratech_desktop/providers/clients_provider.dart';
 import 'package:insuratech_desktop/providers/insurance_package_provider.dart';
+import 'package:insuratech_desktop/providers/insurance_policy_provider.dart';
+import 'package:insuratech_desktop/providers/notification_provider.dart';
 import 'package:insuratech_desktop/providers/roles_provider.dart';
 import 'package:insuratech_desktop/providers/users_provider.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
@@ -20,6 +22,8 @@ void main() {
         ChangeNotifierProvider(create: (_) => ClientsProvider()),
         ChangeNotifierProvider(create: (_) => RolesProvider()),
         ChangeNotifierProvider(create: (_) => ClaimRequestProvider()),
+        ChangeNotifierProvider(create: (_) => InsurancePolicyProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: const MyApp(),
     ),

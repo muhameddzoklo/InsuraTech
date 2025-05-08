@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_desktop/providers/utils.dart';
-import 'package:intl/intl.dart';
 import 'package:insuratech_desktop/layouts/master_screen.dart';
 import 'package:insuratech_desktop/models/claim_request.dart';
 import 'package:insuratech_desktop/providers/claim_request_provider.dart';

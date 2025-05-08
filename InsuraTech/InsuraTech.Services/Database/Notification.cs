@@ -8,12 +8,15 @@ using System.Threading.Tasks;
 
 namespace InsuraTech.Services.Database
 {
-    public partial class Notification:BaseEntity
+    public partial class Notification : BaseEntity
     {
         public int NotificationId { get; set; }
-        public int UserId { get; set; }
-        [ForeignKey("UserId")]
-        public virtual User User { get; set; } = null!;
+
+        public int ClientId { get; set; }
+        public virtual Client Client { get; set; } = null!;
+
+        public int InsurancePolicyId { get; set; }
+        public virtual InsurancePolicy InsurancePolicy { get; set; } = null!;
         public string? Message { get; set; }
         public DateTime? SentAt { get; set; }
         public bool? IsRead { get; set; }

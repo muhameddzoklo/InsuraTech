@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InsuraTech.Services.Migrations
 {
     [DbContext(typeof(InsuraTechContext))]
-    [Migration("20250427155149_InitialCreate")]
+    [Migration("20250507134419_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -299,6 +299,9 @@ namespace InsuraTech.Services.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsNotificationSent")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -320,6 +323,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePackageId = 1,
                             IsActive = true,
                             IsDeleted = false,
+                            IsNotificationSent = false,
                             StartDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -331,6 +335,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePackageId = 2,
                             IsActive = true,
                             IsDeleted = false,
+                            IsNotificationSent = false,
                             StartDate = new DateTime(2025, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -342,6 +347,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePackageId = 3,
                             IsActive = true,
                             IsDeleted = false,
+                            IsNotificationSent = false,
                             StartDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -353,6 +359,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePackageId = 1,
                             IsActive = false,
                             IsDeleted = false,
+                            IsNotificationSent = false,
                             StartDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -364,6 +371,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePackageId = 2,
                             IsActive = true,
                             IsDeleted = false,
+                            IsNotificationSent = false,
                             StartDate = new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -406,8 +414,14 @@ namespace InsuraTech.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
 
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("InsurancePolicyId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -421,12 +435,11 @@ namespace InsuraTech.Services.Migrations
                     b.Property<DateTime?>("SentAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("NotificationId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("InsurancePolicyId");
 
                     b.ToTable("Notifications");
                 });
@@ -788,13 +801,21 @@ namespace InsuraTech.Services.Migrations
 
             modelBuilder.Entity("InsuraTech.Services.Database.Notification", b =>
                 {
-                    b.HasOne("InsuraTech.Services.Database.User", "User")
+                    b.HasOne("InsuraTech.Services.Database.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.HasOne("InsuraTech.Services.Database.InsurancePolicy", "InsurancePolicy")
+                        .WithMany()
+                        .HasForeignKey("InsurancePolicyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("InsurancePolicy");
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.Transaction", b =>

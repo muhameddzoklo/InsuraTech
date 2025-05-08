@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InsuraTech.API.Controllers
 {
-    public class ClaimRequestController : BaseCRUDControllerAsync<ClaimRequestDTO, ClaimRequestSearchObject, ClaimRequestInsertRequest, ClaimRequestUpdateRequest>
+    public class NotificationController : BaseCRUDControllerAsync<NotificationDTO, NotificationSearchObject, NotificationInsertRequest, NotificationUpdateRequest>
     {
-        public ClaimRequestController(IClaimRequestService service) : base(service)
+        public NotificationController(INotificationService service) : base(service)
         {
         }
 

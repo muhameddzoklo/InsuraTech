@@ -54,11 +54,11 @@ namespace InsuraTech.Services.Database
                 new InsurancePackage { InsurancePackageId = 3, Name = "Premium Health Insurance", Description = "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.", Price = 499.00m, Picture = null, StateMachine = "draft",DurationDays = 180 }
             );
             modelBuilder.Entity<InsurancePolicy>().HasData(
-             new InsurancePolicy { InsurancePolicyId = 1, InsurancePackageId = 1, ClientId = 1, StartDate = new DateTime(2025, 1, 1), EndDate = new DateTime(2026, 1, 1), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false },
-             new InsurancePolicy { InsurancePolicyId = 2, InsurancePackageId = 2, ClientId = 1, StartDate = new DateTime(2025, 2, 15), EndDate = new DateTime(2025, 5, 15), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false },
-             new InsurancePolicy { InsurancePolicyId = 3, InsurancePackageId = 3, ClientId = 2, StartDate = new DateTime(2025, 3, 1), EndDate = new DateTime(2025, 8, 28), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false },
-             new InsurancePolicy { InsurancePolicyId = 4, InsurancePackageId = 1, ClientId = 2, StartDate = new DateTime(2025, 4, 1), EndDate = new DateTime(2026, 4, 1), IsActive = false, IsDeleted = false, HasActiveClaimRequest = false },
-             new InsurancePolicy { InsurancePolicyId = 5, InsurancePackageId = 2, ClientId = 3, StartDate = new DateTime(2025, 5, 20), EndDate = new DateTime(2025, 8, 18), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false }
+             new InsurancePolicy { InsurancePolicyId = 1, InsurancePackageId = 1, ClientId = 1, StartDate = new DateTime(2025, 1, 1), EndDate = new DateTime(2026, 1, 1), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false, IsNotificationSent = false },
+             new InsurancePolicy { InsurancePolicyId = 2, InsurancePackageId = 2, ClientId = 1, StartDate = new DateTime(2025, 2, 15), EndDate = new DateTime(2025, 5, 15), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false, IsNotificationSent = false },
+             new InsurancePolicy { InsurancePolicyId = 3, InsurancePackageId = 3, ClientId = 2, StartDate = new DateTime(2025, 3, 1), EndDate = new DateTime(2025, 8, 28), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false, IsNotificationSent = false },
+             new InsurancePolicy { InsurancePolicyId = 4, InsurancePackageId = 1, ClientId = 2, StartDate = new DateTime(2025, 4, 1), EndDate = new DateTime(2026, 4, 1), IsActive = false, IsDeleted = false, HasActiveClaimRequest = false, IsNotificationSent = false },
+             new InsurancePolicy { InsurancePolicyId = 5, InsurancePackageId = 2, ClientId = 3, StartDate = new DateTime(2025, 5, 20), EndDate = new DateTime(2025, 8, 18), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false, IsNotificationSent = false }
             );
 
             modelBuilder.Entity<UserRole>()
@@ -85,12 +85,6 @@ namespace InsuraTech.Services.Database
                 .HasForeignKey(uf => uf.CustomerFeedbackId)
                 .OnDelete(DeleteBehavior.Restrict); // No action on delete
 
-            modelBuilder.Entity<Notification>()
-                .HasOne(n => n.User)
-                .WithMany()
-                .HasForeignKey(n => n.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // No action on delete
-
             modelBuilder.Entity<MessageLog>()
                 .HasOne(m => m.User)
                 .WithMany()
@@ -111,15 +105,22 @@ namespace InsuraTech.Services.Database
 
             modelBuilder.Entity<InsurancePolicy>()
                 .HasOne(i => i.InsurancePackage)
-                .WithMany()
-                .HasForeignKey(i => i.InsurancePackageId)
-                .OnDelete(DeleteBehavior.Restrict); // No action on delete
-
-            modelBuilder.Entity<InsurancePolicy>()
-                .HasOne(i => i.InsurancePackage)
                 .WithMany(x => x.Policies)
                 .HasForeignKey(i => i.InsurancePackageId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.Client)
+                .WithMany()
+                .HasForeignKey(n => n.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.InsurancePolicy)
+                .WithMany()
+                .HasForeignKey(n => n.InsurancePolicyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
         }
     }
