@@ -23,14 +23,15 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
   void initState() {
     super.initState();
     _policyProvider = context.read<InsurancePolicyProvider>();
-    _selectedDate = DateTime.now();
+    _selectedDate = null;
+
     _loadData();
   }
 
   Future<void> _loadData() async {
     final filter = {
       "isActive": true,
-      if (_selectedDate != null) "EndDate": _selectedDate!.toIso8601String(),
+      if (_selectedDate != null) "EndDateLTE": _selectedDate,
     };
 
     final result = await _policyProvider.get(
@@ -47,7 +48,7 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
+      initialDate: DateTime.now(),
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
     );
@@ -89,8 +90,25 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
                     foregroundColor: Colors.white,
                   ),
                 ),
+                const SizedBox(width: 12),
+                if (_selectedDate != null)
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _selectedDate = null;
+                      });
+                      _loadData();
+                    },
+
+                    label: const Text("Clear date"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade600,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
               ],
             ),
+
             const SizedBox(height: 20),
             Align(
               alignment: Alignment.topLeft,
