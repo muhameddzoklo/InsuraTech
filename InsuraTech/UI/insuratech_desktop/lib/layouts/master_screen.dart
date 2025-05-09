@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:insuratech_desktop/main.dart';
+import 'package:insuratech_desktop/providers/auth_provider.dart';
+import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:insuratech_desktop/screens/claim_requests_screen.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
 import 'package:insuratech_desktop/screens/notify_clients_screen.dart';
@@ -88,6 +91,36 @@ class _MasterScreenState extends State<MasterScreen> {
                   "Notify clients",
                   Icons.notifications,
                   const NotifyClientsScreen(),
+                ),
+                const Spacer(),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.logout, color: Colors.white),
+                  title: const Text(
+                    "Logout",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () async {
+                    final confirm = await showCustomConfirmDialog(
+                      context,
+                      title: "Logout",
+                      text: "Are you sure you want to logout?",
+                      confirmBtnColor: Colors.red,
+                    );
+                    if (confirm == false) {
+                      return;
+                    } else {
+                      AuthProvider.userId = null;
+                      AuthProvider.username = null;
+                      AuthProvider.password = null;
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                        (route) => false,
+                      );
+                    }
+                  },
                 ),
               ],
             ),

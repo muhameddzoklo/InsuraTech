@@ -9,6 +9,7 @@ using InsuraTech.Model.SearchObjects;
 using InsuraTech.Services.BaseServices;
 using InsuraTech.Services.Database;
 using MapsterMapper;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace InsuraTech.Services
@@ -16,6 +17,8 @@ namespace InsuraTech.Services
     public class NotificationService : BaseCRUDServiceAsync<NotificationDTO, NotificationSearchObject, Notification, NotificationInsertRequest, NotificationUpdateRequest>, INotificationService
     {
         IInsurancePolicyService _policyService;
+
+       // private readonly IHubContext<NotificationHub> _hubContext;
         public NotificationService(InsuraTechContext context, IMapper mapper, IInsurancePolicyService policyService ) : base(context, mapper)
         {
             _policyService = policyService;

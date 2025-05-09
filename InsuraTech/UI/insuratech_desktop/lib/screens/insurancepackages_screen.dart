@@ -590,90 +590,30 @@ class InsurancePackageCard extends StatelessWidget {
                       children: [
                         if (!isHidden)
                           ElevatedButton.icon(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder:
-                                    (context) => AlertDialog(
-                                      title: const Text("Are you sure?"),
-                                      content: const Text(
-                                        "Do you want to hide this package?",
-                                      ),
-                                      actionsAlignment:
-                                          MainAxisAlignment.center,
-                                      actions: [
-                                        SizedBox(
-                                          width: 100,
-                                          height: 30,
-                                          child: TextButton(
-                                            onPressed:
-                                                () =>
-                                                    Navigator.of(context).pop(),
-                                            style: TextButton.styleFrom(
-                                              backgroundColor: Colors.red,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                              ),
-                                              minimumSize:
-                                                  const Size.fromHeight(40),
-                                            ),
-                                            child: const Text("No"),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        SizedBox(
-                                          width: 100,
-                                          height: 30,
-                                          child: ElevatedButton.icon(
-                                            onPressed: () async {
-                                              Navigator.of(context).pop();
-                                              try {
-                                                await Provider.of<
-                                                  InsurancePackageProvider
-                                                >(
-                                                  context,
-                                                  listen: false,
-                                                ).ChangeState(
-                                                  package.insurancePackageId!,
-                                                  "hide",
-                                                );
-                                                onRefresh();
-                                              } catch (e) {
-                                                showErrorAlert(
-                                                  context,
-                                                  "Error editing package ${e.toString()} ",
-                                                );
-                                              }
-                                            },
-                                            icon: const Icon(
-                                              Icons.check,
-                                              size: 18,
-                                            ),
-                                            label: const Text("Yes"),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                    255,
-                                                    36,
-                                                    131,
-                                                    7,
-                                                  ),
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                              ),
-                                              minimumSize:
-                                                  const Size.fromHeight(40),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                            onPressed: () async {
+                              final result = await showCustomConfirmDialog(
+                                context,
+                                title: "Hide package",
+                                text: "Do you want to hide this package?",
                               );
+                              print(result);
+                              if (result == true) {
+                                try {
+                                  await Provider.of<InsurancePackageProvider>(
+                                    context,
+                                    listen: false,
+                                  ).ChangeState(
+                                    package.insurancePackageId!,
+                                    "hide",
+                                  );
+                                  onRefresh();
+                                } catch (e) {
+                                  showErrorAlert(
+                                    context,
+                                    "Error editing package ${e.toString()} ",
+                                  );
+                                }
+                              }
                             },
                             icon: const Icon(Icons.visibility_off),
                             label: const Text("Hide"),
@@ -702,92 +642,29 @@ class InsurancePackageCard extends StatelessWidget {
                           ),
                           ElevatedButton.icon(
                             onPressed: () async {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder:
-                                    (context) => AlertDialog(
-                                      title: const Text("Are you sure?"),
-                                      content: const Text(
-                                        "Do you want to delete this package?",
-                                      ),
-                                      actionsAlignment:
-                                          MainAxisAlignment.center,
-                                      actions: [
-                                        SizedBox(
-                                          width: 100,
-                                          height: 30,
-                                          child: TextButton(
-                                            onPressed:
-                                                () =>
-                                                    Navigator.of(context).pop(),
-                                            style: TextButton.styleFrom(
-                                              backgroundColor: Colors.red,
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                              ),
-                                              minimumSize:
-                                                  const Size.fromHeight(40),
-                                            ),
-                                            child: const Text("No"),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        SizedBox(
-                                          width: 100,
-                                          height: 30,
-                                          child: ElevatedButton.icon(
-                                            onPressed: () async {
-                                              Navigator.of(context).pop();
-                                              try {
-                                                await Provider.of<
-                                                  InsurancePackageProvider
-                                                >(
-                                                  context,
-                                                  listen: false,
-                                                ).delete(
-                                                  package.insurancePackageId!,
-                                                );
-                                                onRefresh();
-                                                showSuccessAlert(
-                                                  context,
-                                                  "Package deleted successfully",
-                                                );
-                                              } catch (e) {
-                                                showErrorAlert(
-                                                  context,
-                                                  "Error deliting package ${e.toString()} ",
-                                                );
-                                              }
-                                            },
-                                            icon: const Icon(
-                                              Icons.check,
-                                              size: 18,
-                                            ),
-                                            label: const Text("Yes"),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                    255,
-                                                    36,
-                                                    131,
-                                                    7,
-                                                  ),
-                                              foregroundColor: Colors.white,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                              ),
-                                              minimumSize:
-                                                  const Size.fromHeight(40),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                              final result = await showCustomConfirmDialog(
+                                context,
+                                title: "Package delete",
+                                text: "Do you want to delete this package?",
                               );
+                              if (result == true) {
+                                try {
+                                  await Provider.of<InsurancePackageProvider>(
+                                    context,
+                                    listen: false,
+                                  ).delete(package.insurancePackageId!);
+                                  onRefresh();
+                                  showSuccessAlert(
+                                    context,
+                                    "Package deleted successfully",
+                                  );
+                                } catch (e) {
+                                  showErrorAlert(
+                                    context,
+                                    "Error deliting package ${e.toString()} ",
+                                  );
+                                }
+                              }
                             },
                             icon: const Icon(Icons.delete),
                             label: const Text("Delete"),

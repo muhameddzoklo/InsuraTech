@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace InsuraTech.Services.Database
 {
-    public partial class InsurancePackage:BaseEntity
+    public partial class InsurancePackage : BaseEntity
     {
         public int InsurancePackageId { get; set; }
 
