@@ -11,6 +11,7 @@ class User {
   String? phoneNumber;
   String? username;
   bool? isActive;
+  String? profilePicture;
   List<UserRole>? userRoles;
 
   User();

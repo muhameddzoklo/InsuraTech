@@ -12,6 +12,18 @@ namespace InsuraTech.API.Controllers
         public ClaimRequestController(IClaimRequestService service) : base(service)
         {
         }
+        [HttpGet("status-options")]
+        public IActionResult GetStatusOptions()
+        {
+            var statusOptions = new List<string>
+            {
+                "In progress",
+                "Accepted",
+                "Declined"
+            };
+
+            return Ok(statusOptions);
+        }
 
     }
 }

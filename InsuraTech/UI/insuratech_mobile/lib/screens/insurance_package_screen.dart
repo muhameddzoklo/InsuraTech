@@ -28,12 +28,14 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
 
   Future<void> _loadPackages() async {
     try {
-      final result = await _insurancePackageProvider.get(retrieveAll: true);
+      final result = await _insurancePackageProvider.get();
+      if (!mounted) return;
       setState(() {
         _packages = result.resultList;
         isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => isLoading = false);
       showErrorAlert(context, "Error catching packages: ${e.toString()}");
     }

@@ -15,6 +15,7 @@ namespace InsuraTech.Model.Requests
         public string? PhoneNumber { get; set; }
 
         public string Username { get; set; } = null!;
+        public byte[]? ProfilePicture { get; set; }
         public int RoleId { get; set; }
     }
 }

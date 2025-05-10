@@ -101,6 +101,7 @@ namespace InsuraTech.Services.Migrations
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordSalt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProfilePicture = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -342,9 +343,9 @@ namespace InsuraTech.Services.Migrations
                 columns: new[] { "ClientId", "DeletionTime", "Email", "FirstName", "IsActive", "IsDeleted", "LastName", "PasswordHash", "PasswordSalt", "PhoneNumber", "ProfilePicture", "RegistrationDate", "Username" },
                 values: new object[,]
                 {
-                    { 1, null, "client@mail.com", "Client", true, false, "Client", "8OB3D2RPgagepehex0hLz6HdM1Q=", "mGr/PGoIDO5ILaJYl3MvJg==", "000000003", null, new DateTime(2025, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified), "client" },
-                    { 2, null, "client1@mail.com", "Client1", true, false, "Client1", "8OB3D2RPgagepehex0hLz6HdM1Q=", "mGr/PGoIDO5ILaJYl3MvJg==", "000000004", null, new DateTime(2025, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified), "client1" },
-                    { 3, null, "client2@mail.com", "Client2", true, false, "Client2", "8OB3D2RPgagepehex0hLz6HdM1Q=", "mGr/PGoIDO5ILaJYl3MvJg==", "000000005", null, new DateTime(2025, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified), "client2" }
+                    { 1, null, "john.doe@example.com", "John", true, false, "Doe", "8OB3D2RPgagepehex0hLz6HdM1Q=", "mGr/PGoIDO5ILaJYl3MvJg==", "068225599", null, new DateTime(2024, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified), "mobile" },
+                    { 2, null, "clara.wong@example.com", "Clara", true, false, "Wong", "8OB3D2RPgagepehex0hLz6HdM1Q=", "mGr/PGoIDO5ILaJYl3MvJg==", "068113399", null, new DateTime(2024, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified), "claraW" },
+                    { 3, null, "martin.taylor@example.com", "Martin", true, false, "Taylor", "8OB3D2RPgagepehex0hLz6HdM1Q=", "mGr/PGoIDO5ILaJYl3MvJg==", "068224400", null, new DateTime(2024, 4, 16, 22, 52, 3, 0, DateTimeKind.Unspecified), "martinT" }
                 });
 
             migrationBuilder.InsertData(
@@ -354,7 +355,12 @@ namespace InsuraTech.Services.Migrations
                 {
                     { 1, null, "Essential coverage for your vehicle, including third-party liability and collision coverage.", 365, false, "Basic Car Insurance", null, 199.99m, "active" },
                     { 2, null, "Extensive protection for your home covering fire, theft, natural disasters, and personal liability.", 90, false, "Comprehensive Home Insurance", null, 349.50m, "active" },
-                    { 3, null, "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.", 180, false, "Premium Health Insurance", null, 499.00m, "draft" }
+                    { 3, null, "Premium medical coverage offering extensive benefits including hospitalization, dental care, and vision care.", 180, false, "Premium Health Insurance", null, 499.00m, "active" },
+                    { 4, null, "Covers medical emergencies, trip cancellations, and lost luggage during travel abroad.", 30, false, "Travel Insurance", null, 129.99m, "active" },
+                    { 5, null, "Protect your furry friends with coverage for vet bills, surgeries, and medications.", 180, false, "Pet Insurance", null, 89.99m, "active" },
+                    { 6, null, "Coverage for accidental damage, theft, and repairs for your electronic devices.", 365, false, "Electronics Protection Plan", null, 59.99m, "active" },
+                    { 7, null, "Specialized coverage for motorcycle riders including collision and liability protection.", 270, false, "Motorcycle Insurance", null, 149.99m, "active" },
+                    { 8, null, "Affordable health insurance tailored for students with coverage for regular checkups and emergencies.", 180, false, "Student Health Plan", null, 179.99m, "draft" }
                 });
 
             migrationBuilder.InsertData(
@@ -369,13 +375,13 @@ namespace InsuraTech.Services.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "UserId", "DeletionTime", "Email", "FirstName", "IsActive", "IsDeleted", "LastName", "PasswordHash", "PasswordSalt", "PhoneNumber", "Username" },
+                columns: new[] { "UserId", "DeletionTime", "Email", "FirstName", "IsActive", "IsDeleted", "LastName", "PasswordHash", "PasswordSalt", "PhoneNumber", "ProfilePicture", "Username" },
                 values: new object[,]
                 {
-                    { 1, null, "1", "1", true, false, "1", "XVDI7NKoOCtMiSrKR1uSSGWvA7o=", "NHVv+8KhAiQqFlz7k1P53Q==", "1", "1" },
-                    { 2, null, "admin@mail.com", "Admin", true, false, "Admin", "+zHjeAMut/qVPctS7uaREf4lN1w=", "sOQz4gFWKGh9SeOhqXpqyw==", "000000000", "admin" },
-                    { 3, null, "agent@mail.com", "Agent", true, false, "Agent", "9hkvRabWkVOkr+Hqr52lzoMKiKo=", "2ICZgybWHKj+fYpTc6/19g==", "000000001", "agent" },
-                    { 4, null, "assistant@mail.com", "Assistant", true, false, "Assistant", "sfrZuf7hqepHmMV6gt83a/RaB9g=", "Ct53DBogAC4vUxlb2WodgQ==", "000000002", "assistant" }
+                    { 1, null, "1", "1", true, false, "1", "XVDI7NKoOCtMiSrKR1uSSGWvA7o=", "NHVv+8KhAiQqFlz7k1P53Q==", "1", null, "1" },
+                    { 2, null, "admin@mail.com", "Admin", true, false, "Admin", "+zHjeAMut/qVPctS7uaREf4lN1w=", "sOQz4gFWKGh9SeOhqXpqyw==", "000000000", null, "admin" },
+                    { 3, null, "agent@mail.com", "Agent", true, false, "Agent", "9hkvRabWkVOkr+Hqr52lzoMKiKo=", "2ICZgybWHKj+fYpTc6/19g==", "000000001", null, "agent" },
+                    { 4, null, "assistant@mail.com", "Assistant", true, false, "Assistant", "sfrZuf7hqepHmMV6gt83a/RaB9g=", "Ct53DBogAC4vUxlb2WodgQ==", "000000002", null, "assistant" }
                 });
 
             migrationBuilder.InsertData(
@@ -383,11 +389,12 @@ namespace InsuraTech.Services.Migrations
                 columns: new[] { "InsurancePolicyId", "ClientId", "DeletionTime", "EndDate", "HasActiveClaimRequest", "InsurancePackageId", "IsActive", "IsDeleted", "IsNotificationSent", "StartDate" },
                 values: new object[,]
                 {
-                    { 1, 1, null, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 1, true, false, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 1, null, new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 2, true, false, false, new DateTime(2025, 2, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 1, 1, null, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, 1, true, false, false, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 1, null, new DateTime(2025, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 2, true, false, false, new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 3, 2, null, new DateTime(2025, 8, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 3, true, false, false, new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, 2, null, new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 1, false, false, false, new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, 3, null, new DateTime(2025, 8, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 2, true, false, false, new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 4, 2, null, new DateTime(2026, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), true, 1, true, false, false, new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, 3, null, new DateTime(2025, 8, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), true, 2, true, false, false, new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 6, 1, null, new DateTime(2025, 3, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), false, 3, false, false, false, new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -399,6 +406,18 @@ namespace InsuraTech.Services.Migrations
                     { 2, new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified), null, false, 1, 2 },
                     { 3, new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified), null, false, 2, 3 },
                     { 4, new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified), null, false, 3, 4 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ClaimRequests",
+                columns: new[] { "ClaimRequestId", "Comment", "DeletionTime", "Description", "EstimatedAmount", "InsurancePolicyId", "IsDeleted", "Status", "SubmittedAt" },
+                values: new object[,]
+                {
+                    { 1, null, null, "Windshield damage due to hail.", 350.00m, 1, false, "In progress", new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, "To high ammount requested.", null, "Theft of insured vehicle.", 5000.00m, 2, false, "Declined", new DateTime(2025, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, "Assessment required.", null, "Fire damage in kitchen.", 220.00m, 3, false, "Accepted", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, null, null, "Roof collapsed during storm.", 4000.00m, 4, false, "In progress", new DateTime(2025, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, null, null, "Broken window caused by vandalism.", 120.00m, 5, false, "In progress", new DateTime(2025, 5, 28, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.CreateIndex(

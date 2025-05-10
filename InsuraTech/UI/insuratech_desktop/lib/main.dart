@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:insuratech_desktop/models/claim_request.dart';
 import 'package:insuratech_desktop/providers/auth_provider.dart';
 import 'package:insuratech_desktop/providers/claim_request_provider.dart';
 import 'package:insuratech_desktop/providers/clients_provider.dart';
@@ -12,8 +11,14 @@ import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:window_manager/window_manager.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+  windowManager.waitUntilReadyToShow().then((_) async {
+    await windowManager.setMinimumSize(const Size(1000, 600));
+  });
   runApp(
     MultiProvider(
       providers: [
