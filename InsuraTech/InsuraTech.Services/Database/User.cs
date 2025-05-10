@@ -19,6 +19,8 @@ namespace InsuraTech.Services.Database
         public string? PhoneNumber { get; set; }
         public string PasswordHash { get; set; } = null!;
         public string PasswordSalt { get; set; } = null!;
+
+        public byte[]? ProfilePicture { get; set; }
         public bool IsActive { get; set; }
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     }

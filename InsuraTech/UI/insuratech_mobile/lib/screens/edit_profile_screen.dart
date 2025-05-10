@@ -66,6 +66,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       final bytes = await picked.readAsBytes();
+      if (!mounted) return;
       setState(() {
         _imageFile = File(picked.path);
         _imageBytes = bytes;

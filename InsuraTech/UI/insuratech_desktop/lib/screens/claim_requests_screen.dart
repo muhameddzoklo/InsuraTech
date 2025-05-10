@@ -17,6 +17,16 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
   DateTime? _toDate;
   List<ClaimRequest> _requests = [];
   bool _isLoading = false;
+  List<String> _statusOptions = [];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_isLoading) {
+      _loadStatusOptions();
+    }
+  }
 
   Future<void> _pickDate({required bool isFrom}) async {
     final DateTime? picked = await showDatePicker(
@@ -35,6 +45,18 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
       });
       await _fetchRequests();
     }
+  }
+
+  Future<void> _loadStatusOptions() async {
+    final claimRequestProvider = Provider.of<ClaimRequestProvider>(
+      context,
+      listen: false,
+    );
+    final options = await claimRequestProvider.getStatusOptions();
+    if (!mounted) return;
+    setState(() {
+      _statusOptions = options;
+    });
   }
 
   Future<void> _fetchRequests() async {
@@ -63,6 +85,7 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
   @override
   void initState() {
     super.initState();
+
     _fetchRequests();
   }
 
@@ -71,6 +94,8 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
     final amountController = TextEditingController(
       text: request.estimatedAmount?.toStringAsFixed(2) ?? "",
     );
+
+    final _formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
@@ -83,158 +108,177 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
               constraints: const BoxConstraints(maxWidth: 400),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Process Request",
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Process Request",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Description",
                           style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.brown.shade800,
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF2F2F2),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Description",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.brown.shade800,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF2F2F2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        request.description ?? "No description provided.",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black87,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: amountController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: "Estimated Amount",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: commentController,
-                      maxLines: 2,
-                      decoration: const InputDecoration(
-                        labelText: "Comment (required)",
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: () async {
-                            if (commentController.text.isEmpty) {
-                              showErrorAlert(context, "Comment is required");
-                              return;
-                            }
-
-                            try {
-                              final updatedRequest = {
-                                "status": "accepted",
-                                "comment": commentController.text,
-                                "estimatedAmount":
-                                    double.tryParse(amountController.text) ?? 0,
-                              };
-
-                              await Provider.of<ClaimRequestProvider>(
-                                context,
-                                listen: false,
-                              ).update(request.claimRequestId!, updatedRequest);
-
-                              Navigator.of(context).pop();
-                              showSuccessAlert(
-                                context,
-                                "Request accepted successfully",
-                              );
-                              _fetchRequests();
-                            } catch (e) {
-                              showErrorAlert(
-                                context,
-                                "Error accepting request ${e.toString()}",
-                              );
-                            }
-                          },
-                          icon: const Icon(Icons.check),
-                          label: const Text("Accept"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green.shade600,
-                            foregroundColor: Colors.white,
+                        child: Text(
+                          request.description ?? "No description provided.",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                            height: 1.4,
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        ElevatedButton.icon(
-                          onPressed: () async {
-                            if (commentController.text.isEmpty) {
-                              showErrorAlert(context, "Comment is required");
-                              return;
-                            }
-
-                            try {
-                              final updatedRequest = {
-                                "status": "declined",
-                                "comment": commentController.text,
-                                "estimatedAmount": request.estimatedAmount,
-                              };
-
-                              await Provider.of<ClaimRequestProvider>(
-                                context,
-                                listen: false,
-                              ).update(request.claimRequestId!, updatedRequest);
-
-                              Navigator.of(context).pop();
-                              showSuccessAlert(
-                                context,
-                                "Request declined successfully",
-                              );
-                              _fetchRequests();
-                            } catch (e) {
-                              showErrorAlert(
-                                context,
-                                "Error declining request: ${e.toString()}",
-                              );
-                            }
-                          },
-                          icon: const Icon(Icons.close),
-                          label: const Text("Decline"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red.shade600,
-                            foregroundColor: Colors.white,
-                          ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: amountController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: "Estimated Amount",
+                          border: OutlineInputBorder(),
                         ),
-                      ],
-                    ),
-                  ],
+                        validator: (value) {
+                          if (value != null && value.trim().isNotEmpty) {
+                            final parsed = double.tryParse(value);
+                            if (parsed == null || parsed < 0) {
+                              return "Enter a valid amount";
+                            }
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: commentController,
+                        maxLines: 2,
+                        decoration: const InputDecoration(
+                          labelText: "Comment (required)",
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return "Comment is required.";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              if (!_formKey.currentState!.validate()) return;
+
+                              try {
+                                final updatedRequest = {
+                                  "isAccepted": true,
+                                  "comment": commentController.text,
+                                  "estimatedAmount":
+                                      double.tryParse(amountController.text) ??
+                                      0,
+                                };
+
+                                await Provider.of<ClaimRequestProvider>(
+                                  context,
+                                  listen: false,
+                                ).update(
+                                  request.claimRequestId!,
+                                  updatedRequest,
+                                );
+
+                                Navigator.of(context).pop();
+                                showSuccessAlert(
+                                  context,
+                                  "Request accepted successfully",
+                                );
+                                _fetchRequests();
+                              } catch (e) {
+                                showErrorAlert(
+                                  context,
+                                  "Error accepting request: ${e.toString()}",
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.check),
+                            label: const Text("Accept"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green.shade600,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              if (!_formKey.currentState!.validate()) return;
+
+                              try {
+                                final updatedRequest = {
+                                  "isAccepted": false,
+                                  "comment": commentController.text,
+                                  "estimatedAmount": request.estimatedAmount,
+                                };
+
+                                await Provider.of<ClaimRequestProvider>(
+                                  context,
+                                  listen: false,
+                                ).update(
+                                  request.claimRequestId!,
+                                  updatedRequest,
+                                );
+
+                                Navigator.of(context).pop();
+                                showSuccessAlert(
+                                  context,
+                                  "Request declined successfully",
+                                );
+                                _fetchRequests();
+                              } catch (e) {
+                                showErrorAlert(
+                                  context,
+                                  "Error declining request: ${e.toString()}",
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.close),
+                            label: const Text("Decline"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red.shade600,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -295,11 +339,11 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
                       itemBuilder: (context, index) {
                         final r = _requests[index];
                         final isProcessed =
-                            r.status == "accepted" || r.status == "declined";
+                            r.status == "Accepted" || r.status == "Declined";
                         final statusColor =
-                            r.status == "accepted"
+                            r.status == "Accepted"
                                 ? Colors.green
-                                : r.status == "declined"
+                                : r.status == "Declined"
                                 ? Colors.red
                                 : Colors.blue;
 
@@ -365,7 +409,7 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
                                 Align(
                                   alignment: Alignment.center,
                                   child:
-                                      r.status == "in progress"
+                                      r.status == "In progress"
                                           ? ElevatedButton(
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.orange,

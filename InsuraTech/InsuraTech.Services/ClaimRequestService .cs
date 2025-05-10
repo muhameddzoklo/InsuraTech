@@ -72,6 +72,13 @@ namespace InsuraTech.Services
             }
           
         }
+        public override async Task BeforeUpdateAsync(ClaimRequestUpdateRequest request, ClaimRequest entity, CancellationToken cancellationToken = default)
+        {
+            if (request.IsAccepted.HasValue)
+            {
+                entity.Status = request.IsAccepted.Value ? "Accepted" : "Declined";
+            }
+        }
         public override async Task AfterUpdateAsync(ClaimRequestUpdateRequest request, ClaimRequest entity, CancellationToken cancellationToken = default)
         {
             var policy = await Context.Set<InsurancePolicy>().FirstOrDefaultAsync(x => x.InsurancePolicyId == entity.InsurancePolicyId);

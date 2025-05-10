@@ -45,6 +45,7 @@ class _InsurancePackageDetailsScreenState
       lastDate: DateTime(now.year + 5),
     );
     if (picked != null) {
+      if (!mounted) return;
       setState(() {
         _startDate = picked;
         _validationMessage = null;

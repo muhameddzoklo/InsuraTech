@@ -71,7 +71,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
       for (var item in data['resultList']) {
         result.resultList.add(fromJson(item));
       }
-      print(uri);
       return result;
     } else {
       throw new Exception("Unknown error");

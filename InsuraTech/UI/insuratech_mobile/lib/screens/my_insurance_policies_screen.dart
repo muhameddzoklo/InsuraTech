@@ -38,12 +38,13 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
         sortDirection: "desc",
         filter: {"ClientUsername": AuthProvider.username},
       );
-
+      if (!mounted) return;
       setState(() {
         _policies = searchResult.resultList;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
       showErrorAlert(context, "Failed to load policies: ${e.toString()}");
     }

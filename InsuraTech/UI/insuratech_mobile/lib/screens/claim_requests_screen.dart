@@ -32,7 +32,7 @@ class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
       final searchResult = await claimRequestProvider.get(
         filter: {"Username": AuthProvider.username},
       );
-
+      if (!mounted) return;
       setState(() {
         _claimRequests = searchResult.resultList;
         _isLoading = false;
@@ -98,17 +98,22 @@ class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Claim Request",
+                                  claim
+                                          .insurancePolicy!
+                                          .insurancePackage!
+                                          .name ??
+                                      "-",
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.brown,
                                   ),
                                 ),
-                                _buildStatusBadge(claim.status),
                               ],
                             ),
                             const SizedBox(height: 16),
+                            _buildStatusBadge(claim.status),
+                            SizedBox(height: 16),
                             Text(
                               "Description: ${claim.description ?? 'N/A'}",
                               style: const TextStyle(

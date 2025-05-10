@@ -126,6 +126,7 @@ class _RenewInsurancePolicyScreenState
     );
 
     if (pickedDate != null) {
+      if (!mounted) return;
       setState(() {
         _selectedStartDate = pickedDate;
         _calculatedEndDate = pickedDate.add(

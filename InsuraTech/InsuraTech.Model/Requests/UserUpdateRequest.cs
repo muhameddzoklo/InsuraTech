@@ -18,5 +18,7 @@ namespace InsuraTech.Model.Requests
         public string? Password { get; set; }
 
         public string? PasswordConfirmation { get; set; }
+
+        public byte[]? ProfilePicture { get; set; }
     }
 }

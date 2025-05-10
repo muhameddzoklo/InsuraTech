@@ -44,13 +44,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           showErrorAlert(context, "Error decoding picture: ${e.toString()}");
         }
       }
-
+      if (!mounted) return;
       setState(() {
         _client = result;
         _previewImage = imageBytes;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
       showErrorAlert(context, "Error loading profile: ${e.toString()}");
     }
@@ -73,10 +74,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         children: [
           CircleAvatar(
             radius: 50,
-            backgroundImage: _previewImage != null
-                ? MemoryImage(_previewImage!)
-                : const AssetImage('assets/images/placeholder.png')
-                    as ImageProvider,
+            backgroundImage:
+                _previewImage != null
+                    ? MemoryImage(_previewImage!)
+                    : const AssetImage('assets/images/placeholder.png')
+                        as ImageProvider,
           ),
           const SizedBox(height: 20),
           Text(

@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/main.dart';
 import 'package:insuratech_mobile/providers/client_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
@@ -35,6 +34,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       final bytes = await picked.readAsBytes();
+      if (!mounted) return;
       setState(() {
         _imageFile = File(picked.path);
         _imageBytes = bytes;
