@@ -5,6 +5,7 @@ import 'package:insuratech_mobile/providers/claim_request_provider.dart';
 import 'package:insuratech_mobile/providers/client_provider.dart';
 import 'package:insuratech_mobile/providers/insurance_package_provider.dart';
 import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
+import 'package:insuratech_mobile/providers/notification_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/insurance_package_screen.dart';
 import 'package:insuratech_mobile/screens/register_screen.dart';
@@ -18,6 +19,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => InsurancePolicyProvider()),
         ChangeNotifierProvider(create: (_) => ClaimRequestProvider()),
         ChangeNotifierProvider(create: (_) => ClientProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: const MyApp(),
     ),

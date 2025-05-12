@@ -33,7 +33,9 @@ namespace InsuraTech.Services
             {
                 query = query.Where(x => x.IsRead == false);
             }
-            query = query.Where(x => !x.IsDeleted);
+            query = query.Where(x => !x.IsDeleted).Include(x=>x.InsurancePolicy).ThenInclude(x=>x.InsurancePackage);
+
+
 
             return query;
         }
