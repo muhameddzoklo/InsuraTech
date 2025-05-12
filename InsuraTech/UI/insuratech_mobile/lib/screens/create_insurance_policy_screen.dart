@@ -5,6 +5,7 @@ import 'package:insuratech_mobile/providers/auth_provider.dart';
 import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/my_insurance_policies_screen.dart';
+import 'package:flutter_paypal_payment/flutter_paypal_payment.dart';
 import 'package:provider/provider.dart';
 
 class CreateInsurancePolicyScreen extends StatelessWidget {
@@ -87,36 +88,114 @@ class CreateInsurancePolicyScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () async {
-                  try {
-                    final insurancePolicyProvider =
-                        Provider.of<InsurancePolicyProvider>(
-                          context,
-                          listen: false,
-                        );
+                  var client_Id =
+                      "AUioWKe4n7nFVCDOI-AC2lITkgg4AzSLhpk0FW0-97f146rI8LGznTUsVRuq3d-_usCms_CWK-zD8qFp";
+                  var secret =
+                      "EB4sDeZKe5ewKLO38ppQxHCv0jBl4u46mYLhG4xGFRCbmqhE70Ucg5YhloX8pcV1GYc9NoVsgh2VorWa";
 
-                    final request = {
-                      'insurancePackageId': package.insurancePackageId!,
-                      'clientId': clientId,
-                      'startDate': startDate.toIso8601String(),
-                      'endDate': endDate.toIso8601String(),
-                    };
-
-                    await insurancePolicyProvider.insert(request);
-
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder:
-                            (context) => MasterScreen(
-                              appBarTitle: "My Policies",
-                              showBackButton: false,
-                              child: MyInsurancePoliciesScreen(),
-                            ),
+                  if (client_Id == null || secret == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("PayPal credentials missing"),
                       ),
                     );
-                    showSuccessAlert(context, "Policy created successfully");
-                  } catch (e) {
-                    showErrorAlert(context, "Policy not created: ${e.toString()}");
+                    return;
                   }
+
+                  final insurancePolicy = package;
+                  final price = package.price?.toStringAsFixed(2) ?? "0.00";
+                  print(
+                    "clientid $client_Id, secret $secret, price ${package.price}, name ${package.name}",
+                  );
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => PaypalCheckoutView(
+                            sandboxMode: true,
+                            clientId: client_Id,
+                            secretKey: secret,
+                            transactions: [
+                              {
+                                "amount": {
+                                  "total": price,
+                                  "currency": "USD",
+                                  "details": {
+                                    "subtotal": price,
+                                    "shipping": "0",
+                                    "shipping_discount": 0,
+                                  },
+                                },
+                                "description": "Insurance policy payment",
+                                "item_list": {
+                                  "items": [
+                                    {
+                                      "name": insurancePolicy.name ?? "Policy",
+                                      "quantity": "1",
+                                      "price": price,
+                                      "currency": "USD",
+                                    },
+                                  ],
+                                },
+                              },
+                            ],
+
+                            note: "Thank you for your payment",
+                            onSuccess: (Map params) async {
+                              try {
+                                final insurancePolicyProvider =
+                                    Provider.of<InsurancePolicyProvider>(
+                                      context,
+                                      listen: false,
+                                    );
+
+                                final request = {
+                                  'insurancePackageId':
+                                      package.insurancePackageId!,
+                                  'clientId': clientId,
+                                  'startDate': startDate.toIso8601String(),
+                                  'endDate': endDate.toIso8601String(),
+                                };
+
+                                await insurancePolicyProvider.insert(request);
+
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => MasterScreen(
+                                          appBarTitle: "My Policies",
+                                          showBackButton: false,
+                                          child: MyInsurancePoliciesScreen(),
+                                        ),
+                                  ),
+                                );
+                                showSuccessAlert(
+                                  context,
+                                  "Policy created successfully",
+                                );
+                              } catch (e) {
+                                showErrorAlert(
+                                  context,
+                                  "Policy not created: ${e.toString()}",
+                                );
+                              }
+                              Navigator.pop(context, true);
+                              showSuccessAlert(context, "Payment successful");
+                            },
+                            onError: (error) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("Payment error: $error"),
+                                ),
+                              );
+                            },
+                            onCancel: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                    ),
+                  );
                 },
               ),
             ),

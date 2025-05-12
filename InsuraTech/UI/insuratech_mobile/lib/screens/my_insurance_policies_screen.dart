@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/layouts/master_screen.dart';
+import 'package:insuratech_mobile/models/insurance_policy.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
 import 'package:insuratech_mobile/providers/claim_request_provider.dart';
+import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/claim_requests_screen.dart';
 import 'package:insuratech_mobile/screens/renew_insurance_policy_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
-import 'package:insuratech_mobile/models/insurance_policy.dart';
 
 class MyInsurancePoliciesScreen extends StatefulWidget {
   const MyInsurancePoliciesScreen({super.key});
@@ -75,213 +75,93 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                     elevation: 5,
                     child: Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Stack(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                policy.insurancePackage?.name ?? "N/A",
-                                style: _titleStyle,
+                          Text(
+                            policy.insurancePackage?.name ?? "N/A",
+                            style: _titleStyle,
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isActive ? Colors.green : Colors.red,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              isActive ? 'Active' : 'Inactive',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Start Date: ${formatDateString(policy.startDate)}',
-                                style: _infoStyle,
-                              ),
-                              Text(
-                                'End Date: ${formatDateString(policy.endDate)}',
-                                style: _infoStyle,
-                              ),
-                              const SizedBox(height: 12),
-                              if (policy.isActive == true &&
-                                  startDate != null &&
-                                  startDate.isBefore(DateTime.now()))
-                                Center(
-                                  child:
-                                      policy.hasActiveClaimRequest == true
-                                          ? Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 20,
-                                              vertical: 5,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: const Color.fromARGB(
-                                                255,
-                                                77,
-                                                186,
-                                                237,
-                                              ).withOpacity(0.8),
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              border: Border.all(
-                                                color: const Color.fromARGB(
-                                                  255,
-                                                  77,
-                                                  186,
-                                                  237,
-                                                ),
-                                                width: 1.5,
-                                              ),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: const [
-                                                SizedBox(width: 8),
-                                                Text(
-                                                  'Claim in Progress',
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                          : ElevatedButton.icon(
-                                            onPressed: () {
-                                              _showClaimRequestDialog(
-                                                policy.insurancePolicyId!,
-                                              );
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.orange,
-                                              foregroundColor: Colors.white,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 22,
-                                                    vertical: 9,
-                                                  ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                            icon: const Icon(
-                                              Icons.add_circle,
-                                              size: 22,
-                                            ),
-                                            label: const Text(
-                                              'Claim Request',
-                                              style: TextStyle(fontSize: 16),
-                                            ),
-                                          ),
-                                )
-                              else if (isActive &&
-                                  startDate != null &&
-                                  startDate.isAfter(DateTime.now()))
-                                Center(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Container(
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Start Date: ${formatDateString(policy.startDate)}',
+                            style: _infoStyle,
+                          ),
+                          Text(
+                            'End Date: ${formatDateString(policy.endDate)}',
+                            style: _infoStyle,
+                          ),
+                          const SizedBox(height: 12),
+                          if (policy.isActive == true &&
+                              startDate != null &&
+                              startDate.isBefore(DateTime.now()))
+                            Center(
+                              child:
+                                  policy.hasActiveClaimRequest == true
+                                      ? Container(
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 8,
+                                          horizontal: 20,
+                                          vertical: 5,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: Colors.blueGrey.withOpacity(
-                                            0.8,
-                                          ), // Orange background with opacity
+                                          color: const Color.fromARGB(
+                                            255,
+                                            77,
+                                            186,
+                                            237,
+                                          ).withOpacity(0.8),
                                           borderRadius: BorderRadius.circular(
                                             20,
                                           ),
                                           border: Border.all(
-                                            color:
-                                                Colors
-                                                    .blueGrey, // Orange border
+                                            color: const Color.fromARGB(
+                                              255,
+                                              77,
+                                              186,
+                                              237,
+                                            ),
                                             width: 1.5,
                                           ),
                                         ),
-                                        child: Text(
-                                          'Policy starts from ${formatDateString(policy.startDate)}',
-                                          style: const TextStyle(
-                                            color: Colors.white, // White text
-                                            fontSize: 16,
+                                        child: const Text(
+                                          'Claim in Progress',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              else
-                                Center(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ElevatedButton.icon(
-                                        onPressed: () async {
-                                          final confirm =
-                                              await showCustomConfirmDialog(
-                                                context,
-                                                title: 'Confirm Deletion',
-                                                text:
-                                                    'Are you sure you want to delete this policy?',
-                                              );
-
-                                          if (confirm == true) {
-                                            try {
-                                              final insurancePolicyProvider =
-                                                  Provider.of<
-                                                    InsurancePolicyProvider
-                                                  >(context, listen: false);
-                                              await insurancePolicyProvider
-                                                  .delete(
-                                                    policy.insurancePolicyId!,
-                                                  );
-                                              showSuccessAlert(
-                                                context,
-                                                "Policy deleted successfully",
-                                              );
-                                              _fetchPolicies();
-                                            } catch (e) {
-                                              showErrorAlert(
-                                                context,
-                                                "Failed to delete policy: ${e.toString()}",
-                                              );
-                                            }
-                                          }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.redAccent,
-                                          foregroundColor: Colors.white,
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 18,
-                                            vertical: 10,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                        ),
-                                        icon: const Icon(
-                                          Icons.delete_outline,
-                                          size: 20,
-                                        ),
-                                        label: const Text('Delete'),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      ElevatedButton.icon(
+                                      )
+                                      : ElevatedButton.icon(
                                         onPressed: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (context) =>
-                                                      RenewInsurancePolicyScreen(
-                                                        policy: policy,
-                                                      ),
-                                            ),
+                                          _showClaimRequestDialog(
+                                            policy.insurancePolicyId!,
                                           );
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.green,
+                                          backgroundColor: Colors.orange,
                                           foregroundColor: Colors.white,
                                           padding: const EdgeInsets.symmetric(
-                                            horizontal: 18,
-                                            vertical: 10,
+                                            horizontal: 22,
+                                            vertical: 9,
                                           ),
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
@@ -290,37 +170,125 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                                           ),
                                         ),
                                         icon: const Icon(
-                                          Icons.refresh,
-                                          size: 20,
+                                          Icons.add_circle,
+                                          size: 22,
                                         ),
-                                        label: const Text('Renew'),
+                                        label: const Text(
+                                          'Claim Request',
+                                          style: TextStyle(fontSize: 16),
+                                        ),
                                       ),
-                                    ],
+                            )
+                          else if (isActive &&
+                              startDate != null &&
+                              startDate.isAfter(DateTime.now()))
+                            Center(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.blueGrey.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.blueGrey,
+                                    width: 1.5,
                                   ),
                                 ),
-                            ],
-                          ),
-                          Positioned(
-                            right: 0,
-                            top: 0,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isActive ? Colors.green : Colors.red,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                isActive ? 'Active' : 'Inactive',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                                child: Text(
+                                  'Policy starts from ${formatDateString(policy.startDate)}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
+                            )
+                          else
+                            Center(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: () async {
+                                      final confirm = await showCustomConfirmDialog(
+                                        context,
+                                        title: 'Confirm Deletion',
+                                        text:
+                                            'Are you sure you want to delete this policy?',
+                                      );
+
+                                      if (confirm == true) {
+                                        try {
+                                          final insurancePolicyProvider =
+                                              Provider.of<
+                                                InsurancePolicyProvider
+                                              >(context, listen: false);
+                                          await insurancePolicyProvider.delete(
+                                            policy.insurancePolicyId!,
+                                          );
+                                          showSuccessAlert(
+                                            context,
+                                            "Policy deleted successfully",
+                                          );
+                                          _fetchPolicies();
+                                        } catch (e) {
+                                          showErrorAlert(
+                                            context,
+                                            "Failed to delete policy: ${e.toString()}",
+                                          );
+                                        }
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.redAccent,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 18,
+                                        vertical: 10,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      size: 20,
+                                    ),
+                                    label: const Text('Delete'),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                                  RenewInsurancePolicyScreen(
+                                                    policy: policy,
+                                                  ),
+                                        ),
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 18,
+                                        vertical: 10,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    icon: const Icon(Icons.refresh, size: 20),
+                                    label: const Text('Renew'),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -424,7 +392,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                   } catch (e) {
                     showErrorAlert(
                       context,
-                      "Fail to caim request: ${e.toString()}",
+                      "Fail to claim request: ${e.toString()}",
                     );
                   }
                 }

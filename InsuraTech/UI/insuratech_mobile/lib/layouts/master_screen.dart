@@ -6,6 +6,8 @@ import 'package:insuratech_mobile/screens/claim_requests_screen.dart';
 import 'package:insuratech_mobile/screens/insurance_package_screen.dart';
 import 'package:insuratech_mobile/screens/my_insurance_policies_screen.dart';
 import 'package:insuratech_mobile/screens/my_profile_screen.dart';
+import 'package:insuratech_mobile/screens/notifications_screen.dart';
+import 'package:insuratech_mobile/screens/placeholder_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   final Widget? child;
@@ -46,6 +48,11 @@ class _MasterScreenState extends State<MasterScreen> {
       "icon": Icons.description,
       "label": "My Claims",
       "screen": const ClaimRequestScreen(),
+    },
+    {
+      "icon": Icons.notifications,
+      "label": "Notifications",
+      "screen": const NotificationScreen(),
     },
   ];
 

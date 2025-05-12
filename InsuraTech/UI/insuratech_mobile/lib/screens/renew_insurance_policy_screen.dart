@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_paypal_payment/flutter_paypal_payment.dart';
 import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/models/insurance_policy.dart';
 import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
@@ -137,39 +138,106 @@ class _RenewInsurancePolicyScreenState
   }
 
   Future<void> _renewPolicy() async {
-    try {
-      final insurancePolicyProvider = Provider.of<InsurancePolicyProvider>(
-        context,
-        listen: false,
+    var client_Id =
+        "AUioWKe4n7nFVCDOI-AC2lITkgg4AzSLhpk0FW0-97f146rI8LGznTUsVRuq3d-_usCms_CWK-zD8qFp";
+    var secret =
+        "EB4sDeZKe5ewKLO38ppQxHCv0jBl4u46mYLhG4xGFRCbmqhE70Ucg5YhloX8pcV1GYc9NoVsgh2VorWa";
+
+    if (client_Id == null || secret == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("PayPal credentials missing")),
       );
-
-      final request = {
-        "startDate": _selectedStartDate!.toIso8601String(),
-        "endDate": _calculatedEndDate.toIso8601String(),
-        "isActive": true,
-      };
-
-      await insurancePolicyProvider.update(
-        widget.policy.insurancePolicyId!,
-        request,
-      );
-
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder:
-              (context) => const MasterScreen(
-                appBarTitle: "My Policies",
-                showBackButton: false,
-                child: MyInsurancePoliciesScreen(),
-              ),
-        ),
-
-        (route) => false,
-      );
-      showSuccessAlert(context, "Policy renewed successfully");
-    } catch (e) {
-      showErrorAlert(context, e.toString());
+      return;
     }
+
+    final insurancePolicy = widget.policy;
+    final price =
+        widget.policy.insurancePackage?.price?.toStringAsFixed(2) ?? "0.00";
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => PaypalCheckoutView(
+              sandboxMode: true,
+              clientId: client_Id,
+              secretKey: secret,
+              transactions: [
+                {
+                  "amount": {
+                    "total": price,
+                    "currency": "USD",
+                    "details": {
+                      "subtotal": price,
+                      "shipping": "0",
+                      "shipping_discount": 0,
+                    },
+                  },
+                  "description": "Insurance policy payment",
+                  "item_list": {
+                    "items": [
+                      {
+                        "name":
+                            insurancePolicy.insurancePackage?.name ?? "Policy",
+                        "quantity": "1",
+                        "price": price,
+                        "currency": "USD",
+                      },
+                    ],
+                  },
+                },
+              ],
+
+              note: "Thank you for your payment",
+              onSuccess: (Map params) async {
+                try {
+                  final insurancePolicyProvider =
+                      Provider.of<InsurancePolicyProvider>(
+                        context,
+                        listen: false,
+                      );
+
+                  final request = {
+                    "startDate": _selectedStartDate!.toIso8601String(),
+                    "endDate": _calculatedEndDate.toIso8601String(),
+                    "isActive": true,
+                  };
+
+                  await insurancePolicyProvider.update(
+                    widget.policy.insurancePolicyId!,
+                    request,
+                  );
+
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder:
+                          (context) => const MasterScreen(
+                            appBarTitle: "My Policies",
+                            showBackButton: false,
+                            child: MyInsurancePoliciesScreen(),
+                          ),
+                    ),
+
+                    (route) => false,
+                  );
+                  showSuccessAlert(context, "Policy renewed successfully");
+                } catch (e) {
+                  showErrorAlert(context, e.toString());
+                }
+                Navigator.pop(context, true);
+                showSuccessAlert(context, "Payment successful");
+              },
+              onError: (error) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Payment error: $error")),
+                );
+              },
+              onCancel: () {
+                Navigator.pop(context);
+              },
+            ),
+      ),
+    );
   }
 
   static const TextStyle _labelStyle = TextStyle(
