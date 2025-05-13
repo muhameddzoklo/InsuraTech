@@ -4,6 +4,7 @@ import 'package:insuratech_desktop/providers/auth_provider.dart';
 import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:insuratech_desktop/screens/claim_requests_screen.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
+import 'package:insuratech_desktop/screens/my_profile_screen.dart';
 import 'package:insuratech_desktop/screens/notify_clients_screen.dart';
 import 'package:insuratech_desktop/screens/placeholder_screen.dart';
 import 'package:insuratech_desktop/screens/users_screen.dart';
@@ -58,6 +59,12 @@ class _MasterScreenState extends State<MasterScreen> {
                 const SizedBox(height: 20),
                 _buildSidebarItem(
                   context,
+                  "My profile",
+                  Icons.account_circle,
+                  const MyProfileScreen(),
+                ),
+                _buildSidebarItem(
+                  context,
                   "Packages",
                   Icons.inventory,
                   const InsurancePackageScreen(),
@@ -73,18 +80,6 @@ class _MasterScreenState extends State<MasterScreen> {
                   "Claim Requests",
                   Icons.description,
                   const ClaimRequestsScreen(),
-                ),
-                _buildSidebarItem(
-                  context,
-                  "Statistika",
-                  Icons.bar_chart,
-                  const PlaceholderListScreen(),
-                ),
-                _buildSidebarItem(
-                  context,
-                  "Recepti",
-                  Icons.receipt,
-                  const PlaceholderListScreen(),
                 ),
                 _buildSidebarItem(
                   context,

@@ -17,7 +17,6 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
   DateTime? _toDate;
   List<ClaimRequest> _requests = [];
   bool _isLoading = false;
-  List<String> _statusOptions = [];
 
   @override
   void didChangeDependencies() {
@@ -48,15 +47,8 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
   }
 
   Future<void> _loadStatusOptions() async {
-    final claimRequestProvider = Provider.of<ClaimRequestProvider>(
-      context,
-      listen: false,
-    );
-    final options = await claimRequestProvider.getStatusOptions();
     if (!mounted) return;
-    setState(() {
-      _statusOptions = options;
-    });
+    setState(() {});
   }
 
   Future<void> _fetchRequests() async {
@@ -338,14 +330,6 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
                       itemCount: _requests.length,
                       itemBuilder: (context, index) {
                         final r = _requests[index];
-                        final isProcessed =
-                            r.status == "Accepted" || r.status == "Declined";
-                        final statusColor =
-                            r.status == "Accepted"
-                                ? Colors.green
-                                : r.status == "Declined"
-                                ? Colors.red
-                                : Colors.blue;
 
                         return Card(
                           shape: RoundedRectangleBorder(
@@ -354,82 +338,120 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
                           elevation: 4,
                           child: Padding(
                             padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  r.insurancePolicy?.insurancePackage?.name ??
-                                      "N/A",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Period: ${formatDateString(r.insurancePolicy!.startDate!)} - ${formatDateString(r.insurancePolicy!.endDate!)}",
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                Text(
-                                  "Client: ${r.insurancePolicy!.client?.firstName ?? ''} ${r.insurancePolicy!.client?.lastName ?? ''}",
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  "Submitted: ${formatDateString(r.submittedAt)}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "Status: ${r.status ?? 'unknown'}",
-                                  style: TextStyle(
-                                    color: statusColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "Amount: ${r.estimatedAmount?.toStringAsFixed(2) ?? "0.00"}",
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  isProcessed ? "Comment:" : "Description:",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    isProcessed
-                                        ? r.comment ?? "N/A"
-                                        : r.description ?? "N/A",
-                                    overflow: TextOverflow.fade,
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child:
-                                      r.status == "In progress"
-                                          ? ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.orange,
-                                            ),
-                                            onPressed: () {
-                                              _showProcessDialog(r);
-                                            },
-                                            child: const Text(
-                                              "Process request",
-                                            ),
-                                          )
-                                          : const Text(
-                                            "Processed",
-                                            style: TextStyle(
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return SingleChildScrollView(
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minHeight: constraints.maxHeight,
+                                    ),
+                                    child: IntrinsicHeight(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            r
+                                                    .insurancePolicy
+                                                    ?.insurancePackage
+                                                    ?.name ??
+                                                "N/A",
+                                            style: const TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.blueAccent,
+                                              fontSize: 16,
                                             ),
                                           ),
-                                ),
-                              ],
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            "Period: ${formatDateString(r.insurancePolicy!.startDate!)} - ${formatDateString(r.insurancePolicy!.endDate!)}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          Text(
+                                            "Client: ${r.insurancePolicy!.client?.firstName ?? ''} ${r.insurancePolicy!.client?.lastName ?? ''}",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            "Submitted: ${formatDateString(r.submittedAt)}",
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            "Status: ${r.status ?? 'unknown'}",
+                                            style: TextStyle(
+                                              color:
+                                                  r.status == "Accepted"
+                                                      ? Colors.green
+                                                      : r.status == "Declined"
+                                                      ? Colors.red
+                                                      : Colors.blue,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            "Amount: ${r.estimatedAmount?.toStringAsFixed(2) ?? "0.00"}",
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            r.status == "Accepted" ||
+                                                    r.status == "Declined"
+                                                ? "Comment:"
+                                                : "Description:",
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            r.status == "Accepted" ||
+                                                    r.status == "Declined"
+                                                ? r.comment ?? "N/A"
+                                                : r.description ?? "N/A",
+                                            style: const TextStyle(
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                          const Spacer(),
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child:
+                                                r.status == "In progress"
+                                                    ? ElevatedButton(
+                                                      style:
+                                                          ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                Colors.orange,
+                                                          ),
+                                                      onPressed:
+                                                          () =>
+                                                              _showProcessDialog(
+                                                                r,
+                                                              ),
+                                                      child: const Text(
+                                                        "Process request",
+                                                      ),
+                                                    )
+                                                    : const Text(
+                                                      "Processed",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color:
+                                                            Colors.blueAccent,
+                                                      ),
+                                                    ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         );

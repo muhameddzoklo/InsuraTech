@@ -7,9 +7,8 @@ import 'package:insuratech_desktop/providers/insurance_policy_provider.dart';
 import 'package:insuratech_desktop/providers/notification_provider.dart';
 import 'package:insuratech_desktop/providers/roles_provider.dart';
 import 'package:insuratech_desktop/providers/users_provider.dart';
+import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -198,12 +197,10 @@ class _LoginPageState extends State<LoginPage> {
                                 builder: (context) => InsurancePackageScreen(),
                               ),
                             );
-                          } on Exception catch (e) {
-                            QuickAlert.show(
-                              context: context,
-                              type: QuickAlertType.warning,
-                              text: "Invalid username or password.",
-                              title: "Error",
+                          } catch (e) {
+                            showErrorAlert(
+                              context,
+                              "Invalid username or password",
                             );
                           }
                         }
