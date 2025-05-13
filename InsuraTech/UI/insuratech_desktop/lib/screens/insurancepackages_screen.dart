@@ -447,11 +447,10 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
               : Expanded(
                 child: GridView.builder(
                   padding: const EdgeInsets.all(10),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 500,
                     crossAxisSpacing: 20,
                     mainAxisSpacing: 20,
-                    childAspectRatio: 3 / 2,
                   ),
                   itemCount: _filteredPackages.length,
                   itemBuilder: (context, index) {
@@ -481,6 +480,32 @@ class InsurancePackageCard extends StatelessWidget {
     required this.onRefresh,
     required this.onUpdate,
   });
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return Flexible(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: ElevatedButton.icon(
+          onPressed: onPressed,
+          icon: Icon(icon, size: 16),
+          label: Text(label, style: const TextStyle(fontSize: 13)),
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            backgroundColor: color,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -524,7 +549,7 @@ class InsurancePackageCard extends StatelessWidget {
                     "Duration: ${package.durationDays?.toString() ?? ''} days",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   if (isActive)
                     Text(
                       "${package.price?.toStringAsFixed(2) ?? ''}",
@@ -533,183 +558,155 @@ class InsurancePackageCard extends StatelessWidget {
                         color: Colors.green,
                       ),
                     ),
-                  if (isDraft)
-                    Column(
-                      children: [
-                        const SizedBox(height: 50),
-                        Center(
-                          child: ElevatedButton.icon(
-                            onPressed: () async {
+
+                  if (isDraft) ...[
+                    const SizedBox(height: 20),
+                    Center(
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          try {
+                            await Provider.of<InsurancePackageProvider>(
+                              context,
+                              listen: false,
+                            ).ChangeState(
+                              package.insurancePackageId!,
+                              "activate",
+                            );
+                            onRefresh();
+                            showSuccessAlert(
+                              context,
+                              "Package activated successfully",
+                            );
+                          } catch (e) {
+                            showErrorAlert(
+                              context,
+                              "Error activating: ${e.toString()}",
+                            );
+                          }
+                        },
+                        icon: const Icon(Icons.check_circle),
+                        label: const Text("Activate"),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 16,
+                          ),
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            36,
+                            131,
+                            7,
+                          ),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+
+                  // Rastegljivi prostor
+                  Expanded(child: Container()),
+
+                  // Bottom dugmad
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      if (!isHidden)
+                        _buildActionButton(
+                          icon: Icons.visibility_off,
+                          label: "Hide",
+                          color: Colors.grey,
+                          onPressed: () async {
+                            final result = await showCustomConfirmDialog(
+                              context,
+                              title: "Hide package",
+                              text: "Do you want to hide this package?",
+                            );
+                            if (result == true) {
                               try {
                                 await Provider.of<InsurancePackageProvider>(
                                   context,
                                   listen: false,
                                 ).ChangeState(
                                   package.insurancePackageId!,
-                                  "activate",
+                                  "hide",
                                 );
+                                onRefresh();
+                              } catch (e) {
+                                showErrorAlert(
+                                  context,
+                                  "Error hiding: ${e.toString()}",
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      if (isDraft)
+                        _buildActionButton(
+                          icon: Icons.edit,
+                          label: "Update",
+                          color: Colors.orange,
+                          onPressed: onUpdate,
+                        ),
+                      if (isDraft)
+                        _buildActionButton(
+                          icon: Icons.delete,
+                          label: "Delete",
+                          color: Colors.red,
+                          onPressed: () async {
+                            final result = await showCustomConfirmDialog(
+                              context,
+                              title: "Delete Package",
+                              text:
+                                  "Are you sure you want to delete this package?",
+                            );
+                            if (result == true) {
+                              try {
+                                await Provider.of<InsurancePackageProvider>(
+                                  context,
+                                  listen: false,
+                                ).delete(package.insurancePackageId!);
                                 onRefresh();
                                 showSuccessAlert(
                                   context,
-                                  "Package activated successfully",
+                                  "Package deleted successfully",
                                 );
                               } catch (e) {
                                 showErrorAlert(
                                   context,
-                                  "Error editing package ${e.toString()} ",
+                                  "Error deleting: ${e.toString()}",
                                 );
                               }
-                            },
-                            icon: const Icon(Icons.check_circle),
-                            label: const Text("Activate"),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 16,
-                              ),
-                              backgroundColor: const Color.fromARGB(
-                                255,
-                                36,
-                                131,
-                                7,
-                              ),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                          ),
+                            }
+                          },
                         ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
-                  const Spacer(),
-                  Center(
-                    child: Wrap(
-                      spacing: 10,
-                      children: [
-                        if (!isHidden)
-                          ElevatedButton.icon(
-                            onPressed: () async {
-                              final result = await showCustomConfirmDialog(
+                      if (!isDraft && !isActive)
+                        _buildActionButton(
+                          icon: Icons.update,
+                          label: "Edit",
+                          color: const Color(0xFF8D6E63),
+                          onPressed: () async {
+                            try {
+                              await Provider.of<InsurancePackageProvider>(
                                 context,
-                                title: "Hide package",
-                                text: "Do you want to hide this package?",
+                                listen: false,
+                              ).ChangeState(
+                                package.insurancePackageId!,
+                                "edit",
                               );
-                              print(result);
-                              if (result == true) {
-                                try {
-                                  await Provider.of<InsurancePackageProvider>(
-                                    context,
-                                    listen: false,
-                                  ).ChangeState(
-                                    package.insurancePackageId!,
-                                    "hide",
-                                  );
-                                  onRefresh();
-                                } catch (e) {
-                                  showErrorAlert(
-                                    context,
-                                    "Error editing package ${e.toString()} ",
-                                  );
-                                }
-                              }
-                            },
-                            icon: const Icon(Icons.visibility_off),
-                            label: const Text("Hide"),
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: const Size(120, 40),
-                              backgroundColor: Colors.grey,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          ),
-                        if (isDraft) ...[
-                          ElevatedButton.icon(
-                            onPressed: onUpdate,
-                            icon: const Icon(Icons.edit),
-                            label: const Text("Update"),
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: const Size(120, 40),
-                              backgroundColor: Colors.orange,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          ),
-                          ElevatedButton.icon(
-                            onPressed: () async {
-                              final result = await showCustomConfirmDialog(
+                              onRefresh();
+                            } catch (e) {
+                              showErrorAlert(
                                 context,
-                                title: "Package delete",
-                                text: "Do you want to delete this package?",
+                                "Error editing: ${e.toString()}",
                               );
-                              if (result == true) {
-                                try {
-                                  await Provider.of<InsurancePackageProvider>(
-                                    context,
-                                    listen: false,
-                                  ).delete(package.insurancePackageId!);
-                                  onRefresh();
-                                  showSuccessAlert(
-                                    context,
-                                    "Package deleted successfully",
-                                  );
-                                } catch (e) {
-                                  showErrorAlert(
-                                    context,
-                                    "Error deliting package ${e.toString()} ",
-                                  );
-                                }
-                              }
-                            },
-                            icon: const Icon(Icons.delete),
-                            label: const Text("Delete"),
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: const Size(120, 40),
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          ),
-                        ],
-                        if (!isDraft && !isActive)
-                          ElevatedButton.icon(
-                            onPressed: () async {
-                              try {
-                                await Provider.of<InsurancePackageProvider>(
-                                  context,
-                                  listen: false,
-                                ).ChangeState(
-                                  package.insurancePackageId!,
-                                  "edit",
-                                );
-                                onRefresh();
-                              } catch (e) {
-                                showErrorAlert(
-                                  context,
-                                  "Error editing package ${e.toString()} ",
-                                );
-                              }
-                            },
-                            icon: const Icon(Icons.update),
-                            label: const Text("Edit"),
-                            style: ElevatedButton.styleFrom(
-                              fixedSize: const Size(120, 40),
-                              backgroundColor: const Color(0xFF8D6E63),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+                            }
+                          },
+                        ),
+                    ],
                   ),
                 ],
               ),
