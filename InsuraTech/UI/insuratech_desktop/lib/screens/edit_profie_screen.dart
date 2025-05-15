@@ -51,6 +51,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
@@ -188,6 +196,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 (value == null || value.isEmpty)) {
                               return 'Required';
                             }
+                            if (_changePassword && value!.length < 8) {
+                              return 'Password must be at least 8 characters';
+                            }
                             if (value == _currentPasswordController.text) {
                               return 'Must differ from current password';
                             }
@@ -203,7 +214,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                           validator: (value) {
                             if (_changePassword &&
-                                value != _newPasswordController.text) {
+                                (value == null || value.isEmpty)) {
+                              return 'Required';
+                            }
+                            if (_changePassword && value!.length < 8) {
+                              return 'Password must be at least 8 characters';
+                            }
+                            if (value != _newPasswordController.text) {
                               return 'Passwords do not match';
                             }
                             return null;
@@ -239,6 +256,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _saveChanges() async {
+    FocusScope.of(context).unfocus();
+
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 

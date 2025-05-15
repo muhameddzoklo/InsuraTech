@@ -15,9 +15,10 @@ namespace InsuraTech.Services
 {
     public class InsurancePolicyService : BaseCRUDServiceAsync<InsurancePolicyDTO, InsurancePolicySearchObject, InsurancePolicy, InsurancePolicyInsertRequest, InsurancePolicyUpdateRequest>, IInsurancePolicyService
     {
-        public InsurancePolicyService(InsuraTechContext context, IMapper mapper) : base(context, mapper)
+        private readonly ITransactionService _transactionService;
+        public InsurancePolicyService(InsuraTechContext context, IMapper mapper, ITransactionService transactionService ) : base(context, mapper)
         {
-
+            _transactionService = transactionService;
         }
         public override IQueryable<InsurancePolicy> AddFilter(InsurancePolicySearchObject search, IQueryable<InsurancePolicy> query)
         {
@@ -64,8 +65,25 @@ namespace InsuraTech.Services
 
         public override async Task BeforeInsertAsync(InsurancePolicyInsertRequest request, InsurancePolicy entity, CancellationToken cancellationToken = default) 
         {
-            entity.IsActive = true;
+            entity.IsActive = false;
+            entity.IsPaid = false;
             entity.IsNotificationSent = false;
+            
+        }
+        public override async Task BeforeUpdateAsync(InsurancePolicyUpdateRequest request, InsurancePolicy entity, CancellationToken cancellationToken = default) 
+        {
+            if (request.TransactionInsert != null)
+            {
+                entity.IsActive = true;
+                var existingTransaction = await Context.Transactions
+                    .FirstOrDefaultAsync(t => t.InsurancePolicyId == request.TransactionInsert.InsurancePolicyId, cancellationToken);
+
+
+                if (existingTransaction == null)
+                {
+                    await _transactionService.InsertAsync(request.TransactionInsert, cancellationToken);
+                }
+            }
         }
 
     }

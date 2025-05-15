@@ -1,6 +1,7 @@
 using InsuraTech.API.Auth;
 using InsuraTech.Services;
 using InsuraTech.Services.Database;
+using InsuraTech.Services.Helpers;
 using InsuraTech.Services.InsurancePackageStateMachine;
 using Mapster;
 using Microsoft.AspNetCore.Authentication;
@@ -18,6 +19,7 @@ builder.Services.AddTransient<IClientService, ClientService>();
 builder.Services.AddTransient<IInsurancePolicyService, InsurancePolicyService>();
 builder.Services.AddTransient<IClaimRequestService, ClaimRequestService>();
 builder.Services.AddTransient<INotificationService, NotificationService>();
+builder.Services.AddTransient<ITransactionService, TransactionService>();
 
 builder.Services.AddTransient<BaseInsurancePackageState>();
 builder.Services.AddTransient<InitialInsurancePackageState>();
@@ -26,7 +28,7 @@ builder.Services.AddTransient<ActiveInsurancePackageState>();
 builder.Services.AddTransient<HiddenInsurancePackageState>();
 
 
-
+MappingConfig.RegisterMappings();
 
 
 builder.Services.AddControllers();

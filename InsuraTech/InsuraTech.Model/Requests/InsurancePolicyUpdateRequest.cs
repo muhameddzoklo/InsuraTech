@@ -13,5 +13,7 @@ namespace InsuraTech.Model.Requests
 
         public bool? HasClaimRequest { get; set; }
         public bool? IsNotificationSent { get; set; }
+
+        public TransactionInsertRequest? TransactionInsert { get; set; }
     }
 }

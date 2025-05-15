@@ -15,6 +15,7 @@ InsurancePolicy _$InsurancePolicyFromJson(Map<String, dynamic> json) =>
       ..endDate = json['endDate'] as String?
       ..isActive = json['isActive'] as bool?
       ..isNotificationSent = json['isNotificationSent'] as bool?
+      ..isPaid = json['isPaid'] as bool?
       ..insurancePackage =
           json['insurancePackage'] == null
               ? null
@@ -36,6 +37,7 @@ Map<String, dynamic> _$InsurancePolicyToJson(InsurancePolicy instance) =>
       'endDate': instance.endDate,
       'isActive': instance.isActive,
       'isNotificationSent': instance.isNotificationSent,
+      'isPaid': instance.isPaid,
       'insurancePackage': instance.insurancePackage,
       'client': instance.client,
       'hasActiveClaimRequest': instance.hasActiveClaimRequest,

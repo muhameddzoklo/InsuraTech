@@ -178,6 +178,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       if (value == null || value.isEmpty) {
                         return 'New password is required';
                       }
+                      if (value.length < 8) {
+                        return 'Password must be at least 8 characters';
+                      }
                       if (value == _currentPasswordController.text) {
                         return 'New password must differ from current password';
                       }
@@ -196,6 +199,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     if (_changePassword) {
                       if (value == null || value.isEmpty) {
                         return 'Please confirm new password';
+                      }
+                      if (value.length < 8) {
+                        return 'Password must be at least 8 characters';
                       }
                       if (value != _newPasswordController.text) {
                         return 'Passwords do not match';
@@ -285,7 +291,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         showSuccessAlert(context, "Profile updated successfully");
       }
     } catch (e) {
-      showErrorAlert(context, "Error: ${e.toString()}");
+      showErrorAlert(context, "Invalid current password");
     }
   }
 }

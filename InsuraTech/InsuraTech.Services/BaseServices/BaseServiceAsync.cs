@@ -38,7 +38,7 @@ namespace InsuraTech.Services.BaseServices
             {
                 query = ApplyIncludes(query, search.IncludeTables); // Applies related table includes
             }
-
+            query = AddInclude(query);
             query = AddFilter(search, query); // Adds search filters
 
             int count = await query.CountAsync(cancellationToken); // Counts total matching records
@@ -135,6 +135,10 @@ namespace InsuraTech.Services.BaseServices
             var mappedObj = Mapper.Map<TModel>(entity);
             await CustomMapResponseAsync(mappedObj, cancellationToken); // Custom response mapping if needed
             return mappedObj;
+        }
+        public virtual IQueryable<TDbEntity> AddInclude(IQueryable<TDbEntity> query)
+        {
+            return query;
         }
 
         // Placeholder for additional custom mapping on single record response
