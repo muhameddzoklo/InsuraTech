@@ -27,6 +27,7 @@ namespace InsuraTech.Services.Database
         public bool IsActive { get; set; }
         public bool HasActiveClaimRequest { get; set; }
         public bool IsNotificationSent { get; set; }
+        public bool IsPaid { get; set; }
         public ICollection<ClaimRequest> ClaimRequests { get; set; } = new List<ClaimRequest>();
     }
 

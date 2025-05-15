@@ -1,11 +1,15 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:ui' as flutter_ui;
 
 import 'package:flutter/material.dart';
+import 'package:insuratech_mobile/providers/auth_provider.dart';
+import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
-import 'package:insuratech_mobile/screens/create_insurance_policy_screen.dart';
 import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/models/insurance_package.dart';
+import 'package:insuratech_mobile/screens/my_insurance_policies_screen.dart';
+import 'package:provider/provider.dart';
 
 class InsurancePackageDetailsScreen extends StatefulWidget {
   final InsurancePackage package;
@@ -42,7 +46,7 @@ class _InsurancePackageDetailsScreenState
       context: context,
       initialDate: now,
       firstDate: now,
-      lastDate: DateTime(now.year + 5),
+      lastDate: DateTime(now.year + 1),
     );
     if (picked != null) {
       if (!mounted) return;
@@ -53,7 +57,7 @@ class _InsurancePackageDetailsScreenState
     }
   }
 
-  void _proceedToPayment() {
+  void _proceedToPayment() async {
     if (_startDate == null) {
       setState(() {
         _validationMessage =
@@ -61,17 +65,35 @@ class _InsurancePackageDetailsScreenState
       });
       return;
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            (_) => CreateInsurancePolicyScreen(
-              package: widget.package,
-              startDate: _startDate!,
-              endDate: _endDate!,
-            ),
-      ),
-    );
+    try {
+      final insurancePolicyProvider = Provider.of<InsurancePolicyProvider>(
+        context,
+        listen: false,
+      );
+
+      final request = {
+        'insurancePackageId': widget.package.insurancePackageId,
+        'clientId': AuthProvider.clientId,
+        'startDate': _startDate!.toIso8601String(),
+        'endDate': _endDate!.toIso8601String(),
+      };
+
+      await insurancePolicyProvider.insert(request);
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder:
+              (context) => MasterScreen(
+                appBarTitle: "My Policies",
+                showBackButton: false,
+                child: MyInsurancePoliciesScreen(),
+              ),
+        ),
+      );
+      showSuccessAlert(context, "Policy created successfully");
+    } catch (e) {
+      showErrorAlert(context, "Policy not created: ${e.toString()}");
+    }
   }
 
   @override
@@ -136,7 +158,7 @@ class _InsurancePackageDetailsScreenState
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.brown.shade700,
                 foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(50),
+                minimumSize: flutter_ui.Size.fromHeight(50),
               ),
               onPressed: _pickStartDate,
               icon: const Icon(Icons.date_range),
@@ -190,7 +212,7 @@ class _InsurancePackageDetailsScreenState
                 ),
                 onPressed: _proceedToPayment,
                 child: const Text(
-                  "Proceed to Payment",
+                  "Create policy",
                   style: TextStyle(fontSize: 16),
                 ),
               ),

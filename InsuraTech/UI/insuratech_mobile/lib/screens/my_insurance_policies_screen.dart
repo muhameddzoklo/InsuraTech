@@ -6,7 +6,7 @@ import 'package:insuratech_mobile/providers/claim_request_provider.dart';
 import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/claim_requests_screen.dart';
-import 'package:insuratech_mobile/screens/renew_insurance_policy_screen.dart';
+import 'package:insuratech_mobile/screens/create_insurance_policy_screen.dart';
 import 'package:provider/provider.dart';
 
 class MyInsurancePoliciesScreen extends StatefulWidget {
@@ -64,7 +64,8 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                 itemCount: _policies.length,
                 itemBuilder: (context, index) {
                   final policy = _policies[index];
-                  final bool isActive = policy.isActive ?? false;
+                  final isActive = policy.isActive ?? false;
+                  final isPaid = policy.isPaid ?? false;
                   final startDate =
                       policy.startDate != null
                           ? DateTime.tryParse(policy.startDate!)
@@ -110,100 +111,27 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                             style: _infoStyle,
                           ),
                           const SizedBox(height: 12),
-                          if (policy.isActive == true &&
+                          if (isActive &&
                               startDate != null &&
                               startDate.isBefore(DateTime.now()))
                             Center(
                               child:
                                   policy.hasActiveClaimRequest == true
-                                      ? Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                          vertical: 5,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                            255,
-                                            77,
-                                            186,
-                                            237,
-                                          ).withOpacity(0.8),
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                          border: Border.all(
-                                            color: const Color.fromARGB(
-                                              255,
-                                              77,
-                                              186,
-                                              237,
-                                            ),
-                                            width: 1.5,
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'Claim in Progress',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
+                                      ? _buildTag(
+                                        'Claim in Progress',
+                                        Colors.lightBlueAccent,
                                       )
-                                      : ElevatedButton.icon(
-                                        onPressed: () {
-                                          _showClaimRequestDialog(
-                                            policy.insurancePolicyId!,
-                                          );
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.orange,
-                                          foregroundColor: Colors.white,
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 22,
-                                            vertical: 9,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                        ),
-                                        icon: const Icon(
-                                          Icons.add_circle,
-                                          size: 22,
-                                        ),
-                                        label: const Text(
-                                          'Claim Request',
-                                          style: TextStyle(fontSize: 16),
-                                        ),
+                                      : _buildClaimButton(
+                                        policy.insurancePolicyId!,
                                       ),
                             )
                           else if (isActive &&
                               startDate != null &&
                               startDate.isAfter(DateTime.now()))
                             Center(
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.blueGrey.withOpacity(0.8),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.blueGrey,
-                                    width: 1.5,
-                                  ),
-                                ),
-                                child: Text(
-                                  'Policy starts from ${formatDateString(policy.startDate)}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                              child: _buildTag(
+                                'Policy starts from ${formatDateString(policy.startDate)}',
+                                Colors.blueGrey,
                               ),
                             )
                           else
@@ -211,81 +139,12 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  ElevatedButton.icon(
-                                    onPressed: () async {
-                                      final confirm = await showCustomConfirmDialog(
-                                        context,
-                                        title: 'Confirm Deletion',
-                                        text:
-                                            'Are you sure you want to delete this policy?',
-                                      );
-
-                                      if (confirm == true) {
-                                        try {
-                                          final insurancePolicyProvider =
-                                              Provider.of<
-                                                InsurancePolicyProvider
-                                              >(context, listen: false);
-                                          await insurancePolicyProvider.delete(
-                                            policy.insurancePolicyId!,
-                                          );
-                                          showSuccessAlert(
-                                            context,
-                                            "Policy deleted successfully",
-                                          );
-                                          _fetchPolicies();
-                                        } catch (e) {
-                                          showErrorAlert(
-                                            context,
-                                            "Failed to delete policy: ${e.toString()}",
-                                          );
-                                        }
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.redAccent,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 18,
-                                        vertical: 10,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                    icon: const Icon(
-                                      Icons.delete_outline,
-                                      size: 20,
-                                    ),
-                                    label: const Text('Delete'),
-                                  ),
+                                  _buildDeleteButton(policy.insurancePolicyId!),
                                   const SizedBox(width: 12),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) =>
-                                                  RenewInsurancePolicyScreen(
-                                                    policy: policy,
-                                                  ),
-                                        ),
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.green,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 18,
-                                        vertical: 10,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                    icon: const Icon(Icons.refresh, size: 20),
-                                    label: const Text('Renew'),
-                                  ),
+                                  if (!isPaid)
+                                    _buildPayNowButton(policy)
+                                  else
+                                    _buildRenewButton(policy),
                                 ],
                               ),
                             ),
@@ -295,6 +154,111 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                   );
                 },
               ),
+    );
+  }
+
+  Widget _buildTag(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color, width: 1.5),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildClaimButton(int policyId) {
+    return ElevatedButton.icon(
+      onPressed: () => _showClaimRequestDialog(policyId),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 9),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      icon: const Icon(Icons.add_circle, size: 22),
+      label: const Text('Claim Request', style: TextStyle(fontSize: 16)),
+    );
+  }
+
+  Widget _buildDeleteButton(int policyId) {
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final confirm = await showCustomConfirmDialog(
+          context,
+          title: 'Confirm Deletion',
+          text: 'Are you sure you want to delete this policy?',
+        );
+        if (confirm == true) {
+          try {
+            await Provider.of<InsurancePolicyProvider>(
+              context,
+              listen: false,
+            ).delete(policyId);
+            showSuccessAlert(context, "Policy deleted successfully");
+            _fetchPolicies();
+          } catch (e) {
+            showErrorAlert(context, "Failed to delete policy: ${e.toString()}");
+          }
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.redAccent,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      icon: const Icon(Icons.delete_outline, size: 20),
+      label: const Text('Delete'),
+    );
+  }
+
+  Widget _buildRenewButton(InsurancePolicy policy) {
+    return ElevatedButton.icon(
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => CreateInsurancePolicyScreen(policy: policy),
+          ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      icon: const Icon(Icons.refresh, size: 20),
+      label: const Text('Renew'),
+    );
+  }
+
+  Widget _buildPayNowButton(InsurancePolicy policy) {
+    return ElevatedButton.icon(
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => CreateInsurancePolicyScreen(policy: policy),
+          ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      icon: const Icon(Icons.payment, size: 20),
+      label: const Text('Pay Now'),
     );
   }
 
@@ -322,12 +286,11 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                       border: OutlineInputBorder(),
                     ),
                     maxLines: 3,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Description is required';
-                      }
-                      return null;
-                    },
+                    validator:
+                        (value) =>
+                            value == null || value.trim().isEmpty
+                                ? 'Description is required'
+                                : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -338,13 +301,11 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
+                      if (value == null || value.trim().isEmpty)
                         return 'Estimated amount is required';
-                      }
                       final parsed = double.tryParse(value.trim());
-                      if (parsed == null || parsed <= 0) {
+                      if (parsed == null || parsed <= 0)
                         return 'Enter a valid positive number';
-                      }
                       return null;
                     },
                   ),
@@ -368,20 +329,15 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                         _amountController.text.trim(),
                       ),
                     };
-
-                    final claimRequestProvider =
-                        Provider.of<ClaimRequestProvider>(
-                          context,
-                          listen: false,
-                        );
-                    await claimRequestProvider.insert(claimRequest);
-
+                    await Provider.of<ClaimRequestProvider>(
+                      context,
+                      listen: false,
+                    ).insert(claimRequest);
                     Navigator.of(context).pop();
-
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder:
-                            (context) => MasterScreen(
+                            (_) => const MasterScreen(
                               appBarTitle: "Claim requests",
                               showBackButton: false,
                               child: ClaimRequestScreen(),
@@ -410,7 +366,6 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
     fontWeight: FontWeight.bold,
     color: Colors.brown,
   );
-
   static const TextStyle _infoStyle = TextStyle(
     fontSize: 16,
     color: Colors.black87,

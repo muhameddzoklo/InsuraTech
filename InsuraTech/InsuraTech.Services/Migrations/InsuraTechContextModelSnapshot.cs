@@ -403,6 +403,9 @@ namespace InsuraTech.Services.Migrations
                     b.Property<bool>("IsNotificationSent")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -425,6 +428,7 @@ namespace InsuraTech.Services.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             IsNotificationSent = false,
+                            IsPaid = true,
                             StartDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -437,6 +441,7 @@ namespace InsuraTech.Services.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             IsNotificationSent = false,
+                            IsPaid = true,
                             StartDate = new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -449,6 +454,7 @@ namespace InsuraTech.Services.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             IsNotificationSent = false,
+                            IsPaid = true,
                             StartDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -461,6 +467,7 @@ namespace InsuraTech.Services.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             IsNotificationSent = false,
+                            IsPaid = true,
                             StartDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -473,6 +480,7 @@ namespace InsuraTech.Services.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             IsNotificationSent = false,
+                            IsPaid = true,
                             StartDate = new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -485,6 +493,7 @@ namespace InsuraTech.Services.Migrations
                             IsActive = false,
                             IsDeleted = false,
                             IsNotificationSent = false,
+                            IsPaid = false,
                             StartDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -557,28 +566,6 @@ namespace InsuraTech.Services.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("InsuraTech.Services.Database.PaymentMethod", b =>
-                {
-                    b.Property<int>("PaymentMethodId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentMethodId"));
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("MethodName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("PaymentMethodId");
-
-                    b.ToTable("PaymentMethods");
-                });
-
             modelBuilder.Entity("InsuraTech.Services.Database.Role", b =>
                 {
                     b.Property<int>("RoleId")
@@ -636,29 +623,39 @@ namespace InsuraTech.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
 
-                    b.Property<decimal?>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("InsurancePolicyId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("PaymentMethodId")
-                        .HasColumnType("int");
+                    b.Property<string>("PayerId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Timestamp")
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentMethod")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TransactionDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
 
                     b.HasKey("TransactionId");
 
-                    b.HasIndex("PaymentMethodId");
+                    b.HasIndex("ClientId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("InsurancePolicyId")
+                        .IsUnique();
 
                     b.ToTable("Transactions");
                 });
@@ -936,21 +933,21 @@ namespace InsuraTech.Services.Migrations
 
             modelBuilder.Entity("InsuraTech.Services.Database.Transaction", b =>
                 {
-                    b.HasOne("InsuraTech.Services.Database.PaymentMethod", "paymentMethod")
+                    b.HasOne("InsuraTech.Services.Database.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("PaymentMethodId")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("InsuraTech.Services.Database.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                    b.HasOne("InsuraTech.Services.Database.InsurancePolicy", "InsurancePolicy")
+                        .WithOne()
+                        .HasForeignKey("InsuraTech.Services.Database.Transaction", "InsurancePolicyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Client");
 
-                    b.Navigation("paymentMethod");
+                    b.Navigation("InsurancePolicy");
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.UserFeedback", b =>

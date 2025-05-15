@@ -16,7 +16,6 @@ namespace InsuraTech.Services.Database
         public DbSet<CustomerFeedback> CustomerFeedbacks { get; set; }
         public DbSet<UserFeedback> UserFeedbacks { get; set; }
         public DbSet<MessageLog> MessageLogs { get; set; }
-        public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<ClaimRequest> ClaimRequests { get; set; }
@@ -59,12 +58,12 @@ namespace InsuraTech.Services.Database
                 new InsurancePackage { InsurancePackageId = 8, Name = "Student Health Plan", Description = "Affordable health insurance tailored for students with coverage for regular checkups and emergencies.", Price = 179.99m, Picture = null, StateMachine = "draft", DurationDays = 180 }
             );
             modelBuilder.Entity<InsurancePolicy>().HasData(
-                 new InsurancePolicy { InsurancePolicyId = 1, InsurancePackageId = 1, ClientId = 1, StartDate = new DateTime(2025, 1, 1), EndDate = new DateTime(2026, 1, 1), IsActive = true, IsDeleted = false, HasActiveClaimRequest = true, IsNotificationSent = false },
-                 new InsurancePolicy { InsurancePolicyId = 2, InsurancePackageId = 2, ClientId = 1, StartDate = new DateTime(2025, 5, 15), EndDate = new DateTime(2025, 8, 15), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false, IsNotificationSent = false },
-                 new InsurancePolicy { InsurancePolicyId = 3, InsurancePackageId = 3, ClientId = 2, StartDate = new DateTime(2025, 3, 1), EndDate = new DateTime(2025, 8, 28), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false, IsNotificationSent = false },
-                 new InsurancePolicy { InsurancePolicyId = 4, InsurancePackageId = 1, ClientId = 2, StartDate = new DateTime(2025, 4, 1), EndDate = new DateTime(2026, 4, 1), IsActive = true, IsDeleted = false, HasActiveClaimRequest = true, IsNotificationSent = false },
-                 new InsurancePolicy { InsurancePolicyId = 5, InsurancePackageId = 2, ClientId = 3, StartDate = new DateTime(2025, 5, 20), EndDate = new DateTime(2025, 8, 18), IsActive = true, IsDeleted = false, HasActiveClaimRequest = true, IsNotificationSent = false },
-                 new InsurancePolicy { InsurancePolicyId = 6, InsurancePackageId = 3, ClientId = 1, StartDate = new DateTime(2024, 10, 1), EndDate = new DateTime(2025, 3, 29), IsActive = false, IsDeleted = false, HasActiveClaimRequest = false, IsNotificationSent = false }
+                 new InsurancePolicy { InsurancePolicyId = 1, InsurancePackageId = 1, ClientId = 1, StartDate = new DateTime(2025, 1, 1), EndDate = new DateTime(2026, 1, 1), IsActive = true, IsDeleted = false, HasActiveClaimRequest = true, IsNotificationSent = false, IsPaid = true },
+                 new InsurancePolicy { InsurancePolicyId = 2, InsurancePackageId = 2, ClientId = 1, StartDate = new DateTime(2025, 5, 15), EndDate = new DateTime(2025, 8, 15), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false, IsNotificationSent = false, IsPaid = true },
+                 new InsurancePolicy { InsurancePolicyId = 3, InsurancePackageId = 3, ClientId = 2, StartDate = new DateTime(2025, 3, 1), EndDate = new DateTime(2025, 8, 28), IsActive = true, IsDeleted = false, HasActiveClaimRequest = false, IsNotificationSent = false, IsPaid = true },
+                 new InsurancePolicy { InsurancePolicyId = 4, InsurancePackageId = 1, ClientId = 2, StartDate = new DateTime(2025, 4, 1), EndDate = new DateTime(2026, 4, 1), IsActive = true, IsDeleted = false, HasActiveClaimRequest = true, IsNotificationSent = false, IsPaid = true },
+                 new InsurancePolicy { InsurancePolicyId = 5, InsurancePackageId = 2, ClientId = 3, StartDate = new DateTime(2025, 5, 20), EndDate = new DateTime(2025, 8, 18), IsActive = true, IsDeleted = false, HasActiveClaimRequest = true, IsNotificationSent = false, IsPaid = true },
+                 new InsurancePolicy { InsurancePolicyId = 6, InsurancePackageId = 3, ClientId = 1, StartDate = new DateTime(2024, 10, 1), EndDate = new DateTime(2025, 3, 29), IsActive = false, IsDeleted = false, HasActiveClaimRequest = false, IsNotificationSent = false, IsPaid = false }
             );
             modelBuilder.Entity<ClaimRequest>().HasData(
                 new ClaimRequest { ClaimRequestId = 1, InsurancePolicyId = 1, Description = "Windshield damage due to hail.", EstimatedAmount = 350.00m, Status = "In progress", SubmittedAt = new DateTime(2025, 5, 1) },
@@ -105,18 +104,6 @@ namespace InsuraTech.Services.Database
                 .HasForeignKey(m => m.UserId)
                 .OnDelete(DeleteBehavior.Restrict); // No action on delete
 
-            modelBuilder.Entity<Transaction>()
-                .HasOne(t => t.User)
-                .WithMany()
-                .HasForeignKey(t => t.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // No action on delete
-
-            modelBuilder.Entity<Transaction>()
-                .HasOne(t => t.paymentMethod)
-                .WithMany()
-                .HasForeignKey(t => t.PaymentMethodId)
-                .OnDelete(DeleteBehavior.Restrict); // No action on delete
-
             modelBuilder.Entity<InsurancePolicy>()
                 .HasOne(i => i.InsurancePackage)
                 .WithMany(x => x.Policies)
@@ -135,7 +122,17 @@ namespace InsuraTech.Services.Database
                 .HasForeignKey(n => n.InsurancePolicyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Client)
+                .WithMany()
+                .HasForeignKey(t => t.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.InsurancePolicy)
+                .WithOne()
+                .HasForeignKey<Transaction>(t => t.InsurancePolicyId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
