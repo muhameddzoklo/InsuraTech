@@ -75,14 +75,10 @@ namespace InsuraTech.Services
             if (request.TransactionInsert != null)
             {
                 entity.IsActive = true;
-                var existingTransaction = await Context.Transactions
-                    .FirstOrDefaultAsync(t => t.InsurancePolicyId == request.TransactionInsert.InsurancePolicyId, cancellationToken);
-
-
-                if (existingTransaction == null)
-                {
-                    await _transactionService.InsertAsync(request.TransactionInsert, cancellationToken);
-                }
+                entity.IsPaid = true;
+                
+                await _transactionService.InsertAsync(request.TransactionInsert, cancellationToken);
+                
             }
         }
 

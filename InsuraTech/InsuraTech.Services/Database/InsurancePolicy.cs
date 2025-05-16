@@ -29,6 +29,7 @@ namespace InsuraTech.Services.Database
         public bool IsNotificationSent { get; set; }
         public bool IsPaid { get; set; }
         public ICollection<ClaimRequest> ClaimRequests { get; set; } = new List<ClaimRequest>();
+        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
     }
 
 }

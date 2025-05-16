@@ -75,7 +75,23 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return _isLoading
         ? const Center(child: CircularProgressIndicator())
         : _notifications.isEmpty
-        ? const Center(child: Text("No notifications found."))
+        ? const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.notifications_active, size: 64, color: Colors.brown),
+              SizedBox(height: 12),
+              Text(
+                "No notifications",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        )
         : ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: _notifications.length,
@@ -168,14 +184,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // strelica
                           AnimatedRotation(
                             duration: const Duration(milliseconds: 200),
                             turns: expanded ? 0.5 : 0,
                             child: const Icon(Icons.expand_more, size: 24),
                           ),
-
-                          // delete dugme (samo ako je procitano)
                           if (n.isRead == true)
                             TextButton.icon(
                               onPressed: () async {

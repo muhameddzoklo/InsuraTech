@@ -54,18 +54,14 @@ class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.assignment,
-                      size: 100,
-                      color: Colors.orange.shade400,
-                    ),
+                    Icon(Icons.assignment, size: 64, color: Colors.brown),
                     const SizedBox(height: 20),
                     const Text(
                       "You don't have any claim requests yet",
                       style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        fontSize: 18,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w500,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -123,7 +119,7 @@ class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              "Estimated Amount: \$${claim.estimatedAmount?.toStringAsFixed(2) ?? 'N/A'}",
+                              "Estimated Amount: ${claim.estimatedAmount?.toStringAsFixed(2) ?? 'N/A'}",
                               style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.black87,

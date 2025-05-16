@@ -134,7 +134,7 @@ class _InsurancePackageDetailsScreenState
             ),
             const SizedBox(height: 20),
             Text(
-              "Price: \$${widget.package.price?.toStringAsFixed(2) ?? 'N/A'}",
+              "Price: ${widget.package.price?.toStringAsFixed(2) ?? 'N/A'}",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,

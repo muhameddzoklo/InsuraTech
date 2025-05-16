@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/models/insurance_policy.dart';
-import 'package:insuratech_mobile/providers/auth_provider.dart';
-import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
-import 'package:insuratech_mobile/screens/my_insurance_policies_screen.dart';
-import 'package:flutter_paypal_payment/flutter_paypal_payment.dart';
-import 'package:provider/provider.dart';
+import 'package:insuratech_mobile/screens/paypal_screen.dart';
 
 class CreateInsurancePolicyScreen extends StatefulWidget {
   final InsurancePolicy policy;
@@ -51,7 +47,7 @@ class _CreateInsurancePolicyScreenState
                     Padding(
                       padding: const EdgeInsets.only(left: 24.0),
                       child: Text(
-                        "\$${policy.insurancePackage!.price?.toStringAsFixed(2) ?? 'N/A'}",
+                        "${policy.insurancePackage!.price?.toStringAsFixed(2) ?? 'N/A'}",
                         style: _valueStyle,
                       ),
                     ),
@@ -182,7 +178,7 @@ class _CreateInsurancePolicyScreenState
                     Padding(
                       padding: const EdgeInsets.only(left: 24.0),
                       child: Text(
-                        "\$${policy.insurancePackage!.price?.toStringAsFixed(2) ?? 'N/A'}",
+                        "${policy.insurancePackage!.price?.toStringAsFixed(2) ?? 'N/A'}",
                         style: _valueStyle,
                       ),
                     ),
@@ -288,6 +284,7 @@ class _CreateInsurancePolicyScreenState
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (picked != null) {
+      if (!mounted) return;
       setState(() {
         _renewDate = picked;
         _validationMessage = null;
@@ -297,6 +294,7 @@ class _CreateInsurancePolicyScreenState
 
   void _proceedToRenewal() async {
     if (_renewDate == null) {
+      if (!mounted) return;
       setState(() {
         _validationMessage =
             "Please select a valid start date before continuing.";
@@ -309,133 +307,33 @@ class _CreateInsurancePolicyScreenState
       Duration(days: widget.policy.insurancePackage!.durationDays!),
     );
 
-    try {
-      final provider = Provider.of<InsurancePolicyProvider>(
-        context,
-        listen: false,
-      );
-      final request = {
-        "startDate": newStart.toIso8601String(),
-        "endDate": newEnd.toIso8601String(),
-        "isActive": true,
-        "isPaid": true,
-        "edit": true,
-      };
+    final price =
+        widget.policy.insurancePackage!.price?.toStringAsFixed(2) ?? "0.00";
 
-      await provider.update(widget.policy.insurancePolicyId!, request);
-
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder:
-              (_) => const MasterScreen(
-                appBarTitle: "My Policies",
-                showBackButton: false,
-                child: MyInsurancePoliciesScreen(),
-              ),
-        ),
-      );
-
-      showSuccessAlert(context, "Policy renewed successfully.");
-    } catch (e) {
-      showErrorAlert(context, "Error renewing policy: ${e.toString()}");
-    }
+    if (!mounted) return;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => PaypalScreen(
+              policy: widget.policy,
+              price: price,
+              overrideStartDate: newStart,
+              overrideEndDate: newEnd,
+            ),
+      ),
+    );
   }
 
   void _proceedToPayment() async {
     final price =
         widget.policy.insurancePackage!.price?.toStringAsFixed(2) ?? "0.00";
+    if (!mounted) return;
 
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => PaypalCheckoutView(
-              sandboxMode: true,
-              clientId:
-                  "AUioWKe4n7nFVCDOI-AC2lITkgg4AzSLhpk0FW0-97f146rI8LGznTUsVRuq3d-_usCms_CWK-zD8qFp",
-              secretKey:
-                  "EB4sDeZKe5ewKLO38ppQxHCv0jBl4u46mYLhG4xGFRCbmqhE70Ucg5YhloX8pcV1GYc9NoVsgh2VorWa",
-              transactions: [
-                {
-                  "amount": {
-                    "total": price,
-                    "currency": "USD",
-                    "details": {
-                      "subtotal": price,
-                      "shipping": "0",
-                      "shipping_discount": 0,
-                    },
-                  },
-                  "description": "Insurance policy payment",
-                  "item_list": {
-                    "items": [
-                      {
-                        "name":
-                            widget.policy.insurancePackage!.name ?? "Policy",
-                        "quantity": "1",
-                        "price": price,
-                        "currency": "USD",
-                      },
-                    ],
-                  },
-                },
-              ],
-              note: "Thank you for your payment",
-              onSuccess: (params) async {
-                final data = params['data'];
-                final transaction = {
-                  "amount": double.parse(
-                    data['transactions'][0]['amount']['total'],
-                  ),
-                  "paymentMethod": data['payer']['payment_method'],
-                  "paymentId": data['id'],
-                  "payerId": data['payer']['payer_info']['payer_id'],
-                  "clientId": AuthProvider.clientId,
-                  "insurancePolicyId": widget.policy.insurancePolicyId,
-                };
-
-                try {
-                  final provider = Provider.of<InsurancePolicyProvider>(
-                    context,
-                    listen: false,
-                  );
-                  final request = {
-                    'startDate': widget.policy.startDate,
-                    'endDate': widget.policy.endDate,
-                    "isActive": true,
-                    "transactionInsert": transaction,
-                  };
-
-                  await provider.update(
-                    widget.policy.insurancePolicyId!,
-                    request,
-                  );
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder:
-                          (_) => const MasterScreen(
-                            appBarTitle: "My Policies",
-                            showBackButton: false,
-                            child: MyInsurancePoliciesScreen(),
-                          ),
-                    ),
-                  );
-                  showSuccessAlert(context, "Payment successful.");
-                } catch (e) {
-                  showErrorAlert(
-                    context,
-                    "Error saving transaction: ${e.toString()}",
-                  );
-                }
-              },
-              onError: (error) {
-                Navigator.pop(context);
-                showErrorAlert(context, "Payment failed: $error");
-              },
-              onCancel: () {
-                Navigator.pop(context);
-              },
-            ),
+        builder: (context) => PaypalScreen(policy: widget.policy, price: price),
       ),
     );
   }
