@@ -58,7 +58,27 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
           _isLoading
               ? const Center(child: CircularProgressIndicator())
               : _policies.isEmpty
-              ? const Center(child: Text('No policies found'))
+              ? const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.assignment_outlined,
+                      size: 64,
+                      color: Colors.brown,
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      "No policies created",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              )
               : ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: _policies.length,

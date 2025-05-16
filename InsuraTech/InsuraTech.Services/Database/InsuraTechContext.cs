@@ -110,6 +110,7 @@ namespace InsuraTech.Services.Database
                 .HasForeignKey(i => i.InsurancePackageId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.Client)
                 .WithMany()
@@ -130,9 +131,10 @@ namespace InsuraTech.Services.Database
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.InsurancePolicy)
-                .WithOne()
-                .HasForeignKey<Transaction>(t => t.InsurancePolicyId)
+                .WithMany(p => p.Transactions) 
+                .HasForeignKey(t => t.InsurancePolicyId)
                 .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }
