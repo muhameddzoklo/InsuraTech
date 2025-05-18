@@ -119,7 +119,7 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              "Price: ${package.price?.toStringAsFixed(2) ?? 'N/A'}",
+              "Price: \$${package.price?.toStringAsFixed(2) ?? 'N/A'} ",
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 color: Colors.green,

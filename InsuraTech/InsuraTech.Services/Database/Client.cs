@@ -25,5 +25,6 @@ namespace InsuraTech.Services.Database
         public byte[]? ProfilePicture { get; set; }
         public DateTime RegistrationDate { get; set; }
         public bool IsActive { get; set; }
+        public ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
     }
 }

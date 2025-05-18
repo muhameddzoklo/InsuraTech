@@ -84,16 +84,6 @@ namespace InsuraTech.Services
             entity.PasswordSalt = Helpers.Helper.GenerateSalt();
             entity.PasswordHash = Helpers.Helper.GenerateHash(entity.PasswordSalt, request.Password);
 
-            //await rabbitMqService.SendAnEmail(new EmailDTO
-            //{
-            //    EmailTo = entity.Email,
-            //    Message = $"Poštovani<br>" +
-            //  $"Korisnicko ime: {entity.KorisnickoIme}<br>" +
-            //  $"Lozinka: {lozinka}<br><br>" +
-            //  $"Srdačan pozdrav",
-            //    ReceiverName = entity.Ime + " " + entity.Prezime,
-            //    Subject = "Registracija"
-            //});
         }
         public override async Task BeforeUpdateAsync(ClientUpdateRequest request, Client entity, CancellationToken cancellationToken = default)
         {

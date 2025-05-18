@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EasyNetQ;
 using InsuraTech.Model.DTOs;
+using InsuraTech.Model.Messages;
 using InsuraTech.Model.Requests;
 using InsuraTech.Model.SearchObjects;
 using InsuraTech.Services.BaseServices;
@@ -79,16 +81,22 @@ namespace InsuraTech.Services
             entity.PasswordHash = Helpers.Helper.GenerateHash(entity.PasswordSalt, newPass);
             entity.IsActive = true;
 
-            //await rabbitMqService.SendAnEmail(new EmailDTO
-            //{
-            //    EmailTo = entity.Email,
-            //    Message = $"Poštovani<br>" +
-            //  $"Korisnicko ime: {entity.KorisnickoIme}<br>" +
-            //  $"Lozinka: {lozinka}<br><br>" +
-            //  $"Srdačan pozdrav",
-            //    ReceiverName = entity.Ime + " " + entity.Prezime,
-            //    Subject = "Registracija"
-            //});
+            string rabbitmq = Environment.GetEnvironmentVariable("RABBIT_MQ") ?? string.Empty;
+
+            var bus = RabbitHutch.CreateBus(rabbitmq);
+
+            Console.WriteLine(bus);
+            AccountCreationMsg registerMessage = new AccountCreationMsg
+            {
+                employeeFirstName = request.FirstName,
+                employeeLastName = request.LastName,
+                email = request.Email,
+                username = request.Username,
+                password = newPass
+            };
+
+            await bus.PubSub.PublishAsync(registerMessage);
+
         }
 
         public override async Task AfterInsertAsync(UserInsertRequest request, User entity, CancellationToken cancellationToken = default)

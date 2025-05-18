@@ -224,7 +224,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     vertical: 14,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 onPressed: _saveChanges,

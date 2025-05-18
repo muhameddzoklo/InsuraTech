@@ -20,6 +20,7 @@ builder.Services.AddTransient<IInsurancePolicyService, InsurancePolicyService>()
 builder.Services.AddTransient<IClaimRequestService, ClaimRequestService>();
 builder.Services.AddTransient<INotificationService, NotificationService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
+builder.Services.AddTransient<ISupportTicketService, SupportTicketService>();
 
 builder.Services.AddTransient<BaseInsurancePackageState>();
 builder.Services.AddTransient<InitialInsurancePackageState>();
@@ -53,7 +54,7 @@ builder.Services.AddSwaggerGen(c =>
     } });
 
 });
-DotNetEnv.Env.Load();
+DotNetEnv.Env.Load("../.env");
 
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 builder.Services.AddDbContext<InsuraTechContext>(options => options.UseSqlServer(connectionString));

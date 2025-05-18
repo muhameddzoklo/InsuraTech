@@ -143,7 +143,7 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
                                 "Client:",
                                 "${client.firstName} ${client.lastName}",
                               ),
-                              _infoRow("Paid:", "${pkg.price}\$"),
+                              _infoRow("Paid:", "\$${pkg.price}"),
                               _infoRow(
                                 "Start date:",
                                 formatDateString(policy.startDate.toString()),
