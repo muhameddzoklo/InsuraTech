@@ -136,7 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     vertical: 14,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 onPressed: _submitRegistration,
@@ -174,8 +174,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (required && (value == null || value.isEmpty)) {
           return "$label is required";
         }
-        if (email && !value!.contains('@')) {
-          return "Invalid email";
+        if (email && value != null && value.isNotEmpty) {
+          final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+          if (!emailRegex.hasMatch(value)) {
+            return "Invalid email format";
+          }
         }
         if (phoneNumber && value != null && value.isNotEmpty) {
           final regex = RegExp(r'^\d{9,10}$');
@@ -213,7 +216,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
       showSuccessAlert(context, "Profile created successfully");
     } catch (e) {
-      showErrorAlert(context, "Profile not created: ${e.toString()}");
+      showErrorAlert(context, "Username already exists");
     }
     ;
   }

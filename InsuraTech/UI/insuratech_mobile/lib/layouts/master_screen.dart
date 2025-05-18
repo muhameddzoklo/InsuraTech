@@ -7,6 +7,7 @@ import 'package:insuratech_mobile/screens/insurance_package_screen.dart';
 import 'package:insuratech_mobile/screens/my_insurance_policies_screen.dart';
 import 'package:insuratech_mobile/screens/my_profile_screen.dart';
 import 'package:insuratech_mobile/screens/notifications_screen.dart';
+import 'package:insuratech_mobile/screens/support_ticket_screen.dart';
 import 'package:insuratech_mobile/screens/transaction_screen.dart';
 
 class MasterScreen extends StatefulWidget {
@@ -58,6 +59,11 @@ class _MasterScreenState extends State<MasterScreen> {
       "icon": Icons.payments,
       "label": "Transactions",
       "screen": const TransactionsScreen(),
+    },
+    {
+      "icon": Icons.support_agent,
+      "label": "Support Tickets",
+      "screen": const SupportTicketsScreen(),
     },
   ];
 

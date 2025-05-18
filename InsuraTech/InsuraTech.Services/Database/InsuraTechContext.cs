@@ -14,11 +14,10 @@ namespace InsuraTech.Services.Database
         public DbSet<InsurancePackage> InsurancePackages { get; set; }
         public DbSet<InsurancePolicy> InsurancePolicies { get; set; }
         public DbSet<CustomerFeedback> CustomerFeedbacks { get; set; }
-        public DbSet<UserFeedback> UserFeedbacks { get; set; }
-        public DbSet<MessageLog> MessageLogs { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<ClaimRequest> ClaimRequests { get; set; }
+        public DbSet<SupportTicket> SupportTickets { get; set; }
         public DbSet<Client> Clients { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -85,24 +84,6 @@ namespace InsuraTech.Services.Database
                 .WithMany(r => r.UserRoles)
                 .HasForeignKey(ur => ur.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
-           
-            modelBuilder.Entity<UserFeedback>()
-                .HasOne(uf => uf.User)
-                .WithMany()
-                .HasForeignKey(uf => uf.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // No action on delete
-
-            modelBuilder.Entity<UserFeedback>()
-                .HasOne(uf => uf.CustomerFeedback)
-                .WithMany()
-                .HasForeignKey(uf => uf.CustomerFeedbackId)
-                .OnDelete(DeleteBehavior.Restrict); // No action on delete
-
-            modelBuilder.Entity<MessageLog>()
-                .HasOne(m => m.User)
-                .WithMany()
-                .HasForeignKey(m => m.UserId)
-                .OnDelete(DeleteBehavior.Restrict); // No action on delete
 
             modelBuilder.Entity<InsurancePolicy>()
                 .HasOne(i => i.InsurancePackage)
@@ -133,6 +114,12 @@ namespace InsuraTech.Services.Database
                 .HasOne(t => t.InsurancePolicy)
                 .WithMany(p => p.Transactions) 
                 .HasForeignKey(t => t.InsurancePolicyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SupportTicket>()
+                .HasOne(t => t.Client)
+                .WithMany(p => p.SupportTickets)
+                .HasForeignKey(t => t.ClientId)
                 .OnDelete(DeleteBehavior.Restrict);
 
         }

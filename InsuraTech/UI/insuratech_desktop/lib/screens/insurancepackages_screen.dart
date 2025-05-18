@@ -430,7 +430,7 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                   backgroundColor: const Color(0xFF8D6E63),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 15,
@@ -552,7 +552,7 @@ class InsurancePackageCard extends StatelessWidget {
                   const SizedBox(height: 10),
                   if (isActive)
                     Text(
-                      "${package.price?.toStringAsFixed(2) ?? ''}",
+                      "\$${package.price?.toStringAsFixed(2) ?? ''}",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.green,

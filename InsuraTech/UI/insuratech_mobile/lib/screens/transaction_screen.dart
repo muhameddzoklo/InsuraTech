@@ -99,6 +99,25 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     }
   }
 
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(flex: 7, child: Text(value)),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -168,7 +187,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                         elevation: 3,
                         color: const Color(0xFFFBE9E7),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(16),
@@ -186,7 +205,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                 "Paid on: ${formatDateString(t.transactionDate)}",
                               ),
                               Text(
-                                "Amount: ${t.amount?.toStringAsFixed(2) ?? "0.00"}",
+                                "Amount: \$${t.amount?.toStringAsFixed(2) ?? "0.00"}",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -221,10 +240,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                     showDialog(
                                       context: context,
                                       builder: (context) {
+                                        final policy = t.insurancePolicy;
+                                        final package =
+                                            policy?.insurancePackage;
+
                                         return AlertDialog(
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
-                                              16,
+                                              20,
                                             ),
                                           ),
                                           titlePadding: const EdgeInsets.only(
@@ -258,19 +281,25 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                "Package: ${t.insurancePolicy?.insurancePackage?.name ?? "N/A"}",
+                                              _buildInfoRow(
+                                                "Package:",
+                                                package?.name ?? "N/A",
                                               ),
-                                              const SizedBox(height: 6),
-                                              Text(
-                                                "Duration: ${t.insurancePolicy?.insurancePackage?.durationDays ?? "N/A"} days",
+                                              _buildInfoRow(
+                                                "Duration:",
+                                                "${package?.durationDays ?? "N/A"} days",
                                               ),
-                                              const SizedBox(height: 6),
-                                              Text(
-                                                "Start: ${formatDateString(t.insurancePolicy?.startDate)}",
+                                              _buildInfoRow(
+                                                "Start:",
+                                                formatDateString(
+                                                  policy?.startDate,
+                                                ),
                                               ),
-                                              Text(
-                                                "End: ${formatDateString(t.insurancePolicy?.endDate)}",
+                                              _buildInfoRow(
+                                                "End:",
+                                                formatDateString(
+                                                  policy?.endDate,
+                                                ),
                                               ),
                                             ],
                                           ),

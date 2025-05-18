@@ -139,7 +139,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                                   policy.hasActiveClaimRequest == true
                                       ? _buildTag(
                                         'Claim in Progress',
-                                        Colors.lightBlueAccent,
+                                        Colors.blue,
                                       )
                                       : _buildClaimButton(
                                         policy.insurancePolicyId!,
@@ -203,7 +203,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 9),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       icon: const Icon(Icons.add_circle, size: 22),
       label: const Text('Claim Request', style: TextStyle(fontSize: 16)),
@@ -235,7 +235,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       icon: const Icon(Icons.delete_outline, size: 20),
       label: const Text('Delete'),
@@ -255,7 +255,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       icon: const Icon(Icons.refresh, size: 20),
       label: const Text('Renew'),
@@ -275,7 +275,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       icon: const Icon(Icons.payment, size: 20),
       label: const Text('Pay Now'),

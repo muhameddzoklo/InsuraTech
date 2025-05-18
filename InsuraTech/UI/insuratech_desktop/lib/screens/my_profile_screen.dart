@@ -153,7 +153,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                       backgroundColor: Colors.brown.shade700,
                                       foregroundColor: Colors.white,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                     ),
                                   ),

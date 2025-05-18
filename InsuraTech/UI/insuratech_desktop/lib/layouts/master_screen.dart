@@ -6,14 +6,19 @@ import 'package:insuratech_desktop/screens/claim_requests_screen.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
 import 'package:insuratech_desktop/screens/my_profile_screen.dart';
 import 'package:insuratech_desktop/screens/notify_clients_screen.dart';
-import 'package:insuratech_desktop/screens/placeholder_screen.dart';
 import 'package:insuratech_desktop/screens/users_screen.dart';
 
 class MasterScreen extends StatefulWidget {
   final String title;
   final Widget child;
+  final bool showBackButton;
 
-  const MasterScreen({super.key, required this.title, required this.child});
+  const MasterScreen({
+    super.key,
+    required this.title,
+    required this.child,
+    this.showBackButton = false,
+  });
 
   @override
   State<MasterScreen> createState() => _MasterScreenState();
@@ -124,7 +129,6 @@ class _MasterScreenState extends State<MasterScreen> {
             child: Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   height: 60,
                   decoration: const BoxDecoration(
                     color: Color(0xFF5D4037),
@@ -132,34 +136,37 @@ class _MasterScreenState extends State<MasterScreen> {
                       bottomLeft: Radius.circular(15),
                     ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Stack(
+                    alignment: Alignment.center,
                     children: [
-                      Text(
-                        widget.title,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child:
+                            widget.showBackButton
+                                ? IconButton(
+                                  icon: const Icon(
+                                    Icons.arrow_back,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                )
+                                : const SizedBox.shrink(),
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          widget.title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.notifications,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.account_circle,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {},
-                          ),
-                        ],
+                      // Placeholder za buduće ikonice s desne strane
+                      const Align(
+                        alignment: Alignment.centerRight,
+                        child: SizedBox(width: 50), // ostavlja prostor
                       ),
                     ],
                   ),

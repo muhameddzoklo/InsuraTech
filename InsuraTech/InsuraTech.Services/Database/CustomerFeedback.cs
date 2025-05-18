@@ -17,8 +17,6 @@ namespace InsuraTech.Services.Database
         [Range(1, 5)]
         public int? Rating { get; set; }
         public DateTime? SubmittedAt { get; set; }
-
-        public ICollection<UserFeedback> UserFeedbacks { get; set; } = new List<UserFeedback>();
         }
 
 }

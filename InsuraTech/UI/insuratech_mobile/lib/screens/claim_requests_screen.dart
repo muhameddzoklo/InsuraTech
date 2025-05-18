@@ -119,7 +119,7 @@ class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              "Estimated Amount: ${claim.estimatedAmount?.toStringAsFixed(2) ?? 'N/A'}",
+                              "Estimated Amount: \$${claim.estimatedAmount?.toStringAsFixed(2) ?? 'N/A'}",
                               style: const TextStyle(
                                 fontSize: 16,
                                 color: Colors.black87,
@@ -200,7 +200,7 @@ class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
 
     switch (status?.toLowerCase()) {
       case "in progress":
-        badgeColor = Colors.blueAccent;
+        badgeColor = Colors.blue;
         break;
       case "accepted":
         badgeColor = Colors.green;

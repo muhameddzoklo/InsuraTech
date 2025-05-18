@@ -106,7 +106,7 @@ class _InsurancePackageDetailsScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(20),
               child:
                   imageBytes != null
                       ? Image.memory(
@@ -134,7 +134,7 @@ class _InsurancePackageDetailsScreenState
             ),
             const SizedBox(height: 20),
             Text(
-              "Price: ${widget.package.price?.toStringAsFixed(2) ?? 'N/A'}",
+              "Price: \$${widget.package.price?.toStringAsFixed(2) ?? 'N/A'} ",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
@@ -207,7 +207,7 @@ class _InsurancePackageDetailsScreenState
                     vertical: 14,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 onPressed: _proceedToPayment,

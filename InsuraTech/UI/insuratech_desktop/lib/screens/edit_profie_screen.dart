@@ -76,6 +76,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return MasterScreen(
       title: "Edit Profile",
+      showBackButton: true,
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
@@ -239,7 +240,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             vertical: 14,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                         onPressed: _saveChanges,

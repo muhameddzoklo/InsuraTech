@@ -47,7 +47,7 @@ class _CreateInsurancePolicyScreenState
                     Padding(
                       padding: const EdgeInsets.only(left: 24.0),
                       child: Text(
-                        "${policy.insurancePackage!.price?.toStringAsFixed(2) ?? 'N/A'}",
+                        "\$${policy.insurancePackage!.price?.toStringAsFixed(2) ?? 'N/A'}",
                         style: _valueStyle,
                       ),
                     ),
@@ -121,14 +121,14 @@ class _CreateInsurancePolicyScreenState
                             style: TextStyle(fontSize: 16),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange.shade800,
+                            backgroundColor: Colors.green.shade700,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 30,
                               vertical: 14,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                           onPressed: _proceedToRenewal,
@@ -151,7 +151,7 @@ class _CreateInsurancePolicyScreenState
                               vertical: 14,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                           onPressed: _proceedToPayment,
@@ -178,7 +178,7 @@ class _CreateInsurancePolicyScreenState
                     Padding(
                       padding: const EdgeInsets.only(left: 24.0),
                       child: Text(
-                        "${policy.insurancePackage!.price?.toStringAsFixed(2) ?? 'N/A'}",
+                        "\$${policy.insurancePackage!.price?.toStringAsFixed(2) ?? 'N/A'}",
                         style: _valueStyle,
                       ),
                     ),
@@ -232,14 +232,14 @@ class _CreateInsurancePolicyScreenState
                             style: TextStyle(fontSize: 16),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange.shade800,
+                            backgroundColor: Colors.green.shade700,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 30,
                               vertical: 14,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                           onPressed: _proceedToRenewal,
@@ -262,7 +262,7 @@ class _CreateInsurancePolicyScreenState
                               vertical: 14,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                           onPressed: _proceedToPayment,
