@@ -6,6 +6,7 @@ import 'package:insuratech_desktop/screens/claim_requests_screen.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
 import 'package:insuratech_desktop/screens/my_profile_screen.dart';
 import 'package:insuratech_desktop/screens/notify_clients_screen.dart';
+import 'package:insuratech_desktop/screens/support_tickets_screen.dart';
 import 'package:insuratech_desktop/screens/users_screen.dart';
 
 class MasterScreen extends StatefulWidget {
@@ -49,50 +50,87 @@ class _MasterScreenState extends State<MasterScreen> {
             ),
             child: Column(
               children: [
-                const SizedBox(height: 20),
-                Container(
-                  height: 100,
-                  width: 100,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/logo.jpg'),
-                      fit: BoxFit.cover,
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        Container(
+                          height: 100,
+                          width: 100,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/logo.jpg'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildSidebarItem(
+                          context,
+                          "My profile",
+                          Icons.account_circle,
+                          const MyProfileScreen(),
+                        ),
+                        _buildSidebarItem(
+                          context,
+                          "Packages",
+                          Icons.inventory,
+                          const InsurancePackageScreen(),
+                        ),
+                        _buildSidebarItem(
+                          context,
+                          "Users",
+                          Icons.event,
+                          const UsersScreen(),
+                        ),
+                        _buildSidebarItem(
+                          context,
+                          "Claim Requests",
+                          Icons.description,
+                          const ClaimRequestsScreen(),
+                        ),
+                        _buildSidebarItem(
+                          context,
+                          "Notify clients",
+                          Icons.notifications,
+                          const NotifyClientsScreen(),
+                        ),
+                        _buildSidebarItem(
+                          context,
+                          "Support tickets",
+                          Icons.support_agent,
+                          const SupportTicketsScreen(),
+                        ),
+                        _buildSidebarItem(
+                          context,
+                          "Reviews",
+                          Icons.reviews,
+                          const Placeholder(),
+                        ),
+                        _buildSidebarItem(
+                          context,
+                          "Reports",
+                          Icons.edit_document,
+                          const Placeholder(),
+                        ),
+                        _buildSidebarItem(
+                          context,
+                          "Loyalty program",
+                          Icons.loyalty,
+                          const Placeholder(),
+                        ),
+                        _buildSidebarItem(
+                          context,
+                          "Management",
+                          Icons.settings,
+                          const Placeholder(),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-                _buildSidebarItem(
-                  context,
-                  "My profile",
-                  Icons.account_circle,
-                  const MyProfileScreen(),
-                ),
-                _buildSidebarItem(
-                  context,
-                  "Packages",
-                  Icons.inventory,
-                  const InsurancePackageScreen(),
-                ),
-                _buildSidebarItem(
-                  context,
-                  "Users",
-                  Icons.event,
-                  const UsersScreen(),
-                ),
-                _buildSidebarItem(
-                  context,
-                  "Claim Requests",
-                  Icons.description,
-                  const ClaimRequestsScreen(),
-                ),
-                _buildSidebarItem(
-                  context,
-                  "Notify clients",
-                  Icons.notifications,
-                  const NotifyClientsScreen(),
-                ),
-                const Spacer(),
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.logout, color: Colors.white),
@@ -163,10 +201,9 @@ class _MasterScreenState extends State<MasterScreen> {
                           ),
                         ),
                       ),
-                      // Placeholder za buduće ikonice s desne strane
                       const Align(
                         alignment: Alignment.centerRight,
-                        child: SizedBox(width: 50), // ostavlja prostor
+                        child: SizedBox(width: 50),
                       ),
                     ],
                   ),
