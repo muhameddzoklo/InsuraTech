@@ -17,8 +17,6 @@ namespace InsuraTech.Services
     public class NotificationService : BaseCRUDServiceAsync<NotificationDTO, NotificationSearchObject, Notification, NotificationInsertRequest, NotificationUpdateRequest>, INotificationService
     {
         IInsurancePolicyService _policyService;
-
-       // private readonly IHubContext<NotificationHub> _hubContext;
         public NotificationService(InsuraTechContext context, IMapper mapper, IInsurancePolicyService policyService ) : base(context, mapper)
         {
             _policyService = policyService;
@@ -27,7 +25,7 @@ namespace InsuraTech.Services
         {
             if (search.ClientId > 0)
             {
-                query=query.Where(x=>x.ClientId == search.ClientId);
+                query = query.Where(x=>x.ClientId == search.ClientId);
             }
             if (search.ShowUnread == true)
             {

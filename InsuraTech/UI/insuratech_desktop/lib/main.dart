@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:insuratech_desktop/models/support_ticket.dart';
 import 'package:insuratech_desktop/providers/auth_provider.dart';
 import 'package:insuratech_desktop/providers/claim_request_provider.dart';
 import 'package:insuratech_desktop/providers/clients_provider.dart';
@@ -6,6 +7,7 @@ import 'package:insuratech_desktop/providers/insurance_package_provider.dart';
 import 'package:insuratech_desktop/providers/insurance_policy_provider.dart';
 import 'package:insuratech_desktop/providers/notification_provider.dart';
 import 'package:insuratech_desktop/providers/roles_provider.dart';
+import 'package:insuratech_desktop/providers/support_ticket_provider.dart';
 import 'package:insuratech_desktop/providers/users_provider.dart';
 import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
@@ -28,6 +30,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ClaimRequestProvider()),
         ChangeNotifierProvider(create: (_) => InsurancePolicyProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => SupportTicketProvider()),
       ],
       child: const MyApp(),
     ),

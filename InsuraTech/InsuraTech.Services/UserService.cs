@@ -81,21 +81,21 @@ namespace InsuraTech.Services
             entity.PasswordHash = Helpers.Helper.GenerateHash(entity.PasswordSalt, newPass);
             entity.IsActive = true;
 
-            string rabbitmq = Environment.GetEnvironmentVariable("RABBIT_MQ") ?? string.Empty;
+            //string rabbitmq = Environment.GetEnvironmentVariable("RABBIT_MQ") ?? string.Empty;
 
-            var bus = RabbitHutch.CreateBus(rabbitmq);
+            //var bus = RabbitHutch.CreateBus(rabbitmq);
 
-            Console.WriteLine(bus);
-            AccountCreationMsg registerMessage = new AccountCreationMsg
-            {
-                employeeFirstName = request.FirstName,
-                employeeLastName = request.LastName,
-                email = request.Email,
-                username = request.Username,
-                password = newPass
-            };
+            //Console.WriteLine(bus);
+            //AccountCreationMsg registerMessage = new AccountCreationMsg
+            //{
+            //    employeeFirstName = request.FirstName,
+            //    employeeLastName = request.LastName,
+            //    email = request.Email,
+            //    username = request.Username,
+            //    password = newPass
+            //};
 
-            await bus.PubSub.PublishAsync(registerMessage);
+            //await bus.PubSub.PublishAsync(registerMessage);
 
         }
 
