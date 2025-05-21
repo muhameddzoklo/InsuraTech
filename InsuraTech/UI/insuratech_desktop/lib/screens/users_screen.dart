@@ -24,6 +24,12 @@ class _UsersScreenState extends State<UsersScreen> {
   List<Client> clients = [];
   List<Role> roles = [];
   bool clientsLoaded = false;
+  final ScrollController _verticalController = ScrollController();
+  @override
+  void dispose() {
+    _verticalController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -61,7 +67,7 @@ class _UsersScreenState extends State<UsersScreen> {
         return AlertDialog(
           title: const Text("Add New Employee"),
           content: SizedBox(
-            width: 400, // Fiksna širina
+            width: 400,
             child: Form(
               key: _formKey,
               child: SingleChildScrollView(
@@ -89,15 +95,28 @@ class _UsersScreenState extends State<UsersScreen> {
                       onSaved: (value) => lastName = value!,
                     ),
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Email'),
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'example@example.com',
+                      ),
                       keyboardType: TextInputType.emailAddress,
-                      validator:
-                          (value) =>
-                              value == null || !value.contains('@')
-                                  ? 'Enter valid email (example@example.com)'
-                                  : null,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Email is required';
+                        }
+
+                        final emailRegex = RegExp(
+                          r'^[\w\.-]+@[a-zA-Z\d-]+\.[a-zA-Z]{2,}$',
+                        );
+                        if (!emailRegex.hasMatch(value)) {
+                          return 'Enter a valid email (example@example.com)';
+                        }
+
+                        return null;
+                      },
                       onSaved: (value) => email = value!,
                     ),
+
                     TextFormField(
                       decoration: const InputDecoration(
                         labelText: 'Phone Number',
@@ -105,16 +124,17 @@ class _UsersScreenState extends State<UsersScreen> {
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Enter phone number';
+                          return null;
                         }
                         final regex = RegExp(r'^\d{9,10}$');
                         if (!regex.hasMatch(value)) {
-                          return 'Enter exactly 9 or 10 digits';
+                          return 'Phone number must be 9 or 10 digits';
                         }
                         return null;
                       },
-                      onSaved: (value) => phoneNumber = value!,
+                      onSaved: (value) => phoneNumber = value ?? '',
                     ),
+
                     TextFormField(
                       decoration: const InputDecoration(labelText: 'Username'),
                       validator:
@@ -237,13 +257,22 @@ class _UsersScreenState extends State<UsersScreen> {
                             decoration: const InputDecoration(
                               labelText: 'Phone Number',
                             ),
-                            validator:
-                                (value) =>
-                                    value == null || value.isEmpty
-                                        ? 'Enter phone number'
-                                        : null,
+                            keyboardType: TextInputType.phone,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return null;
+                              }
+
+                              final phoneRegex = RegExp(r'^\d{9,10}$');
+                              if (!phoneRegex.hasMatch(value.trim())) {
+                                return 'Phone number must be 9 or 10 digits';
+                              }
+
+                              return null;
+                            },
                             onSaved: (value) => phoneNumber = value!,
                           ),
+
                           const SizedBox(height: 10),
                           SwitchListTile(
                             title: Text(isActive ? "Active" : "Inactive"),
@@ -355,14 +384,24 @@ class _UsersScreenState extends State<UsersScreen> {
                             initialValue: phoneNumber,
                             decoration: const InputDecoration(
                               labelText: 'Phone Number',
+                              hintText: 'e.g. 061234567',
                             ),
-                            validator:
-                                (value) =>
-                                    value == null || value.isEmpty
-                                        ? 'Enter phone number'
-                                        : null,
+                            keyboardType: TextInputType.phone,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return null; // Prazan broj je dozvoljen
+                              }
+
+                              final phoneRegex = RegExp(r'^\d{9,10}$');
+                              if (!phoneRegex.hasMatch(value.trim())) {
+                                return 'Phone number must be 9 or 10 digits';
+                              }
+
+                              return null;
+                            },
                             onSaved: (value) => phoneNumber = value!,
                           ),
+
                           const SizedBox(height: 10),
                           SwitchListTile(
                             title: Text(isActive ? "Active" : "Inactive"),
@@ -540,163 +579,200 @@ class _UsersScreenState extends State<UsersScreen> {
                   ),
                   const SizedBox(height: 20),
                   Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      child: DataTable(
-                        columnSpacing: 40,
-                        columns: const [
-                          DataColumn(label: Text("Username")),
-                          DataColumn(label: Text("Status")),
-                          DataColumn(label: Text("Actions")),
-                        ],
-                        rows:
-                            showEmployees
-                                ? filteredEmployees.map((user) {
-                                  return DataRow(
-                                    cells: [
-                                      DataCell(Text(user.username ?? 'N/A')),
-                                      DataCell(
-                                        Text(
-                                          (user.isActive ?? false)
-                                              ? "Active"
-                                              : "Inactive",
-                                          style: TextStyle(
-                                            color:
+                    child: Scrollbar(
+                      thumbVisibility: false,
+                      controller: _verticalController,
+                      child: SingleChildScrollView(
+                        controller: _verticalController,
+                        scrollDirection: Axis.vertical,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minWidth: MediaQuery.of(context).size.width,
+                            ),
+                            child: DataTable(
+                              columnSpacing: 40,
+                              columns: const [
+                                DataColumn(label: Text("Username")),
+                                DataColumn(label: Text("Name")),
+                                DataColumn(label: Text("Status")),
+                                DataColumn(label: Text("Actions")),
+                                DataColumn(label: Text("")),
+                              ],
+                              rows:
+                                  showEmployees
+                                      ? filteredEmployees.map((user) {
+                                        return DataRow(
+                                          cells: [
+                                            DataCell(
+                                              Text(user.username ?? 'N/A'),
+                                            ),
+                                            DataCell(
+                                              Text(
+                                                "${user.firstName} ${user.lastName}",
+                                              ),
+                                            ),
+                                            DataCell(
+                                              Text(
                                                 (user.isActive ?? false)
-                                                    ? Colors.green
-                                                    : Colors.red,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      DataCell(
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.edit,
-                                                color: Colors.blue,
+                                                    ? "Active"
+                                                    : "Inactive",
+                                                style: TextStyle(
+                                                  color:
+                                                      (user.isActive ?? false)
+                                                          ? Colors.green
+                                                          : Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                              onPressed:
-                                                  () => _showUpdateUserDialog(
-                                                    user,
+                                            ),
+                                            DataCell(
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Icons.edit,
+                                                      color: Colors.blue,
+                                                    ),
+                                                    onPressed:
+                                                        () =>
+                                                            _showUpdateUserDialog(
+                                                              user,
+                                                            ),
                                                   ),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Icons.delete,
+                                                      color: Colors.red,
+                                                    ),
+                                                    onPressed: () async {
+                                                      final result =
+                                                          await showCustomConfirmDialog(
+                                                            context,
+                                                            title:
+                                                                "Employee deletion",
+                                                            text:
+                                                                "Do you want delete this employee?",
+                                                          );
+                                                      if (result == true) {
+                                                        try {
+                                                          await Provider.of<
+                                                            UsersProvider
+                                                          >(
+                                                            context,
+                                                            listen: false,
+                                                          ).delete(
+                                                            user.userId!,
+                                                          );
+                                                          _loadEmployees();
+                                                          showSuccessAlert(
+                                                            context,
+                                                            "Employee deleted successfully",
+                                                          );
+                                                        } catch (e) {
+                                                          showErrorAlert(
+                                                            context,
+                                                            "Error deleting employee ${e.toString()}",
+                                                          );
+                                                        }
+                                                      }
+                                                    },
+                                                  ),
+                                                ],
                                               ),
-                                              onPressed: () async {
-                                                final result =
-                                                    await showCustomConfirmDialog(
-                                                      context,
-                                                      title:
-                                                          "Employee deletion ",
-                                                      text:
-                                                          "Do you want delete this employee",
-                                                    );
-                                                if (result == true) {
-                                                  try {
-                                                    await Provider.of<
-                                                      UsersProvider
-                                                    >(
-                                                      context,
-                                                      listen: false,
-                                                    ).delete(user.userId!);
-                                                    _loadEmployees();
-                                                    showSuccessAlert(
-                                                      context,
-                                                      "Employee deleted successfully",
-                                                    );
-                                                  } catch (e) {
-                                                    showErrorAlert(
-                                                      context,
-                                                      "Error deleting employee ${e.toString()}",
-                                                    );
-                                                  }
-                                                }
-                                              },
                                             ),
+                                            DataCell(SizedBox(width: 0)),
                                           ],
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }).toList()
-                                : filteredClients.map((client) {
-                                  return DataRow(
-                                    cells: [
-                                      DataCell(Text(client.username ?? 'N/A')),
-                                      DataCell(
-                                        Text(
-                                          (client.isActive ?? false)
-                                              ? "Active"
-                                              : "Inactive",
-                                          style: TextStyle(
-                                            color:
+                                        );
+                                      }).toList()
+                                      : filteredClients.map((client) {
+                                        return DataRow(
+                                          cells: [
+                                            DataCell(
+                                              Text(client.username ?? 'N/A'),
+                                            ),
+                                            DataCell(
+                                              Text(
+                                                "${client.firstName} ${client.lastName}",
+                                              ),
+                                            ),
+                                            DataCell(
+                                              Text(
                                                 (client.isActive ?? false)
-                                                    ? Colors.green
-                                                    : Colors.red,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      DataCell(
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.edit,
-                                                color: Colors.blue,
+                                                    ? "Active"
+                                                    : "Inactive",
+                                                style: TextStyle(
+                                                  color:
+                                                      (client.isActive ?? false)
+                                                          ? Colors.green
+                                                          : Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                              onPressed:
-                                                  () => _showUpdateClientDialog(
-                                                    client,
+                                            ),
+                                            DataCell(
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Icons.edit,
+                                                      color: Colors.blue,
+                                                    ),
+                                                    onPressed:
+                                                        () =>
+                                                            _showUpdateClientDialog(
+                                                              client,
+                                                            ),
                                                   ),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Icons.delete,
+                                                      color: Colors.red,
+                                                    ),
+                                                    onPressed: () async {
+                                                      final result =
+                                                          await showCustomConfirmDialog(
+                                                            context,
+                                                            title:
+                                                                "Client deletion",
+                                                            text:
+                                                                "Do you want to delete this client?",
+                                                          );
+                                                      if (result == true) {
+                                                        try {
+                                                          await Provider.of<
+                                                            ClientsProvider
+                                                          >(
+                                                            context,
+                                                            listen: false,
+                                                          ).delete(
+                                                            client.clientId!,
+                                                          );
+                                                          _loadClients();
+                                                          showSuccessAlert(
+                                                            context,
+                                                            "Client deleted successfully",
+                                                          );
+                                                        } catch (e) {
+                                                          showErrorAlert(
+                                                            context,
+                                                            "Error deleting client ${e.toString()}",
+                                                          );
+                                                        }
+                                                      }
+                                                    },
+                                                  ),
+                                                ],
                                               ),
-                                              onPressed: () async {
-                                                final result =
-                                                    await showCustomConfirmDialog(
-                                                      context,
-                                                      title: "Client deletion",
-                                                      text:
-                                                          "Do you want to delete this client?",
-                                                    );
-                                                if (result == true) {
-                                                  try {
-                                                    await Provider.of<
-                                                      ClientsProvider
-                                                    >(
-                                                      context,
-                                                      listen: false,
-                                                    ).delete(client.clientId!);
-
-                                                    _loadClients();
-                                                    showSuccessAlert(
-                                                      context,
-                                                      "Client deleted successfully",
-                                                    );
-                                                  } catch (e) {
-                                                    showErrorAlert(
-                                                      context,
-                                                      "Error deleting client ${e.toString()}",
-                                                    );
-                                                  }
-                                                }
-                                              },
                                             ),
+                                            DataCell(SizedBox(width: 0)),
                                           ],
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }).toList(),
+                                        );
+                                      }).toList(),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),

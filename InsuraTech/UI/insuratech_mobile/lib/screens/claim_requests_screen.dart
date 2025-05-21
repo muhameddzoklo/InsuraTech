@@ -110,21 +110,58 @@ class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
                             const SizedBox(height: 16),
                             _buildStatusBadge(claim.status),
                             SizedBox(height: 16),
-                            Text(
-                              "Description: ${claim.description ?? 'N/A'}",
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.black87,
-                              ),
+                            Row(
+                              children: [
+                                const Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    "Description:",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    claim.description ?? 'N/A',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              "Estimated Amount: \$${claim.estimatedAmount?.toStringAsFixed(2) ?? 'N/A'}",
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.black87,
-                              ),
+                            Row(
+                              children: [
+                                const Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    "Estimated Amount:",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    "\$${claim.estimatedAmount?.toStringAsFixed(2) ?? 'N/A'}",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
+
                             const SizedBox(height: 12),
                             if (claim.status?.toLowerCase() == "accepted" ||
                                 claim.status?.toLowerCase() == "declined") ...[

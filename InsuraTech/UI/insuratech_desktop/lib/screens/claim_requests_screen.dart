@@ -422,11 +422,6 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
                                             child:
                                                 r.status == "In progress"
                                                     ? ElevatedButton(
-                                                      style:
-                                                          ElevatedButton.styleFrom(
-                                                            backgroundColor:
-                                                                Colors.orange,
-                                                          ),
                                                       onPressed:
                                                           () =>
                                                               _showProcessDialog(
@@ -435,14 +430,28 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
                                                       child: const Text(
                                                         "Process request",
                                                       ),
+                                                      style:
+                                                          ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                Colors.orange,
+                                                            foregroundColor:
+                                                                Colors.black,
+                                                          ),
                                                     )
-                                                    : const Text(
-                                                      "Processed",
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Colors.blueAccent,
+                                                    : ElevatedButton(
+                                                      onPressed: null,
+                                                      child: const Text(
+                                                        "Processed",
+                                                      ),
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.blue,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        disabledBackgroundColor:
+                                                            Colors.blue,
+                                                        disabledForegroundColor:
+                                                            Colors.white,
                                                       ),
                                                     ),
                                           ),

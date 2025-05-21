@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_desktop/layouts/master_screen.dart';
-import 'package:insuratech_desktop/models/search_result.dart';
 import 'package:insuratech_desktop/models/support_ticket.dart';
 import 'package:insuratech_desktop/providers/support_ticket_provider.dart';
 import 'package:insuratech_desktop/providers/utils.dart';
@@ -47,7 +46,6 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
         if (_dateTo != null) 'dateTo': _dateTo,
         if (_isAnswered != null) 'isAnswered': _isAnswered,
         if (_isClosed != null) 'isClosed': _isClosed,
-        'retrieveAll': true,
       },
     );
 
@@ -59,29 +57,162 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
     }
   }
 
-  void _closeTicket(SupportTicket ticket) async {
-    final confirm = await showDialog<bool>(
+  void _showResolveTicketDialog(SupportTicket ticket) {
+    final replyController = TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+
+    showDialog(
       context: context,
       builder:
-          (_) => AlertDialog(
-            title: const Text('Close Ticket'),
-            content: const Text('Are you sure you want to close this ticket?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 450),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Resolve Ticket",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Subject",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.brown.shade800,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF2F2F2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          ticket.subject ?? "-",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Message",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.brown.shade800,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF2F2F2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          ticket.message ?? "-",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: replyController,
+                        maxLines: 3,
+                        decoration: const InputDecoration(
+                          labelText: "Reply (required)",
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return "Reply is required.";
+                          }
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.check),
+                          label: const Text("Resolve"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green.shade700,
+                            foregroundColor: Colors.white,
+                          ),
+                          onPressed: () async {
+                            if (!_formKey.currentState!.validate()) return;
+
+                            final updatedData = {
+                              "reply": replyController.text.trim(),
+                              "isAnswered": true,
+                              "isClosed": true,
+                            };
+
+                            try {
+                              await Provider.of<SupportTicketProvider>(
+                                context,
+                                listen: false,
+                              ).update(ticket.supportTicketId!, updatedData);
+
+                              Navigator.of(context).pop();
+                              _fetchTickets();
+                              showSuccessAlert(
+                                context,
+                                "Ticket resolved successfully",
+                              );
+                            } catch (e) {
+                              showErrorAlert(
+                                context,
+                                "Error resolving ticket: ${e.toString()}",
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('Close'),
-              ),
-            ],
+            ),
           ),
     );
-    if (confirm == true) {
-      await _provider.CloseTicket(ticket.supportTicketId!);
-      _fetchTickets();
-    }
   }
 
   Widget _buildFilters() {
@@ -190,9 +321,7 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
                         controller: _scrollController,
                         scrollDirection: Axis.vertical,
                         child: SizedBox(
-                          width:
-                              double
-                                  .infinity, // <<< Ovdje se rasteže tabela maksimalno
+                          width: double.infinity,
                           child: DataTable(
                             columnSpacing: 30,
                             dataRowMinHeight: 56,
@@ -239,41 +368,40 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
 
                                       DataCell(
                                         SizedBox(
-                                          width:
-                                              120, // ✅ fiksna širina za oba dugmeta
+                                          width: 120,
                                           child:
                                               ticket.isClosed == false
                                                   ? ElevatedButton(
                                                     onPressed:
-                                                        () => _closeTicket(
-                                                          ticket,
-                                                        ),
+                                                        () =>
+                                                            _showResolveTicketDialog(
+                                                              ticket,
+                                                            ),
                                                     child: const Text(
                                                       "Resolve",
                                                     ),
                                                     style:
                                                         ElevatedButton.styleFrom(
                                                           backgroundColor:
-                                                              Colors.blue,
+                                                              Colors.orange,
                                                           foregroundColor:
-                                                              Colors.white,
+                                                              Colors.black,
                                                         ),
                                                   )
                                                   : ElevatedButton(
-                                                    onPressed:
-                                                        null, // ✅ disabled dugme
+                                                    onPressed: null,
                                                     child: const Text(
                                                       "Resolved",
                                                     ),
                                                     style: ElevatedButton.styleFrom(
                                                       backgroundColor:
-                                                          Colors.grey,
+                                                          Colors.blue,
                                                       foregroundColor:
-                                                          Colors.black,
+                                                          Colors.white,
                                                       disabledBackgroundColor:
-                                                          Colors.grey,
+                                                          Colors.blue,
                                                       disabledForegroundColor:
-                                                          Colors.black,
+                                                          Colors.white,
                                                     ),
                                                   ),
                                         ),

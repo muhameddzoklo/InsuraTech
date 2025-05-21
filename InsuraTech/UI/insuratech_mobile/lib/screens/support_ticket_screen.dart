@@ -3,7 +3,6 @@ import 'package:insuratech_mobile/models/support_ticket.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
 import 'package:insuratech_mobile/providers/support_ticket_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
-import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:provider/provider.dart';
 
 class SupportTicketsScreen extends StatefulWidget {
@@ -52,24 +51,41 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
   }
 
   void _showCreateTicketDialog() {
+    final _formKey = GlobalKey<FormState>();
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text("New Support Ticket"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _subjectController,
-                decoration: const InputDecoration(labelText: "Subject"),
-              ),
-              TextField(
-                controller: _messageController,
-                decoration: const InputDecoration(labelText: "Message"),
-                maxLines: 3,
-              ),
-            ],
+          content: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: _subjectController,
+                  decoration: const InputDecoration(labelText: "Subject"),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Subject is required';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _messageController,
+                  decoration: const InputDecoration(labelText: "Message"),
+                  maxLines: 3,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Message is required';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -78,18 +94,12 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
-                final subject = _subjectController.text.trim();
-                final message = _messageController.text.trim();
-
-                if (subject.isEmpty || message.isEmpty) {
-                  showErrorAlert(context, "Both fields are required.");
-                  return;
-                }
+                if (!_formKey.currentState!.validate()) return;
 
                 final request = {
                   "clientId": AuthProvider.clientId,
-                  "subject": subject,
-                  "message": message,
+                  "subject": _subjectController.text.trim(),
+                  "message": _messageController.text.trim(),
                 };
 
                 final provider = Provider.of<SupportTicketProvider>(
@@ -105,7 +115,10 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
                   _subjectController.clear();
                   _messageController.clear();
                 } catch (e) {
-                  showErrorAlert(context, e.toString());
+                  showErrorAlert(
+                    context,
+                    " Error subbmiting ticket ${e.toString()}",
+                  );
                 }
               },
               child: const Text("Submit"),
@@ -124,17 +137,15 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
   }
 
   Color getTicketStatusColor(SupportTicket t) {
-    if (getTicketStatusLabel(t) == "Resolved") {
-      return Colors.green[100]!;
-    }
-    return Colors.orange[100]!;
+    return getTicketStatusLabel(t) == "Resolved"
+        ? Colors.green[100]!
+        : Colors.orange[100]!;
   }
 
   Color getTicketStatusTextColor(SupportTicket t) {
-    if (getTicketStatusLabel(t) == "Resolved") {
-      return Colors.green[800]!;
-    }
-    return Colors.orange[800]!;
+    return getTicketStatusLabel(t) == "Resolved"
+        ? Colors.green[800]!
+        : Colors.orange[800]!;
   }
 
   Future<void> _deleteTicket(int id) async {
@@ -144,8 +155,27 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
       await _loadTickets();
       showSuccessAlert(context, "Ticket deleted.");
     } catch (e) {
-      showErrorAlert(context, e.toString());
+      showErrorAlert(context, "Error deleting ticket ${e.toString()}");
     }
+  }
+
+  Widget _rowText(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              "$label:",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(child: Text(value)),
+        ],
+      ),
+    );
   }
 
   @override
@@ -199,7 +229,6 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Status row
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -269,24 +298,30 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 6),
-                                  Text("Message: ${t.message}"),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    "Created: ${formatDateString(t.createdAt)}",
+                                  _rowText("Message", t.message ?? "-"),
+                                  _rowText(
+                                    "Created",
+                                    formatDateString(t.createdAt),
                                   ),
-                                  if (t.reply != null) ...[
-                                    const SizedBox(height: 6),
-                                    Text("Reply: ${t.reply}"),
-                                  ],
+                                  if (t.reply != null)
+                                    _rowText("Reply", t.reply!),
                                   const SizedBox(height: 10),
                                   if (!(t.isClosed ?? false))
                                     Align(
                                       alignment: Alignment.centerRight,
                                       child: ElevatedButton(
-                                        onPressed:
-                                            () => _closeTicket(
-                                              t.supportTicketId!,
-                                            ),
+                                        onPressed: () async {
+                                          final confirmed =
+                                              await showCustomConfirmDialog(
+                                                context,
+                                                title: "Close Ticket",
+                                                text:
+                                                    "Are you sure you want to close this ticket?",
+                                              );
+                                          if (confirmed) {
+                                            _closeTicket(t.supportTicketId!);
+                                          }
+                                        },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.red.shade400,
                                           foregroundColor: Colors.white,

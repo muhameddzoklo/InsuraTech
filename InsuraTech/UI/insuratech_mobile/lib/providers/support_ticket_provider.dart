@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:insuratech_mobile/models/support_ticket.dart';
 import 'package:insuratech_mobile/providers/base_provider.dart';
