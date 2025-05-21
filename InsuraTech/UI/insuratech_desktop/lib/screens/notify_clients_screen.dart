@@ -40,8 +40,16 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
       orderBy: "IsNotificationSent",
       sortDirection: "ASC",
     );
+    final unnotified =
+        result.resultList.where((p) => p.isNotificationSent == false).toList()
+          ..sort((a, b) => a.endDate!.compareTo(b.endDate!));
+
+    final notified =
+        result.resultList.where((p) => p.isNotificationSent == true).toList()
+          ..sort((a, b) => a.endDate!.compareTo(b.endDate!));
+
     setState(() {
-      _policies = result.resultList;
+      _policies = [...unnotified, ...notified];
     });
   }
 

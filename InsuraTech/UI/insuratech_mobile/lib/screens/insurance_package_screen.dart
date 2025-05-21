@@ -118,24 +118,59 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
               style: const TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 8),
-            Text(
-              "Price: \$${package.price?.toStringAsFixed(2) ?? 'N/A'} ",
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Colors.green,
-              ),
+            Row(
+              children: [
+                const Expanded(
+                  flex: 2,
+                  child: Text(
+                    "Price:",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    "\$${package.price?.toStringAsFixed(2) ?? 'N/A'}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+              ],
             ),
             if (package.durationDays != null)
               Padding(
-                padding: const EdgeInsets.only(top: 4.0),
-                child: Text(
-                  "Duration: ${package.durationDays} days",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
+                padding: const EdgeInsets.only(top: 6),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Duration:",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        "${package.durationDays} days",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerRight,

@@ -122,14 +122,40 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            'Start Date: ${formatDateString(policy.startDate)}',
-                            style: _infoStyle,
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              const Expanded(
+                                flex: 2,
+                                child: Text('Start Date:', style: _infoStyle),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  formatDateString(policy.startDate),
+                                  style: _infoStyle,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            'End Date: ${formatDateString(policy.endDate)}',
-                            style: _infoStyle,
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Expanded(
+                                flex: 2,
+                                child: Text('End Date:', style: _infoStyle),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  formatDateString(policy.endDate),
+                                  style: _infoStyle,
+                                ),
+                              ),
+                            ],
                           ),
+                          const SizedBox(height: 10),
+
                           const SizedBox(height: 12),
                           if (isActive &&
                               startDate != null &&

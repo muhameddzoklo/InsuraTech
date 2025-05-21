@@ -133,26 +133,58 @@ class _InsurancePackageDetailsScreenState
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
-            Text(
-              "Price: \$${widget.package.price?.toStringAsFixed(2) ?? 'N/A'} ",
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                color: Colors.green,
-              ),
+            Row(
+              children: [
+                const Expanded(
+                  flex: 2,
+                  child: Text(
+                    "Price:",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    "\$${widget.package.price?.toStringAsFixed(2) ?? 'N/A'}",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+              ],
             ),
             if (widget.package.durationDays != null)
               Padding(
                 padding: const EdgeInsets.only(top: 10),
-                child: Text(
-                  "Duration: ${widget.package.durationDays} days",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.brown,
-                  ),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      flex: 2,
+                      child: Text(
+                        "Duration:",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        "${widget.package.durationDays} days",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.brown,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+
             const SizedBox(height: 30),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(

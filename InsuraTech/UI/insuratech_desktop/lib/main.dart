@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:insuratech_desktop/models/support_ticket.dart';
 import 'package:insuratech_desktop/providers/auth_provider.dart';
 import 'package:insuratech_desktop/providers/claim_request_provider.dart';
 import 'package:insuratech_desktop/providers/clients_provider.dart';
@@ -19,6 +18,7 @@ void main() async {
   await windowManager.ensureInitialized();
   windowManager.waitUntilReadyToShow().then((_) async {
     await windowManager.setMinimumSize(const Size(1000, 600));
+    await windowManager.maximize();
   });
   runApp(
     MultiProvider(
