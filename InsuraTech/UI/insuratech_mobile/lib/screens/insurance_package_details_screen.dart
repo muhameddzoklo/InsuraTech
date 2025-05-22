@@ -4,10 +4,12 @@ import 'dart:ui' as flutter_ui;
 
 import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
+import 'package:insuratech_mobile/providers/client_feedback_provider.dart';
 import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/models/insurance_package.dart';
+import 'package:insuratech_mobile/screens/comments_screen.dart';
 import 'package:insuratech_mobile/screens/my_insurance_policies_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -26,6 +28,9 @@ class _InsurancePackageDetailsScreenState
   DateTime? _startDate;
   String? _validationMessage;
 
+  double? _averageRating;
+  int _commentCount = 0;
+
   Uint8List? get imageBytes {
     if (widget.package.picture != null && widget.package.picture!.isNotEmpty) {
       return base64Decode(widget.package.picture!);
@@ -38,6 +43,40 @@ class _InsurancePackageDetailsScreenState
       return _startDate!.add(Duration(days: widget.package.durationDays!));
     }
     return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFeedbackStats();
+  }
+
+  Future<void> _loadFeedbackStats() async {
+    final feedbackProvider = Provider.of<ClientFeedbackProvider>(
+      context,
+      listen: false,
+    );
+    final result = await feedbackProvider.get(
+      filter: {"InsurancePackageId": widget.package.insurancePackageId},
+    );
+
+    final feedbacks = result.resultList;
+    if (feedbacks.isNotEmpty) {
+      final ratings = feedbacks
+          .where((f) => f.rating != null)
+          .map((f) => f.rating!);
+      final comments = feedbacks.where(
+        (f) => f.comment != null && f.comment!.trim().isNotEmpty,
+      );
+
+      setState(() {
+        _averageRating =
+            ratings.isNotEmpty
+                ? ratings.reduce((a, b) => a + b) / ratings.length
+                : null;
+        _commentCount = comments.length;
+      });
+    }
   }
 
   Future<void> _pickStartDate() async {
@@ -123,6 +162,65 @@ class _InsurancePackageDetailsScreenState
                       ),
             ),
             const SizedBox(height: 20),
+            (_averageRating != null || _commentCount > 0)
+                ? Padding(
+                  padding: const EdgeInsets.only(left: 60),
+                  child: Row(
+                    children: [
+                      if (_averageRating != null)
+                        Row(
+                          children: List.generate(5, (index) {
+                            return Icon(
+                              index < _averageRating!.round()
+                                  ? Icons.star
+                                  : Icons.star_border,
+                              color: Colors.amber,
+                              size: 22,
+                            );
+                          }),
+                        ),
+                      const SizedBox(width: 16),
+                      if (_commentCount > 0)
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => MasterScreen(
+                                      appBarTitle: "Comments",
+                                      showBackButton: true,
+                                      child: CommentsScreen(
+                                        packageId:
+                                            widget.package.insurancePackageId!,
+                                      ),
+                                    ),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.comment,
+                                size: 20,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                "$_commentCount comment${_commentCount > 1 ? 's' : ''}",
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                )
+                : Center(
+                  child: Text(
+                    "No reviews yet!",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+            SizedBox(height: 20),
             Text(
               widget.package.name ?? 'Unnamed Package',
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -132,6 +230,7 @@ class _InsurancePackageDetailsScreenState
               widget.package.description ?? 'No description provided.',
               style: const TextStyle(fontSize: 16),
             ),
+
             const SizedBox(height: 20),
             Row(
               children: [
@@ -188,9 +287,14 @@ class _InsurancePackageDetailsScreenState
             const SizedBox(height: 30),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.brown.shade700,
-                foregroundColor: Colors.white,
-                minimumSize: flutter_ui.Size.fromHeight(50),
+                backgroundColor: const flutter_ui.Color.fromARGB(
+                  255,
+                  244,
+                  226,
+                  207,
+                ),
+                foregroundColor: Colors.black,
+                minimumSize: flutter_ui.Size.fromRadius(20),
               ),
               onPressed: _pickStartDate,
               icon: const Icon(Icons.date_range),

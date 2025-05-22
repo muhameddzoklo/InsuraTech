@@ -1,4 +1,5 @@
 import 'package:insuratech_mobile/models/client.dart';
+import 'package:insuratech_mobile/models/client_feedback.dart';
 import 'package:insuratech_mobile/models/insurance_package.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'insurance_policy.g.dart';
@@ -16,6 +17,7 @@ class InsurancePolicy {
   InsurancePackage? insurancePackage;
   Client? client;
   bool? hasActiveClaimRequest;
+  ClientFeedback? clientFeedback;
 
   InsurancePolicy();
 

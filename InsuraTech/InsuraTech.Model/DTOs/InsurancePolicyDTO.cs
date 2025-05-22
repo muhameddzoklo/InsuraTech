@@ -19,6 +19,7 @@ namespace InsuraTech.Model.DTOs
         public bool IsPaid { get; set; }
         public InsurancePackageDTO InsurancePackage { get; set; }
         public ClientDTO Client { get; set; }
-       // public ICollection<ClaimRequestDTO> ClaimRequests { get; set; } = new List<ClaimRequestDTO>();
+        // public ICollection<ClaimRequestDTO> ClaimRequests { get; set; } = new List<ClaimRequestDTO>();
+
     }
 }

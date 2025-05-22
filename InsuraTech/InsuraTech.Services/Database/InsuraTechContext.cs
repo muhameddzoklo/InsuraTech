@@ -13,7 +13,7 @@ namespace InsuraTech.Services.Database
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<InsurancePackage> InsurancePackages { get; set; }
         public DbSet<InsurancePolicy> InsurancePolicies { get; set; }
-        public DbSet<CustomerFeedback> CustomerFeedbacks { get; set; }
+        public DbSet<ClientFeedback> ClientFeedbacks { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<ClaimRequest> ClaimRequests { get; set; }
@@ -120,6 +120,12 @@ namespace InsuraTech.Services.Database
                 .HasOne(t => t.Client)
                 .WithMany(p => p.SupportTickets)
                 .HasForeignKey(t => t.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ClientFeedback>()
+                .HasOne(x => x.InsurancePolicy)
+                .WithMany()
+                .HasForeignKey(x => x.InsurancePolicyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
         }
