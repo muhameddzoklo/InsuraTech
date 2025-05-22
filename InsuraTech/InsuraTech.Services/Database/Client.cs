@@ -26,5 +26,6 @@ namespace InsuraTech.Services.Database
         public DateTime RegistrationDate { get; set; }
         public bool IsActive { get; set; }
         public ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
+        public ICollection<ClientFeedback> ClientFeedbacks { get; set; } = new List<ClientFeedback>();
     }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/layouts/master_screen.dart';
+import 'package:insuratech_mobile/models/client_feedback.dart';
 import 'package:insuratech_mobile/models/insurance_policy.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
 import 'package:insuratech_mobile/providers/claim_request_provider.dart';
+import 'package:insuratech_mobile/providers/client_feedback_provider.dart';
 import 'package:insuratech_mobile/providers/insurance_policy_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/claim_requests_screen.dart';
@@ -29,24 +31,44 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
 
   Future<void> _fetchPolicies() async {
     try {
-      var insurancePolicyProvider = Provider.of<InsurancePolicyProvider>(
+      final policyProvider = Provider.of<InsurancePolicyProvider>(
         context,
         listen: false,
       );
-      var searchResult = await insurancePolicyProvider.get(
+      final feedbackProvider = Provider.of<ClientFeedbackProvider>(
+        context,
+        listen: false,
+      );
+
+      final result = await policyProvider.get(
         orderBy: "IsActive",
         sortDirection: "desc",
         filter: {"ClientUsername": AuthProvider.username},
       );
+
+      final policies = result.resultList;
+
+      for (var policy in policies) {
+        final feedbackResult = await feedbackProvider.get(
+          filter: {
+            "InsurancePolicyId": policy.insurancePolicyId,
+            "isDeleted": true,
+          },
+        );
+        if (feedbackResult.resultList.isNotEmpty) {
+          policy.clientFeedback = feedbackResult.resultList.first;
+        }
+      }
+
       if (!mounted) return;
       setState(() {
-        _policies = searchResult.resultList;
+        _policies = policies;
         _isLoading = false;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      showErrorAlert(context, "Failed to load policies: ${e.toString()}");
+      showErrorAlert(context, "Failed to load policies: \${e.toString()}");
     }
   }
 
@@ -61,7 +83,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
               ? const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(
                       Icons.assignment_outlined,
                       size: 64,
@@ -99,9 +121,177 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            policy.insurancePackage?.name ?? "N/A",
-                            style: _titleStyle,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  policy.insurancePackage?.name ?? "N/A",
+                                  style: _titleStyle,
+                                ),
+                              ),
+                              PopupMenuButton<String>(
+                                onSelected: (value) async {
+                                  switch (value) {
+                                    case 'claim':
+                                      _showClaimRequestDialog(
+                                        policy.insurancePolicyId!,
+                                      );
+                                      break;
+                                    case 'delete':
+                                      final confirm = await showCustomConfirmDialog(
+                                        context,
+                                        title: 'Confirm Deletion',
+                                        text:
+                                            'Are you sure you want to delete this policy?',
+                                      );
+                                      if (confirm == true) {
+                                        try {
+                                          await Provider.of<
+                                            InsurancePolicyProvider
+                                          >(
+                                            context,
+                                            listen: false,
+                                          ).delete(policy.insurancePolicyId!);
+                                          showSuccessAlert(
+                                            context,
+                                            "Policy deleted successfully",
+                                          );
+                                          _fetchPolicies();
+                                        } catch (e) {
+                                          showErrorAlert(
+                                            context,
+                                            "Failed to delete policy: \${e.toString()}",
+                                          );
+                                        }
+                                      }
+                                      break;
+                                    case 'pay':
+                                    case 'renew':
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder:
+                                              (_) =>
+                                                  CreateInsurancePolicyScreen(
+                                                    policy: policy,
+                                                  ),
+                                        ),
+                                      );
+                                      break;
+                                  }
+                                },
+                                itemBuilder: (context) {
+                                  List<PopupMenuEntry<String>> items = [];
+
+                                  if (isActive) {
+                                    if (startDate != null &&
+                                        startDate.isBefore(DateTime.now())) {
+                                      if (policy.hasActiveClaimRequest ==
+                                          true) {
+                                        items.add(
+                                          const PopupMenuItem<String>(
+                                            value: 'claim',
+                                            enabled: false,
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.report_gmailerrorred,
+                                                  color: Colors.black,
+                                                ),
+                                                SizedBox(width: 8),
+                                                Text(
+                                                  "Claim in Progress",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        items.add(
+                                          const PopupMenuItem<String>(
+                                            value: 'claim',
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.assignment_outlined,
+                                                  color: Colors.black87,
+                                                ),
+                                                SizedBox(width: 8),
+                                                Text("Submit Claim Request"),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    } else if (startDate != null &&
+                                        startDate.isAfter(DateTime.now())) {
+                                      items.add(
+                                        PopupMenuItem<String>(
+                                          value: 'future',
+                                          enabled: false,
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.schedule,
+                                                color: Colors.black,
+                                              ),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                "Policy starts on: ${formatDateString(policy.startDate)}",
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    items.add(
+                                      const PopupMenuItem<String>(
+                                        value: 'delete',
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.delete_forever_outlined,
+                                              color: Colors.redAccent,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text("Delete Policy"),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                    items.add(
+                                      PopupMenuItem<String>(
+                                        value: isPaid ? 'renew' : 'pay',
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              isPaid
+                                                  ? Icons.refresh
+                                                  : Icons.payment,
+                                              color: Colors.teal,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              isPaid
+                                                  ? "Renew Policy"
+                                                  : "Pay Now",
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  return items;
+                                },
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 6),
                           Container(
@@ -110,19 +300,21 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: isActive ? Colors.green : Colors.red,
+                              color:
+                                  isActive
+                                      ? Colors.green.shade300
+                                      : Colors.red.shade300,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
                               isActive ? 'Active' : 'Inactive',
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const SizedBox(height: 10),
                           Row(
                             children: [
                               const Expanded(
@@ -154,46 +346,8 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
-
                           const SizedBox(height: 12),
-                          if (isActive &&
-                              startDate != null &&
-                              startDate.isBefore(DateTime.now()))
-                            Center(
-                              child:
-                                  policy.hasActiveClaimRequest == true
-                                      ? _buildTag(
-                                        'Claim in Progress',
-                                        Colors.blue,
-                                      )
-                                      : _buildClaimButton(
-                                        policy.insurancePolicyId!,
-                                      ),
-                            )
-                          else if (isActive &&
-                              startDate != null &&
-                              startDate.isAfter(DateTime.now()))
-                            Center(
-                              child: _buildTag(
-                                'Policy starts from ${formatDateString(policy.startDate)}',
-                                Colors.blueGrey,
-                              ),
-                            )
-                          else
-                            Center(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  _buildDeleteButton(policy.insurancePolicyId!),
-                                  const SizedBox(width: 12),
-                                  if (!isPaid)
-                                    _buildPayNowButton(policy)
-                                  else
-                                    _buildRenewButton(policy),
-                                ],
-                              ),
-                            ),
+                          _buildFeedbackSection(policy),
                         ],
                       ),
                     ),
@@ -203,116 +357,236 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
     );
   }
 
-  Widget _buildTag(String text, Color color) {
+  void showAddReviewDialog(InsurancePolicy policy) {
+    final _formKey = GlobalKey<FormState>();
+    final _commentController = TextEditingController();
+    int _rating = 3;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Leave Feedback'),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(5, (index) {
+                        return IconButton(
+                          icon: Icon(
+                            index < _rating ? Icons.star : Icons.star_border,
+                            color: Colors.amber,
+                          ),
+                          onPressed: () => setState(() => _rating = index + 1),
+                        );
+                      }),
+                    ),
+                    TextFormField(
+                      controller: _commentController,
+                      decoration: const InputDecoration(
+                        labelText: 'Comment (optional)',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                try {
+                  await Provider.of<ClientFeedbackProvider>(
+                    context,
+                    listen: false,
+                  ).insert({
+                    "insurancePolicyId": policy.insurancePolicyId,
+                    "insurancePackageId":
+                        policy.insurancePackage?.insurancePackageId,
+                    "clientId": AuthProvider.clientId,
+                    "rating": _rating,
+                    "comment": _commentController.text.trim(),
+                  });
+
+                  Navigator.pop(context);
+                  _fetchPolicies();
+                  showSuccessAlert(context, "Feedback submitted.");
+                } catch (e) {
+                  showErrorAlert(context, e.toString());
+                }
+              },
+              child: const Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showEditReviewDialog(InsurancePolicy policy, ClientFeedback feedback) {
+    final _formKey = GlobalKey<FormState>();
+    final _commentController = TextEditingController(text: feedback.comment);
+    int _rating = feedback.rating?.round() ?? 3;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit Feedback'),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(5, (index) {
+                        return IconButton(
+                          icon: Icon(
+                            index < _rating ? Icons.star : Icons.star_border,
+                            color: Colors.amber,
+                          ),
+                          onPressed: () => setState(() => _rating = index + 1),
+                        );
+                      }),
+                    ),
+                    TextFormField(
+                      controller: _commentController,
+                      decoration: const InputDecoration(
+                        labelText: 'Comment (optional)',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                try {
+                  await Provider.of<ClientFeedbackProvider>(
+                    context,
+                    listen: false,
+                  ).update(feedback.clientFeedbackId!, {
+                    "rating": _rating,
+                    "comment": _commentController.text.trim(),
+                  });
+
+                  Navigator.pop(context);
+                  _fetchPolicies();
+                  showSuccessAlert(context, "Feedback updated.");
+                } catch (e) {
+                  showErrorAlert(context, e.toString());
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildFeedbackSection(InsurancePolicy policy) {
+    final feedback = policy.clientFeedback;
+    final isPaid = policy.isPaid ?? false;
+    final isActive = policy.isActive ?? false;
+
+    if (!isPaid && !isActive) {
+      return const Padding(
+        padding: EdgeInsets.only(top: 8),
+        child: Text(
+          "You can review after purchasing the policy",
+          style: TextStyle(color: Colors.blue, fontStyle: FontStyle.italic),
+        ),
+      );
+    }
+
+    if (feedback == null) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.blue.shade300,
+          borderRadius: BorderRadius.circular(20), // zaobljeni rubovi
+        ),
+        child: InkWell(
+          onTap: () => showAddReviewDialog(policy),
+
+          borderRadius: BorderRadius.circular(8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text("Add review", style: TextStyle(color: Colors.black)),
+              const SizedBox(width: 8),
+              Tooltip(
+                message: "Add review",
+                child: Icon(Icons.rate_review_outlined, color: Colors.black),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (feedback.isDeleted == true) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.grey,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text("Reviewed", style: TextStyle(color: Colors.black)),
+      );
+    }
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color, width: 1.5),
+        color: Colors.orange.shade300,
+        borderRadius: BorderRadius.circular(20), // zaobljeni rubovi
       ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
+      child: InkWell(
+        onTap: () => showEditReviewDialog(policy, feedback),
+        borderRadius: BorderRadius.circular(8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("Reviewed", style: TextStyle(color: Colors.black)),
+            const SizedBox(width: 8),
+            Tooltip(
+              message: "Edit review",
+              child: Icon(Icons.edit_outlined, color: Colors.black),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildClaimButton(int policyId) {
-    return ElevatedButton.icon(
-      onPressed: () => _showClaimRequestDialog(policyId),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.orange,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 9),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      icon: const Icon(Icons.add_circle, size: 22),
-      label: const Text('Claim Request', style: TextStyle(fontSize: 16)),
-    );
-  }
-
-  Widget _buildDeleteButton(int policyId) {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final confirm = await showCustomConfirmDialog(
-          context,
-          title: 'Confirm Deletion',
-          text: 'Are you sure you want to delete this policy?',
-        );
-        if (confirm == true) {
-          try {
-            await Provider.of<InsurancePolicyProvider>(
-              context,
-              listen: false,
-            ).delete(policyId);
-            showSuccessAlert(context, "Policy deleted successfully");
-            _fetchPolicies();
-          } catch (e) {
-            showErrorAlert(context, "Failed to delete policy: ${e.toString()}");
-          }
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.redAccent,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      icon: const Icon(Icons.delete_outline, size: 20),
-      label: const Text('Delete'),
-    );
-  }
-
-  Widget _buildRenewButton(InsurancePolicy policy) {
-    return ElevatedButton.icon(
-      onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => CreateInsurancePolicyScreen(policy: policy),
-          ),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      icon: const Icon(Icons.refresh, size: 20),
-      label: const Text('Renew'),
-    );
-  }
-
-  Widget _buildPayNowButton(InsurancePolicy policy) {
-    return ElevatedButton.icon(
-      onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => CreateInsurancePolicyScreen(policy: policy),
-          ),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      icon: const Icon(Icons.payment, size: 20),
-      label: const Text('Pay Now'),
-    );
-  }
-
   void _showClaimRequestDialog(int insurancePolicyId) {
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-    final TextEditingController _descriptionController =
-        TextEditingController();
-    final TextEditingController _amountController = TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+    final _descriptionController = TextEditingController();
+    final _amountController = TextEditingController();
 
     showDialog(
       context: context,
@@ -334,7 +608,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                     maxLines: 3,
                     validator:
                         (value) =>
-                            value == null || value.trim().isEmpty
+                            (value == null || value.trim().isEmpty)
                                 ? 'Description is required'
                                 : null,
                   ),

@@ -23,6 +23,7 @@ namespace InsuraTech.Services.Database
         public int DurationDays { get; set; }
 
         public ICollection<InsurancePolicy> Policies { get; set; } = new List<InsurancePolicy>();
+        public ICollection<ClientFeedback> ClientFeedbacks { get; set; } = new List<ClientFeedback>();
     }
 
 }

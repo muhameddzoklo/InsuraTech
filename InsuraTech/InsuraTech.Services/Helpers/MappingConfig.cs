@@ -36,8 +36,26 @@ namespace InsuraTech.Services.Helpers
                 .Ignore(dest => dest.InsurancePolicy)
                 .Ignore(dest => dest.Client);
 
-
+            config.NewConfig<ClientFeedback, ClientFeedbackDTO>()
+    .Map(dest => dest.PackageName,
+        src => src.InsurancePackage != null
+            ? src.InsurancePackage.Name
+            : "")
+    .Map(dest => dest.ClientName,
+        src => src.Client != null
+            ? (
+                (src.Client.FirstName ?? "") + " " +
+                (src.Client.LastName ?? "")
+              ).Trim()
+            : "")
+    .Map(dest => dest.ClientProfilePicture,
+        src => src.Client != null && src.Client.ProfilePicture != null
+            ? Convert.ToBase64String(src.Client.ProfilePicture)
+            : null)
+    .IgnoreNullValues(true);
+        
 
         }
+
     }
 }
