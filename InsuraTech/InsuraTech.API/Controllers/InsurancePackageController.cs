@@ -40,6 +40,28 @@ namespace InsuraTech.API.Controllers
             return (_service as IInsurancePackageService).AllowedActions(id);
         }
 
+        [HttpGet("recommended")]
+        public async Task<ActionResult<List<InsurancePackageDTO>>> Recommend(int clientId)
+        {
+            var recommender = _service as IInsurancePackageService;
+            if (recommender == null)
+                return BadRequest("Service does not support recommendations.");
+
+            var result = await recommender.Recommend(clientId);
+            return Ok(result);
+        }
+        [HttpPost("trainData")]
+        public async Task<ActionResult> TrainData()
+        {
+            var trainData = _service as IInsurancePackageService;
+            if (trainData == null)
+                return BadRequest("Service does not support data training.");
+
+            trainData.TrainData();
+            return Ok();
+        }
+
+
 
     }
 }

@@ -19,5 +19,7 @@ namespace InsuraTech.Services
         public InsurancePackageDTO Hide(int id);
 
         public List<string> AllowedActions(int id);
+        Task<List<InsurancePackageDTO>> Recommend(int id);
+        void TrainData();
     }                            
 }

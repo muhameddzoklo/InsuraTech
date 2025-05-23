@@ -11,6 +11,7 @@ using InsuraTech.Services.BaseServices;
 using InsuraTech.Services.Database;
 using Microsoft.Extensions.Logging;
 using InsuraTech.Services.InsurancePackageStateMachine;
+using InsuraTech.Services.Recommender;
 
 namespace InsuraTech.Services
 {
@@ -18,11 +19,13 @@ namespace InsuraTech.Services
     {
         ILogger<InsurancePackageService> _logger;
         public BaseInsurancePackageState BaseInsurancePackageState { get; set; }
-        public InsurancePackageService(InsuraTechContext context, IMapper mapper, BaseInsurancePackageState baseInsurancePackageState, ILogger<InsurancePackageService> logger)
+        private readonly IRecommenderService _recommenderService;
+        public InsurancePackageService(InsuraTechContext context, IMapper mapper, BaseInsurancePackageState baseInsurancePackageState, ILogger<InsurancePackageService> logger, IRecommenderService recommenderService)
         : base(context, mapper)
         {
             BaseInsurancePackageState = baseInsurancePackageState;
             _logger = logger;
+            _recommenderService = recommenderService;
         }
 
         public override IQueryable<InsurancePackage> AddFilter(InsurancePackageSearchObject search, IQueryable<InsurancePackage> query)
@@ -99,6 +102,16 @@ namespace InsuraTech.Services
                 var state = BaseInsurancePackageState.CreateState(entity.StateMachine);
                 return state.AllowedActions(entity);
             }
+        }
+        public async Task<List<InsurancePackageDTO>> Recommend(int clientId)
+        {
+            var recommend = await _recommenderService.Recommend(clientId);
+            return recommend.Where(d => d.StateMachine == "active").ToList();
+        }
+
+        public void TrainData()
+        {
+            _recommenderService.TrainModel();
         }
     }
 
