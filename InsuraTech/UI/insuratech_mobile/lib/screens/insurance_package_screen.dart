@@ -16,6 +16,7 @@ class InsurancePackageScreen extends StatefulWidget {
 class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
   late InsurancePackageProvider _insurancePackageProvider;
   List<InsurancePackage> _packages = [];
+  List<InsurancePackage> _recommended = [];
   String searchQuery = '';
   bool isLoading = true;
 
@@ -29,14 +30,18 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
   Future<void> _loadPackages() async {
     try {
       final result = await _insurancePackageProvider.get();
+      final recommended = await _insurancePackageProvider.getRecommended();
+
       if (!mounted) return;
       setState(() {
         _packages = result.resultList;
+        _recommended = recommended;
         isLoading = false;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() => isLoading = false);
+
       showErrorAlert(context, "Error catching packages: ${e.toString()}");
     }
   }
@@ -67,19 +72,36 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                 onChanged: (value) => setState(() => searchQuery = value),
               ),
               const SizedBox(height: 20),
+              if (_recommended.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 12),
+                    ..._recommended
+                        .take(3)
+                        .map(
+                          (pkg) => _buildPackageCard(pkg, isRecommended: true),
+                        ),
+                    const SizedBox(height: 30),
+                  ],
+                ),
               ...filteredPackages.map(_buildPackageCard).toList(),
             ],
           ),
         );
   }
 
-  Widget _buildPackageCard(InsurancePackage package) {
+  Widget _buildPackageCard(
+    InsurancePackage package, {
+    bool isRecommended = false,
+  }) {
     Uint8List? imageBytes;
     if (package.picture != null && package.picture!.isNotEmpty) {
       imageBytes = base64Decode(package.picture!);
     }
 
     return Card(
+      color: isRecommended ? Colors.yellow.shade100 : null,
       margin: const EdgeInsets.symmetric(vertical: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
@@ -108,10 +130,39 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                 ),
               ),
             const SizedBox(height: 12),
-            Text(
-              package.name ?? '',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    package.name ?? '',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (isRecommended)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.teal.shade200,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      "RECOMMENDED",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              ],
             ),
+
             const SizedBox(height: 8),
             Text(
               package.description ?? '',
@@ -170,7 +221,6 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                   ],
                 ),
               ),
-
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerRight,

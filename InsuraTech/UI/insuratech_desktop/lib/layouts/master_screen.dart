@@ -3,6 +3,7 @@ import 'package:insuratech_desktop/main.dart';
 import 'package:insuratech_desktop/providers/auth_provider.dart';
 import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:insuratech_desktop/screens/claim_requests_screen.dart';
+import 'package:insuratech_desktop/screens/client_feedbacks_screen.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
 import 'package:insuratech_desktop/screens/my_profile_screen.dart';
 import 'package:insuratech_desktop/screens/notify_clients_screen.dart';
@@ -105,9 +106,9 @@ class _MasterScreenState extends State<MasterScreen> {
                         ),
                         _buildSidebarItem(
                           context,
-                          "Reviews",
+                          "Client Feedbacks",
                           Icons.reviews,
-                          const Placeholder(),
+                          const ClientFeedbackScreen(),
                         ),
                         _buildSidebarItem(
                           context,

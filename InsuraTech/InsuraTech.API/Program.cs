@@ -3,6 +3,7 @@ using InsuraTech.Services;
 using InsuraTech.Services.Database;
 using InsuraTech.Services.Helpers;
 using InsuraTech.Services.InsurancePackageStateMachine;
+using InsuraTech.Services.Recommender;
 using Mapster;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ builder.Services.AddTransient<DraftInsurancePackageState>();
 builder.Services.AddTransient<ActiveInsurancePackageState>();
 builder.Services.AddTransient<HiddenInsurancePackageState>();
 
+builder.Services.AddScoped<IRecommenderService, RecommenderService>();
 
 MappingConfig.RegisterMappings();
 
