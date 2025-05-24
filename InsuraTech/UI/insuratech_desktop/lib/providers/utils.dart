@@ -148,3 +148,50 @@ Future<void> showErrorAlert(BuildContext context, String message) async {
     text: message,
   );
 }
+
+enum LoyaltyTier { bronze, silver, gold, platinum }
+
+double getDiscountForTier(int? tier) {
+  switch (tier) {
+    case 0:
+      return 0.01;
+    case 1:
+      return 0.05;
+    case 2:
+      return 0.10;
+    case 3:
+      return 0.15;
+    default:
+      return 0.0;
+  }
+}
+
+String getLoyaltyTierName(int? tier) {
+  switch (tier) {
+    case 0:
+      return "Bronze";
+    case 1:
+      return "Silver";
+    case 2:
+      return "Gold";
+    case 3:
+      return "Platinum";
+    default:
+      return "No Tier";
+  }
+}
+
+Color getLoyaltyTierColor(int? tier) {
+  switch (tier) {
+    case 0:
+      return const Color(0xFFCD7F32);
+    case 1:
+      return const Color.fromARGB(255, 145, 143, 143);
+    case 2:
+      return const Color.fromARGB(255, 205, 175, 3);
+    case 3:
+      return const Color(0xFF2196F3);
+    default:
+      return Colors.black;
+  }
+}

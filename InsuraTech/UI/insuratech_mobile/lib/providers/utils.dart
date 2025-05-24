@@ -47,82 +47,87 @@ Future<bool> showCustomConfirmDialog(
   await showDialog(
     context: context,
     barrierDismissible: false,
-    builder: (context) => Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.help_outline, size: 48, color: Theme.of(context).primaryColor),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
-            ),
-            const SizedBox(height: 24),
-            Row(
+    builder:
+        (context) => Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      confirmed = false;
-                      Navigator.of(context).pop();
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: cancelBorderColor, width: 1.5),
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(cancelBtnText),
+                Icon(
+                  Icons.help_outline,
+                  size: 48,
+                  color: Theme.of(context).primaryColor,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      confirmed = true;
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: confirmBtnColor,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 12),
+                Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16, color: Colors.black87),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          confirmed = false;
+                          Navigator.of(context).pop();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: cancelBorderColor,
+                            width: 1.5,
+                          ),
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(cancelBtnText),
                       ),
-                      elevation: 3,
                     ),
-                    child: Text(confirmBtnText),
-                  ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          confirmed = true;
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: confirmBtnColor,
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 3,
+                        ),
+                        child: Text(confirmBtnText),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
-      ),
-    ),
   );
 
   return confirmed;
 }
-
-
-
 
 Future<void> showSuccessAlert(BuildContext context, String message) async {
   if (!context.mounted) return;
@@ -142,4 +147,51 @@ Future<void> showErrorAlert(BuildContext context, String message) async {
     title: "Error",
     text: message,
   );
+}
+
+enum LoyaltyTier { bronze, silver, gold, platinum }
+
+double getDiscountForTier(int? tier) {
+  switch (tier) {
+    case 0:
+      return 0.01;
+    case 1:
+      return 0.05;
+    case 2:
+      return 0.10;
+    case 3:
+      return 0.15;
+    default:
+      return 0.0;
+  }
+}
+
+String getLoyaltyTierName(int? tier) {
+  switch (tier) {
+    case 0:
+      return "Bronze";
+    case 1:
+      return "Silver";
+    case 2:
+      return "Gold";
+    case 3:
+      return "Platinum";
+    default:
+      return "No Tier";
+  }
+}
+
+Color getLoyaltyTierColor(int? tier) {
+  switch (tier) {
+    case 0:
+      return const Color(0xFFCD7F32);
+    case 1:
+      return const Color.fromARGB(255, 145, 143, 143);
+    case 2:
+      return const Color.fromARGB(255, 205, 175, 3);
+    case 3:
+      return const Color(0xFF2196F3);
+    default:
+      return Colors.black;
+  }
 }

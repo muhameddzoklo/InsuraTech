@@ -14,6 +14,9 @@ namespace InsuraTech.Services.Database
 
         public int ClientId { get; set; }
         public virtual Client Client { get; set; } = null!;
+        public int? UserId { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User? User { get; set; }
 
         public int InsurancePolicyId { get; set; }
         public virtual InsurancePolicy InsurancePolicy { get; set; } = null!;

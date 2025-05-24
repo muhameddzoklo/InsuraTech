@@ -4,10 +4,8 @@ using System.Text;
 
 namespace InsuraTech.Model.Requests
 {
-    public class NotificationInsertRequest
+    public class LoyaltyProgramInsertRequest
     {
         public int ClientId { get; set; }
-        public int InsurancePolicyId { get; set; }
-        public int? UserId { get; set; }
     }
 }

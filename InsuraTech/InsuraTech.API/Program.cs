@@ -23,6 +23,7 @@ builder.Services.AddTransient<INotificationService, NotificationService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
 builder.Services.AddTransient<ISupportTicketService, SupportTicketService>();
 builder.Services.AddTransient<IClientFeedbackService, ClientFeedbackService>();
+builder.Services.AddTransient<ILoyaltyProgramService, LoyaltyProgramService>();
 
 builder.Services.AddTransient<BaseInsurancePackageState>();
 builder.Services.AddTransient<InitialInsurancePackageState>();

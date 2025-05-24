@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:insuratech_desktop/providers/auth_provider.dart';
 import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:insuratech_desktop/layouts/master_screen.dart';
 import 'package:insuratech_desktop/models/claim_request.dart';
@@ -197,6 +198,7 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
                                   "estimatedAmount":
                                       double.tryParse(amountController.text) ??
                                       0,
+                                  "userId": AuthProvider.userId,
                                 };
 
                                 await Provider.of<ClaimRequestProvider>(
@@ -237,6 +239,7 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
                                   "isAccepted": false,
                                   "comment": commentController.text,
                                   "estimatedAmount": request.estimatedAmount,
+                                  "userId": AuthProvider.userId,
                                 };
 
                                 await Provider.of<ClaimRequestProvider>(

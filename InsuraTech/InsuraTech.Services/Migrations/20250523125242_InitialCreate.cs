@@ -45,7 +45,7 @@ namespace InsuraTech.Services.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     Picture = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     StateMachine = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DurationDays = table.Column<int>(type: "int", nullable: false),
@@ -97,6 +97,30 @@ namespace InsuraTech.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LoyaltyPrograms",
+                columns: table => new
+                {
+                    LoyaltyProgramId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    Points = table.Column<int>(type: "int", nullable: false),
+                    Tier = table.Column<int>(type: "int", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoyaltyPrograms", x => x.LoyaltyProgramId);
+                    table.ForeignKey(
+                        name: "FK_LoyaltyPrograms_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "InsurancePolicies",
                 columns: table => new
                 {
@@ -131,49 +155,36 @@ namespace InsuraTech.Services.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomerFeedbacks",
+                name: "SupportTickets",
                 columns: table => new
                 {
-                    CustomerFeedbackId = table.Column<int>(type: "int", nullable: false)
+                    SupportTicketId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Rating = table.Column<int>(type: "int", nullable: true),
-                    SubmittedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Reply = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsAnswered = table.Column<bool>(type: "bit", nullable: false),
+                    IsClosed = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomerFeedbacks", x => x.CustomerFeedbackId);
+                    table.PrimaryKey("PK_SupportTickets", x => x.SupportTicketId);
                     table.ForeignKey(
-                        name: "FK_CustomerFeedbacks_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MessageLogs",
-                columns: table => new
-                {
-                    MessageLogId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MessageLogs", x => x.MessageLogId);
-                    table.ForeignKey(
-                        name: "FK_MessageLogs_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
+                        name: "FK_SupportTickets_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_SupportTickets_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -212,9 +223,10 @@ namespace InsuraTech.Services.Migrations
                     ClaimRequestId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     InsurancePolicyId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EstimatedAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    EstimatedAmount = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SubmittedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -229,6 +241,49 @@ namespace InsuraTech.Services.Migrations
                         principalTable: "InsurancePolicies",
                         principalColumn: "InsurancePolicyId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClaimRequests_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientFeedbacks",
+                columns: table => new
+                {
+                    ClientFeedbackId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InsurancePackageId = table.Column<int>(type: "int", nullable: false),
+                    InsurancePolicyId = table.Column<int>(type: "int", nullable: false),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientFeedbacks", x => x.ClientFeedbackId);
+                    table.ForeignKey(
+                        name: "FK_ClientFeedbacks_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientFeedbacks_InsurancePackages_InsurancePackageId",
+                        column: x => x.InsurancePackageId,
+                        principalTable: "InsurancePackages",
+                        principalColumn: "InsurancePackageId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientFeedbacks_InsurancePolicies_InsurancePolicyId",
+                        column: x => x.InsurancePolicyId,
+                        principalTable: "InsurancePolicies",
+                        principalColumn: "InsurancePolicyId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -238,6 +293,7 @@ namespace InsuraTech.Services.Migrations
                     NotificationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ClientId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
                     InsurancePolicyId = table.Column<int>(type: "int", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SentAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -260,6 +316,11 @@ namespace InsuraTech.Services.Migrations
                         principalTable: "InsurancePolicies",
                         principalColumn: "InsurancePolicyId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Notifications_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -292,38 +353,6 @@ namespace InsuraTech.Services.Migrations
                         column: x => x.InsurancePolicyId,
                         principalTable: "InsurancePolicies",
                         principalColumn: "InsurancePolicyId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserFeedbacks",
-                columns: table => new
-                {
-                    UserFeedbackId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    CustomerFeedbackId = table.Column<int>(type: "int", nullable: false),
-                    CustomerFeedbackId1 = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserFeedbacks", x => x.UserFeedbackId);
-                    table.ForeignKey(
-                        name: "FK_UserFeedbacks_CustomerFeedbacks_CustomerFeedbackId",
-                        column: x => x.CustomerFeedbackId,
-                        principalTable: "CustomerFeedbacks",
-                        principalColumn: "CustomerFeedbackId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserFeedbacks_CustomerFeedbacks_CustomerFeedbackId1",
-                        column: x => x.CustomerFeedbackId1,
-                        principalTable: "CustomerFeedbacks",
-                        principalColumn: "CustomerFeedbackId");
-                    table.ForeignKey(
-                        name: "FK_UserFeedbacks_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -399,14 +428,14 @@ namespace InsuraTech.Services.Migrations
 
             migrationBuilder.InsertData(
                 table: "ClaimRequests",
-                columns: new[] { "ClaimRequestId", "Comment", "DeletionTime", "Description", "EstimatedAmount", "InsurancePolicyId", "IsDeleted", "Status", "SubmittedAt" },
+                columns: new[] { "ClaimRequestId", "Comment", "DeletionTime", "Description", "EstimatedAmount", "InsurancePolicyId", "IsDeleted", "Status", "SubmittedAt", "UserId" },
                 values: new object[,]
                 {
-                    { 1, null, null, "Windshield damage due to hail.", 350.00m, 1, false, "In progress", new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, "To high ammount requested.", null, "Theft of insured vehicle.", 5000.00m, 2, false, "Declined", new DateTime(2025, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, "Assessment required.", null, "Fire damage in kitchen.", 220.00m, 3, false, "Accepted", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, null, null, "Roof collapsed during storm.", 4000.00m, 4, false, "In progress", new DateTime(2025, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, null, null, "Broken window caused by vandalism.", 120.00m, 5, false, "In progress", new DateTime(2025, 5, 28, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, null, null, "Windshield damage due to hail.", 350.00m, 1, false, "In progress", new DateTime(2025, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null },
+                    { 2, "To high ammount requested.", null, "Theft of insured vehicle.", 5000.00m, 2, false, "Declined", new DateTime(2025, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), null },
+                    { 3, "Assessment required.", null, "Fire damage in kitchen.", 220.00m, 3, false, "Accepted", new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), null },
+                    { 4, null, null, "Roof collapsed during storm.", 4000.00m, 4, false, "In progress", new DateTime(2025, 5, 6, 0, 0, 0, 0, DateTimeKind.Unspecified), null },
+                    { 5, null, null, "Broken window caused by vandalism.", 120.00m, 5, false, "In progress", new DateTime(2025, 5, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), null }
                 });
 
             migrationBuilder.CreateIndex(
@@ -415,9 +444,24 @@ namespace InsuraTech.Services.Migrations
                 column: "InsurancePolicyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomerFeedbacks_UserId",
-                table: "CustomerFeedbacks",
+                name: "IX_ClaimRequests_UserId",
+                table: "ClaimRequests",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientFeedbacks_ClientId",
+                table: "ClientFeedbacks",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientFeedbacks_InsurancePackageId",
+                table: "ClientFeedbacks",
+                column: "InsurancePackageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientFeedbacks_InsurancePolicyId",
+                table: "ClientFeedbacks",
+                column: "InsurancePolicyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InsurancePolicies_ClientId",
@@ -430,9 +474,9 @@ namespace InsuraTech.Services.Migrations
                 column: "InsurancePackageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MessageLogs_UserId",
-                table: "MessageLogs",
-                column: "UserId");
+                name: "IX_LoyaltyPrograms_ClientId",
+                table: "LoyaltyPrograms",
+                column: "ClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_ClientId",
@@ -445,6 +489,21 @@ namespace InsuraTech.Services.Migrations
                 column: "InsurancePolicyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SupportTickets_ClientId",
+                table: "SupportTickets",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SupportTickets_UserId",
+                table: "SupportTickets",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Transactions_ClientId",
                 table: "Transactions",
                 column: "ClientId");
@@ -452,23 +511,7 @@ namespace InsuraTech.Services.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_InsurancePolicyId",
                 table: "Transactions",
-                column: "InsurancePolicyId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserFeedbacks_CustomerFeedbackId",
-                table: "UserFeedbacks",
-                column: "CustomerFeedbackId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserFeedbacks_CustomerFeedbackId1",
-                table: "UserFeedbacks",
-                column: "CustomerFeedbackId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserFeedbacks_UserId",
-                table: "UserFeedbacks",
-                column: "UserId");
+                column: "InsurancePolicyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_RoleId",
@@ -488,16 +531,19 @@ namespace InsuraTech.Services.Migrations
                 name: "ClaimRequests");
 
             migrationBuilder.DropTable(
-                name: "MessageLogs");
+                name: "ClientFeedbacks");
+
+            migrationBuilder.DropTable(
+                name: "LoyaltyPrograms");
 
             migrationBuilder.DropTable(
                 name: "Notifications");
 
             migrationBuilder.DropTable(
-                name: "Transactions");
+                name: "SupportTickets");
 
             migrationBuilder.DropTable(
-                name: "UserFeedbacks");
+                name: "Transactions");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
@@ -506,19 +552,16 @@ namespace InsuraTech.Services.Migrations
                 name: "InsurancePolicies");
 
             migrationBuilder.DropTable(
-                name: "CustomerFeedbacks");
+                name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Clients");
 
             migrationBuilder.DropTable(
                 name: "InsurancePackages");
-
-            migrationBuilder.DropTable(
-                name: "Users");
         }
     }
 }

@@ -9,5 +9,6 @@ namespace InsuraTech.Model.Requests
         public string? Reply { get; set; }
         public bool IsAnswered { get; set; }
         public bool IsClosed { get; set; }
+        public int? UserId { get; set; }
     }
 }

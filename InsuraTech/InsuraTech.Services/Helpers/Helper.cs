@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InsuraTech.Services.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -50,5 +51,18 @@ namespace InsuraTech.Services.Helpers
 
                 return result.ToString();
             }
+        public static LoyaltyTier GetTierFromPoints(int points)
+        {
+            if (points >= 501)
+                return LoyaltyTier.Platinum;
+            else if (points >= 251)
+                return LoyaltyTier.Gold;
+            else if (points >= 101)
+                return LoyaltyTier.Silver;
+            else
+                return LoyaltyTier.Bronze;
         }
+
+    }
+
 }

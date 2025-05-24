@@ -60,7 +60,7 @@ class _ClientFeedbackScreenState extends State<ClientFeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreen(
-      title: "Support tickets",
+      title: "Client feedbacks",
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

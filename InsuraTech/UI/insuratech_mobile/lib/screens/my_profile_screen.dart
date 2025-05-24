@@ -3,10 +3,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:insuratech_mobile/models/client.dart';
+import 'package:insuratech_mobile/models/loyalty_program.dart';
 import 'package:insuratech_mobile/providers/auth_provider.dart';
 import 'package:insuratech_mobile/providers/client_provider.dart';
+import 'package:insuratech_mobile/providers/loyalty_program_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/edit_profile_screen.dart';
+import 'package:insuratech_mobile/screens/loyalty_program_screen.dart';
 import 'package:provider/provider.dart';
 
 class MyProfileScreen extends StatefulWidget {
@@ -19,41 +22,53 @@ class MyProfileScreen extends StatefulWidget {
 class _MyProfileScreenState extends State<MyProfileScreen> {
   Client? _client;
   Uint8List? _previewImage;
+  LoyaltyProgram? _loyaltyProgram;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadClientProfile();
+    _loadProfileAndLoyalty();
   }
 
-  Future<void> _loadClientProfile() async {
+  Future<void> _loadProfileAndLoyalty() async {
     try {
       final clientProvider = Provider.of<ClientProvider>(
         context,
         listen: false,
       );
+      final loyaltyProvider = LoyaltyProgramProvider();
       final clientId = AuthProvider.clientId!;
-      final result = await clientProvider.getById(clientId);
+
+      final clientResult = await clientProvider.getById(clientId);
+      final loyaltyResult = await loyaltyProvider.get(
+        filter: {"ClientId": clientId},
+      );
 
       Uint8List? imageBytes;
-      if (result.profilePicture != null && result.profilePicture!.isNotEmpty) {
+      if (clientResult.profilePicture != null &&
+          clientResult.profilePicture!.isNotEmpty) {
         try {
-          imageBytes = base64Decode(result.profilePicture!);
+          imageBytes = base64Decode(clientResult.profilePicture!);
         } catch (e) {
           showErrorAlert(context, "Error decoding picture: ${e.toString()}");
         }
       }
+
       if (!mounted) return;
       setState(() {
-        _client = result;
+        _client = clientResult;
         _previewImage = imageBytes;
+        _loyaltyProgram =
+            loyaltyResult.resultList.isNotEmpty
+                ? loyaltyResult.resultList.first
+                : null;
         _isLoading = false;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      showErrorAlert(context, "Error loading profile: ${e.toString()}");
+      showErrorAlert(context, "Error loading data: ${e.toString()}");
     }
   }
 
@@ -98,6 +113,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
             "Member Since",
             formatDateString(_client!.registrationDate),
           ),
+          _buildLoyaltyCard(),
           const SizedBox(height: 60),
           ElevatedButton.icon(
             onPressed: () {
@@ -126,6 +142,66 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         leading: Icon(icon, color: Colors.brown),
         title: Text(label),
         subtitle: Text(value ?? 'N/A'),
+      ),
+    );
+  }
+
+  Widget _buildLoyaltyCard() {
+    if (_loyaltyProgram == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Card(
+      margin: const EdgeInsets.only(top: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Loyalty Program",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Text("Tier:"),
+                Text(
+                  " ${getLoyaltyTierName(_loyaltyProgram!.tier)}",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: getLoyaltyTierColor(_loyaltyProgram!.tier),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder:
+                          (_) => LoyaltyProgramScreen(
+                            loyaltyProgram: _loyaltyProgram!,
+                          ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.info),
+                label: const Text("Details"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.brown,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

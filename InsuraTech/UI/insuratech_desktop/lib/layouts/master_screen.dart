@@ -5,6 +5,7 @@ import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:insuratech_desktop/screens/claim_requests_screen.dart';
 import 'package:insuratech_desktop/screens/client_feedbacks_screen.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
+import 'package:insuratech_desktop/screens/loyalty_program_screen.dart';
 import 'package:insuratech_desktop/screens/my_profile_screen.dart';
 import 'package:insuratech_desktop/screens/notify_clients_screen.dart';
 import 'package:insuratech_desktop/screens/support_tickets_screen.dart';
@@ -83,7 +84,7 @@ class _MasterScreenState extends State<MasterScreen> {
                         _buildSidebarItem(
                           context,
                           "Users",
-                          Icons.event,
+                          Icons.person,
                           const UsersScreen(),
                         ),
                         _buildSidebarItem(
@@ -120,7 +121,7 @@ class _MasterScreenState extends State<MasterScreen> {
                           context,
                           "Loyalty program",
                           Icons.loyalty,
-                          const Placeholder(),
+                          const LoyaltyProgramScreen(),
                         ),
                         _buildSidebarItem(
                           context,
