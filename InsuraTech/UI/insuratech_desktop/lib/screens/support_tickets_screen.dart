@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:insuratech_desktop/layouts/master_screen.dart';
 import 'package:insuratech_desktop/models/support_ticket.dart';
+import 'package:insuratech_desktop/providers/auth_provider.dart';
 import 'package:insuratech_desktop/providers/support_ticket_provider.dart';
 import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:provider/provider.dart';
@@ -183,6 +184,7 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
                               "reply": replyController.text.trim(),
                               "isAnswered": true,
                               "isClosed": true,
+                              "UserId": AuthProvider.userId,
                             };
 
                             try {

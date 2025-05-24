@@ -5,6 +5,7 @@ import 'package:insuratech_desktop/providers/client_feedback_provider.dart';
 import 'package:insuratech_desktop/providers/clients_provider.dart';
 import 'package:insuratech_desktop/providers/insurance_package_provider.dart';
 import 'package:insuratech_desktop/providers/insurance_policy_provider.dart';
+import 'package:insuratech_desktop/providers/loyalty_program_provider.dart';
 import 'package:insuratech_desktop/providers/notification_provider.dart';
 import 'package:insuratech_desktop/providers/roles_provider.dart';
 import 'package:insuratech_desktop/providers/support_ticket_provider.dart';
@@ -33,6 +34,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => SupportTicketProvider()),
         ChangeNotifierProvider(create: (_) => ClientFeedbackProvider()),
+        ChangeNotifierProvider(create: (_) => LoyaltyProgramProvider()),
       ],
       child: const MyApp(),
     ),

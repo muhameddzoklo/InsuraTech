@@ -14,6 +14,9 @@ namespace InsuraTech.Services.Database
         public int InsurancePolicyId { get; set; }
         [ForeignKey("InsurancePolicyId")]
         public virtual InsurancePolicy insurancePolicy { get; set; } = null!;
+        public int? UserId { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User? User { get; set; }
         public string Description { get; set; } =null!;
         public string? Comment { get; set; }
         [Required]

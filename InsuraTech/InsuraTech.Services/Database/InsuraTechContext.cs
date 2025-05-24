@@ -19,6 +19,7 @@ namespace InsuraTech.Services.Database
         public DbSet<ClaimRequest> ClaimRequests { get; set; }
         public DbSet<SupportTicket> SupportTickets { get; set; }
         public DbSet<Client> Clients { get; set; }
+        public DbSet<LoyaltyProgram> LoyaltyPrograms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -127,6 +128,22 @@ namespace InsuraTech.Services.Database
                 .WithMany()
                 .HasForeignKey(x => x.InsurancePolicyId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<LoyaltyProgram>()
+                .HasOne(x => x.Client)
+                .WithMany()
+                .HasForeignKey(x => x.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<InsurancePackage>()
+                .Property(x => x.Price)
+                .HasPrecision(10, 2);
+
+            modelBuilder.Entity<ClaimRequest>()
+                .Property(x => x.EstimatedAmount)
+                .HasPrecision(10, 2);
+
+
 
         }
     }

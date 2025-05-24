@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:insuratech_desktop/providers/auth_provider.dart';
 import 'package:insuratech_desktop/providers/notification_provider.dart';
 import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:intl/intl.dart';
@@ -178,6 +179,7 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
                                                   "clientId": policy.clientId,
                                                   "insurancePolicyId":
                                                       policy.insurancePolicyId,
+                                                  "userId": AuthProvider.userId,
                                                 },
                                               );
                                               showSuccessAlert(

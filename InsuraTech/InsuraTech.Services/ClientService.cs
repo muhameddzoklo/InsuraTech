@@ -17,9 +17,11 @@ namespace InsuraTech.Services
     public class ClientService : BaseCRUDServiceAsync<ClientDTO, ClientSearchObject, Client, ClientInsertRequest, ClientUpdateRequest>, IClientService
     {
         ILogger<ClientService> _logger;
-        public ClientService(InsuraTechContext context, IMapper mapper, ILogger<ClientService> logger) : base(context, mapper)
+        private readonly ILoyaltyProgramService _loyaltyProgramService; 
+        public ClientService(InsuraTechContext context, IMapper mapper, ILogger<ClientService> logger, ILoyaltyProgramService loyaltyProgramService) : base(context, mapper)
         {
             _logger = logger;
+            _loyaltyProgramService = loyaltyProgramService;
         }
         public override IQueryable<Client> AddFilter(ClientSearchObject searchObject, IQueryable<Client> query)
         {
@@ -85,6 +87,16 @@ namespace InsuraTech.Services
             entity.PasswordHash = Helpers.Helper.GenerateHash(entity.PasswordSalt, request.Password);
 
         }
+        public override async Task AfterInsertAsync(ClientInsertRequest request, Client entity, CancellationToken cancellationToken = default) 
+        {
+            LoyaltyProgramInsertRequest loyaltyrequest = new LoyaltyProgramInsertRequest
+            {
+                ClientId = entity.ClientId,
+            };
+           await _loyaltyProgramService.InsertAsync(loyaltyrequest);
+            
+        }
+
         public override async Task BeforeUpdateAsync(ClientUpdateRequest request, Client entity, CancellationToken cancellationToken = default)
         {
             if (request.Password != null && request.PasswordConfirmation != null && request.CurrentPassword != null)
@@ -128,5 +140,6 @@ namespace InsuraTech.Services
 
             return this.Mapper.Map<ClientDTO>(entity);
         }
+
     }
 }

@@ -41,7 +41,8 @@ namespace InsuraTech.Services.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("EstimatedAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("InsurancePolicyId")
                         .HasColumnType("int");
@@ -56,9 +57,14 @@ namespace InsuraTech.Services.Migrations
                     b.Property<DateTime?>("SubmittedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("ClaimRequestId");
 
                     b.HasIndex("InsurancePolicyId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ClaimRequests");
 
@@ -291,7 +297,8 @@ namespace InsuraTech.Services.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("StateMachine")
                         .IsRequired()
@@ -511,6 +518,39 @@ namespace InsuraTech.Services.Migrations
                         });
                 });
 
+            modelBuilder.Entity("InsuraTech.Services.Database.LoyaltyProgram", b =>
+                {
+                    b.Property<int>("LoyaltyProgramId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LoyaltyProgramId"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Tier")
+                        .HasColumnType("int");
+
+                    b.HasKey("LoyaltyProgramId");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("LoyaltyPrograms");
+                });
+
             modelBuilder.Entity("InsuraTech.Services.Database.Notification", b =>
                 {
                     b.Property<int>("NotificationId")
@@ -540,11 +580,16 @@ namespace InsuraTech.Services.Migrations
                     b.Property<DateTime?>("SentAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("NotificationId");
 
                     b.HasIndex("ClientId");
 
                     b.HasIndex("InsurancePolicyId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
                 });
@@ -635,9 +680,14 @@ namespace InsuraTech.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("SupportTicketId");
 
                     b.HasIndex("ClientId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("SupportTickets");
                 });
@@ -866,6 +916,12 @@ namespace InsuraTech.Services.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("InsuraTech.Services.Database.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+
                     b.Navigation("insurancePolicy");
                 });
 
@@ -915,6 +971,17 @@ namespace InsuraTech.Services.Migrations
                     b.Navigation("InsurancePackage");
                 });
 
+            modelBuilder.Entity("InsuraTech.Services.Database.LoyaltyProgram", b =>
+                {
+                    b.HasOne("InsuraTech.Services.Database.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("InsuraTech.Services.Database.Notification", b =>
                 {
                     b.HasOne("InsuraTech.Services.Database.Client", "Client")
@@ -929,9 +996,15 @@ namespace InsuraTech.Services.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("InsuraTech.Services.Database.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Client");
 
                     b.Navigation("InsurancePolicy");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.SupportTicket", b =>
@@ -942,7 +1015,13 @@ namespace InsuraTech.Services.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("InsuraTech.Services.Database.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Client");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.Transaction", b =>
