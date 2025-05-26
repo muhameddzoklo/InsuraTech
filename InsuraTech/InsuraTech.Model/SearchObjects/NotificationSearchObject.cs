@@ -8,5 +8,7 @@ namespace InsuraTech.Model.SearchObjects
     {
         public int? ClientId { get; set; }
         public bool? ShowUnread { get; set; } = false;
+
+        public string? ClientNameGTE { get; set; }
     }
 }

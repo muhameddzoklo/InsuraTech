@@ -11,6 +11,7 @@ import 'package:insuratech_mobile/providers/client_provider.dart';
 import 'package:insuratech_mobile/providers/utils.dart';
 import 'package:insuratech_mobile/screens/my_profile_screen.dart';
 import 'package:provider/provider.dart';
+
 import '../layouts/master_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -35,6 +36,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Uint8List? _imageBytes;
   File? _imageFile;
+  bool _isPickingImage = false; // 🔥 Flag za kontrolu picker-a
 
   @override
   void initState() {
@@ -48,7 +50,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       try {
         _imageBytes = base64Decode(widget.client.profilePicture!);
       } catch (e) {
-        showErrorAlert(context, "Error deconing picture: ${e.toString()}");
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showErrorAlert(context, "Error decoding picture: ${e.toString()}");
+        });
       }
     }
   }
@@ -62,15 +66,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      final bytes = await picked.readAsBytes();
-      if (!mounted) return;
-      setState(() {
-        _imageFile = File(picked.path);
-        _imageBytes = bytes;
-      });
+    if (_isPickingImage) return; // 🛡️ Ne dozvoli više pokretanja
+    _isPickingImage = true;
+
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked != null) {
+        final bytes = await picked.readAsBytes();
+        if (!mounted) return;
+        setState(() {
+          _imageFile = File(picked.path);
+          _imageBytes = bytes;
+        });
+      }
+    } catch (e) {
+      showErrorAlert(context, "Error picking image: ${e.toString()}");
+    } finally {
+      _isPickingImage = false;
     }
   }
 
@@ -132,12 +145,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 initialValue: _phone,
                 decoration: const InputDecoration(labelText: "Phone Number"),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Enter phone number';
-                  }
-                  final regex = RegExp(r'^\d{9,10}$');
-                  if (!regex.hasMatch(value)) {
-                    return 'Enter exactly 9 or 10 digits';
+                  if (value != null && value.isNotEmpty) {
+                    final regex = RegExp(r'^\d{9,10}$');
+                    if (!regex.hasMatch(value)) {
+                      return 'Phone must be 9 or 10 digits';
+                    }
                   }
                   return null;
                 },
@@ -211,7 +223,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   },
                 ),
               ],
-
               const SizedBox(height: 30),
               ElevatedButton.icon(
                 icon: const Icon(Icons.save),
@@ -243,6 +254,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final currentPassword = _currentPasswordController.text.trim();
     final newPassword = _newPasswordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
+
     final Map<String, dynamic> request = {
       "firstName": _firstName,
       "lastName": _lastName,

@@ -118,6 +118,31 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     );
   }
 
+  Widget _buildBoldInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            flex: 7,
+            child: Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -156,7 +181,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             },
           ),
         ),
-
         Expanded(
           child:
               _transactions.isEmpty
@@ -201,14 +225,13 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                "Paid on: ${formatDateString(t.transactionDate)}",
+                              _buildInfoRow(
+                                "Paid on:",
+                                formatDateString(t.transactionDate),
                               ),
-                              Text(
-                                "Amount: \$${t.amount?.toStringAsFixed(2) ?? "0.00"}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              _buildBoldInfoRow(
+                                "Amount:",
+                                "\$${t.amount?.toStringAsFixed(2) ?? "0.00"}",
                               ),
                               const SizedBox(height: 8),
                               Align(
@@ -243,7 +266,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                                         final policy = t.insurancePolicy;
                                         final package =
                                             policy?.insurancePackage;
-
                                         return AlertDialog(
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(

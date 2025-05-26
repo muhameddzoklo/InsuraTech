@@ -364,60 +364,113 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
                                               fontSize: 16,
                                             ),
                                           ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            "Period: ${formatDateString(r.insurancePolicy!.startDate!)} - ${formatDateString(r.insurancePolicy!.endDate!)}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Client: ${r.insurancePolicy!.client?.firstName ?? ''} ${r.insurancePolicy!.client?.lastName ?? ''}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
                                           const SizedBox(height: 8),
-                                          Text(
-                                            "Submitted: ${formatDateString(r.submittedAt)}",
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Status: ${r.status ?? 'unknown'}",
-                                            style: TextStyle(
-                                              color:
-                                                  r.status == "Accepted"
-                                                      ? Colors.green
-                                                      : r.status == "Declined"
-                                                      ? Colors.red
-                                                      : Colors.blue,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Amount: ${r.estimatedAmount?.toStringAsFixed(2) ?? "0.00"}",
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            r.status == "Accepted" ||
-                                                    r.status == "Declined"
-                                                ? "Comment:"
-                                                : "Description:",
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            r.status == "Accepted" ||
-                                                    r.status == "Declined"
-                                                ? r.comment ?? "N/A"
-                                                : r.description ?? "N/A",
-                                            style: const TextStyle(
-                                              color: Colors.black87,
-                                            ),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                flex: 4,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: const [
+                                                    Text(
+                                                      "Period:",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "Client:",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "Submitted:",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "Status:",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "Amount:",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "Comment:",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 6,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "${formatDateString(r.insurancePolicy!.startDate!)} - ${formatDateString(r.insurancePolicy!.endDate!)}",
+                                                    ),
+                                                    Text(
+                                                      "${r.insurancePolicy!.client?.firstName ?? ''} ${r.insurancePolicy!.client?.lastName ?? ''}",
+                                                    ),
+                                                    Text(
+                                                      formatDateString(
+                                                        r.submittedAt,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      r.status ?? 'unknown',
+                                                      style: TextStyle(
+                                                        color:
+                                                            r.status ==
+                                                                    "Accepted"
+                                                                ? Colors.green
+                                                                : r.status ==
+                                                                    "Declined"
+                                                                ? Colors.red
+                                                                : Colors.blue,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      r.estimatedAmount
+                                                              ?.toStringAsFixed(
+                                                                2,
+                                                              ) ??
+                                                          "0.00",
+                                                    ),
+                                                    Text(
+                                                      r.status == "Accepted" ||
+                                                              r.status ==
+                                                                  "Declined"
+                                                          ? r.comment ?? "N/A"
+                                                          : r.description ??
+                                                              "N/A",
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           const Spacer(),
                                           Align(

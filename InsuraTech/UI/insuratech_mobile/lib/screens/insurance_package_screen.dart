@@ -186,8 +186,8 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                   child: Text(
                     "\$${package.price?.toStringAsFixed(2) ?? 'N/A'}",
                     style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.green,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
                     ),
                   ),
                 ),
