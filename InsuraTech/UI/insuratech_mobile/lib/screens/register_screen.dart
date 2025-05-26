@@ -29,16 +29,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Uint8List? _imageBytes;
   File? _imageFile;
 
+  bool _isPickingImage = false;
+
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      final bytes = await picked.readAsBytes();
-      if (!mounted) return;
-      setState(() {
-        _imageFile = File(picked.path);
-        _imageBytes = bytes;
-      });
+    if (_isPickingImage) return; // Spriječava višestruki odabir slike
+    setState(() => _isPickingImage = true);
+
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked != null) {
+        final bytes = await picked.readAsBytes();
+        if (!mounted) return;
+        setState(() {
+          _imageFile = File(picked.path);
+          _imageBytes = bytes;
+        });
+      }
+    } catch (e) {
+      showErrorAlert(context, "Error picking image: $e");
+    } finally {
+      setState(() => _isPickingImage = false);
     }
   }
 
@@ -97,11 +108,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               _buildTextField(
                 _phoneController,
                 "Phone (optional)",
-                required: false,
                 phoneNumber: true,
               ),
               const SizedBox(height: 16),
-
               _buildTextField(_usernameController, "Username", required: true),
               const SizedBox(height: 16),
               _buildTextField(
@@ -109,6 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 "Password",
                 required: true,
                 obscure: true,
+                isPassword: true,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -120,6 +130,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 validator: (value) {
                   if (value != _passwordController.text) {
                     return 'Passwords do not match';
+                  }
+                  if (value == null || value.length < 8) {
+                    return 'Password must be at least 8 characters';
                   }
                   return null;
                 },
@@ -165,6 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     bool obscure = false,
     bool email = false,
     bool phoneNumber = false,
+    bool isPassword = false,
   }) {
     return TextFormField(
       controller: controller,
@@ -173,6 +187,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       validator: (value) {
         if (required && (value == null || value.isEmpty)) {
           return "$label is required";
+        }
+        if (isPassword && value != null && value.length < 8) {
+          return "$label must be at least 8 characters";
         }
         if (email && value != null && value.isNotEmpty) {
           final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
@@ -218,6 +235,5 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } catch (e) {
       showErrorAlert(context, "Username already exists");
     }
-    ;
   }
 }

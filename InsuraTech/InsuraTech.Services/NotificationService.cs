@@ -25,15 +25,23 @@ namespace InsuraTech.Services
         {
             if (search.ClientId > 0)
             {
-                query = query.Where(x=>x.ClientId == search.ClientId);
+                query = query.Where(x => x.ClientId == search.ClientId);
             }
             if (search.ShowUnread == true)
             {
                 query = query.Where(x => x.IsRead == false);
             }
-            query = query.Where(x => !x.IsDeleted).Include(x=>x.InsurancePolicy).ThenInclude(x=>x.InsurancePackage);
+            if (!string.IsNullOrWhiteSpace(search.ClientNameGTE))
+            {
+                query = query.Where(r =>
+                    (r.Client.FirstName + " " + r.Client.LastName).ToLower().Contains(search.ClientNameGTE.ToLower())
+                );
+            }
 
-
+            query = query.Where(x => !x.IsDeleted)
+                         .Include(r => r.Client)
+                         .Include(r => r.InsurancePolicy)
+                         .ThenInclude(r => r.InsurancePackage);
 
             return query;
         }

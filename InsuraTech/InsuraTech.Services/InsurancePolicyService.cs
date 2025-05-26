@@ -41,6 +41,12 @@ namespace InsuraTech.Services
             {
                 query = query.Where(x => x.InsurancePackageId == search.InsurancePackageId);
             }
+                        if (!string.IsNullOrWhiteSpace(search.ClientNameGTE))
+            {
+                query = query.Where(r =>
+                    (r.Client.FirstName + " " + r.Client.LastName).ToLower().Contains(search.ClientNameGTE.ToLower())
+                );
+            }
 
             query = query.Where(x => !x.IsDeleted).Include(x=>x.Client).Include(x=>x.InsurancePackage);
             var expiredPolicies = Context.InsurancePolicies

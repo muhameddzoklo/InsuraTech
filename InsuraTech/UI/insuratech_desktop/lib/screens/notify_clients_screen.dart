@@ -19,13 +19,14 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
   late InsurancePolicyProvider _policyProvider;
   List<InsurancePolicy> _policies = [];
   DateTime? _selectedDate;
+  String? _clientNameGTE;
 
   @override
   void initState() {
     super.initState();
     _policyProvider = context.read<InsurancePolicyProvider>();
     _selectedDate = null;
-
+    _clientNameGTE = null;
     _loadData();
   }
 
@@ -33,6 +34,8 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
     final filter = {
       "isActive": true,
       if (_selectedDate != null) "EndDateLTE": _selectedDate,
+      if (_clientNameGTE != null && _clientNameGTE!.isNotEmpty)
+        "ClientNameGTE": _clientNameGTE,
     };
 
     final result = await _policyProvider.get(
@@ -41,6 +44,7 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
       orderBy: "IsNotificationSent",
       sortDirection: "ASC",
     );
+
     final unnotified =
         result.resultList.where((p) => p.isNotificationSent == false).toList()
           ..sort((a, b) => a.endDate!.compareTo(b.endDate!));
@@ -81,6 +85,25 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
             const SizedBox(height: 20),
             Row(
               children: [
+                // Pretraga po imenu klijenta
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search by client name...',
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _clientNameGTE = value.trim();
+                      });
+                      _loadData();
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
                 const Text(
                   'Notify clients expiring before:',
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -108,7 +131,6 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
                       });
                       _loadData();
                     },
-
                     label: const Text("Clear date"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey.shade600,
@@ -117,7 +139,6 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
                   ),
               ],
             ),
-
             const SizedBox(height: 20),
             Align(
               alignment: Alignment.topLeft,
@@ -191,7 +212,7 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
                                             } catch (e) {
                                               showErrorAlert(
                                                 context,
-                                                "Error Sending notification ${e.toString()}",
+                                                "Error Sending notification: ${e.toString()}",
                                               );
                                             }
                                           },
