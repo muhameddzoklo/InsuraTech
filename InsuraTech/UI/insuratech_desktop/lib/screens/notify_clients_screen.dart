@@ -85,7 +85,6 @@ class _NotifyClientsScreenState extends State<NotifyClientsScreen> {
             const SizedBox(height: 20),
             Row(
               children: [
-                // Pretraga po imenu klijenta
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(

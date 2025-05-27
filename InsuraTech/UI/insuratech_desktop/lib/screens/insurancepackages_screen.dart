@@ -553,10 +553,7 @@ class InsurancePackageCard extends StatelessWidget {
                   if (isActive)
                     Text(
                       "\$${package.price?.toStringAsFixed(2) ?? ''}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
 
                   if (isDraft) ...[
@@ -606,11 +603,7 @@ class InsurancePackageCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                   ],
-
-                  // Rastegljivi prostor
                   Expanded(child: Container()),
-
-                  // Bottom dugmad
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
