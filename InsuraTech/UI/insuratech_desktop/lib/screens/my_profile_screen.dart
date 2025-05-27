@@ -5,6 +5,7 @@ import 'package:insuratech_desktop/layouts/master_screen.dart';
 import 'package:insuratech_desktop/models/user.dart';
 import 'package:insuratech_desktop/providers/auth_provider.dart';
 import 'package:insuratech_desktop/providers/users_provider.dart';
+import 'package:insuratech_desktop/providers/utils.dart';
 import 'package:insuratech_desktop/screens/edit_profie_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -43,6 +44,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         _isLoading = false;
       });
     } catch (e) {
+      showErrorAlert(context, "Error loading profile ${e.toString()}");
       setState(() => _isLoading = false);
     }
   }

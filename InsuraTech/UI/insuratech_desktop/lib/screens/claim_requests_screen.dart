@@ -314,8 +314,26 @@ class _ClaimRequestsScreenState extends State<ClaimRequestsScreen> {
                   foregroundColor: Colors.white,
                 ),
               ),
+              const SizedBox(width: 16),
+              if (_fromDate != null || _toDate != null)
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.clear),
+                  label: const Text("Clear Filters"),
+                  onPressed: () {
+                    setState(() {
+                      _fromDate = null;
+                      _toDate = null;
+                    });
+                    _fetchRequests();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade600,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
             ],
           ),
+
           const SizedBox(height: 20),
           Expanded(
             child:

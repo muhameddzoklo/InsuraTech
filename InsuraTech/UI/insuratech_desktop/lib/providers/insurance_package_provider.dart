@@ -20,7 +20,6 @@ class InsurancePackageProvider extends BaseProvider<InsurancePackage> {
     var headers = createHeaders();
 
     var response = await http.put(uri, headers: headers);
-    print("$uri");
     if (isValidResponse(response)) {
       if (response.body.isEmpty)
         return fromJson({}); // or return null if allowed

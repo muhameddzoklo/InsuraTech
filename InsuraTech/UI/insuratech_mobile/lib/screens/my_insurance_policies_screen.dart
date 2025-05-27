@@ -68,7 +68,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      showErrorAlert(context, "Failed to load policies: \${e.toString()}");
+      showErrorAlert(context, "Failed to load policies: ${e.toString()}");
     }
   }
 
@@ -160,7 +160,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                                         } catch (e) {
                                           showErrorAlert(
                                             context,
-                                            "Failed to delete policy: \${e.toString()}",
+                                            "Failed to delete policy: ${e.toString()}",
                                           );
                                         }
                                       }
@@ -423,7 +423,10 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                   _fetchPolicies();
                   showSuccessAlert(context, "Feedback submitted.");
                 } catch (e) {
-                  showErrorAlert(context, e.toString());
+                  showErrorAlert(
+                    context,
+                    "Error submiting feedback ${e.toString()}",
+                  );
                 }
               },
               child: const Text('Submit'),
@@ -496,7 +499,10 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                   _fetchPolicies();
                   showSuccessAlert(context, "Feedback updated.");
                 } catch (e) {
-                  showErrorAlert(context, e.toString());
+                  showErrorAlert(
+                    context,
+                    "Error updating feedback ${e.toString()}",
+                  );
                 }
               },
               child: const Text('Save'),

@@ -46,7 +46,7 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
       await _loadTickets();
       showSuccessAlert(context, msg);
     } catch (e) {
-      showErrorAlert(context, e.toString());
+      showErrorAlert(context, "Error closing ticket ${e.toString()}");
     }
   }
 

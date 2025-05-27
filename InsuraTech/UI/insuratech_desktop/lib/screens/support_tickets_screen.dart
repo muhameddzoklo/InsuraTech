@@ -297,7 +297,24 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
           },
         ),
         const SizedBox(width: 8),
-        IconButton(icon: const Icon(Icons.refresh), onPressed: _fetchTickets),
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: "Refresh",
+          onPressed: _fetchTickets,
+        ),
+        IconButton(
+          icon: const Icon(Icons.clear_all),
+          tooltip: "Reset Filters",
+          onPressed: () {
+            setState(() {
+              _dateFrom = null;
+              _dateTo = null;
+              _isAnswered = null;
+              _isClosed = null;
+            });
+            _fetchTickets();
+          },
+        ),
       ],
     );
   }
