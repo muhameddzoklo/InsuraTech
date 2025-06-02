@@ -4,6 +4,7 @@ part 'role.g.dart';
 @JsonSerializable()
 class Role {
   int? roleId;
+  String? description;
   String? roleName;
   Role();
 

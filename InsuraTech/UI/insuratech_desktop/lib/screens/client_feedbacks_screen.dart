@@ -53,7 +53,7 @@ class _ClientFeedbackScreenState extends State<ClientFeedbackScreen> {
       });
     } catch (e) {
       setState(() => _isLoading = false);
-      showErrorAlert(context, e.toString());
+      showErrorAlert(context, "Error fetching Feadbacks ${e.toString()}");
     }
   }
 
@@ -74,7 +74,7 @@ class _ClientFeedbackScreenState extends State<ClientFeedbackScreen> {
         showSuccessAlert(context, "Feedback deleted.");
         _loadFeedbacks();
       } catch (e) {
-        showErrorAlert(context, e.toString());
+        showErrorAlert(context, "Error deleting Feedback${e.toString()}");
       }
     }
   }

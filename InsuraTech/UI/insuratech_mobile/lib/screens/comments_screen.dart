@@ -44,7 +44,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      showErrorAlert(context, "Failed to load comments: \$e");
+      showErrorAlert(context, "Failed to load comments: ${e.toString()}");
     }
   }
 

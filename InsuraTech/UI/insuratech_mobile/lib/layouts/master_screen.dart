@@ -85,12 +85,20 @@ class _MasterScreenState extends State<MasterScreen> {
       drawer: Drawer(
         child: Column(
           children: [
-            const DrawerHeader(
-              child: Text(
-                "Navigation",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.brown.shade100),
+              child: Center(
+                child: SizedBox(
+                  height: 90,
+                  width: 150,
+                  child: Image.asset(
+                    "assets/images/logo.jpg",
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
             ),
+
             for (int i = 0; i < _menuItems.length; i++)
               ListTile(
                 leading: Icon(_menuItems[i]['icon']),

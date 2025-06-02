@@ -278,6 +278,8 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
                                                       title: "Delete Ticket",
                                                       text:
                                                           "Are you sure you want to permanently delete this ticket?",
+                                                      confirmBtnColor:
+                                                          Colors.red,
                                                     );
                                                 if (confirmed == true) {
                                                   await _deleteTicket(

@@ -72,7 +72,7 @@ class _InsurancePackageScreenState extends State<InsurancePackageScreen> {
                 onChanged: (value) => setState(() => searchQuery = value),
               ),
               const SizedBox(height: 20),
-              if (_recommended.isNotEmpty)
+              if (_recommended.isNotEmpty && searchQuery == "")
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

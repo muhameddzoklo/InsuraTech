@@ -7,6 +7,7 @@ import 'package:insuratech_desktop/providers/insurance_package_provider.dart';
 import 'package:insuratech_desktop/providers/insurance_policy_provider.dart';
 import 'package:insuratech_desktop/providers/loyalty_program_provider.dart';
 import 'package:insuratech_desktop/providers/notification_provider.dart';
+import 'package:insuratech_desktop/providers/report_provider.dart';
 import 'package:insuratech_desktop/providers/roles_provider.dart';
 import 'package:insuratech_desktop/providers/support_ticket_provider.dart';
 import 'package:insuratech_desktop/providers/users_provider.dart';
@@ -35,6 +36,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => SupportTicketProvider()),
         ChangeNotifierProvider(create: (_) => ClientFeedbackProvider()),
         ChangeNotifierProvider(create: (_) => LoyaltyProgramProvider()),
+        ChangeNotifierProvider(create: (_) => ReportProvider()),
       ],
       child: const MyApp(),
     ),
@@ -108,11 +110,11 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
-                      height: 100,
-                      width: 100,
+                      height: 200,
+                      width: 400,
                       child: Image.asset(
                         "assets/images/logo.jpg",
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     const SizedBox(height: 20),

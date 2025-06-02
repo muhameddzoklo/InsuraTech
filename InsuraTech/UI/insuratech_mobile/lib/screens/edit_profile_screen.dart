@@ -36,7 +36,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Uint8List? _imageBytes;
   File? _imageFile;
-  bool _isPickingImage = false; // 🔥 Flag za kontrolu picker-a
+  bool _isPickingImage = false;
 
   @override
   void initState() {
@@ -66,7 +66,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _pickImage() async {
-    if (_isPickingImage) return; // 🛡️ Ne dozvoli više pokretanja
+    if (_isPickingImage) return;
     _isPickingImage = true;
 
     try {

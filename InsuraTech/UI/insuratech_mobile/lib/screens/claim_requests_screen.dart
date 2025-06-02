@@ -16,6 +16,7 @@ class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
   List<ClaimRequest> _claimRequests = [];
   bool _isLoading = true;
   Set<int> _expandedCards = {};
+  String _selectedStatus = 'All';
 
   @override
   void initState() {
@@ -30,8 +31,14 @@ class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
         listen: false,
       );
       final searchResult = await claimRequestProvider.get(
-        filter: {"Username": AuthProvider.username},
+        filter: {
+          "Username": AuthProvider.username,
+          if (_selectedStatus != 'All') "Status": _selectedStatus,
+          "OrderBy": "Status",
+          "SortDirection": "ASC",
+        },
       );
+
       if (!mounted) return;
       setState(() {
         _claimRequests = searchResult.resultList;
@@ -49,184 +56,236 @@ class _ClaimRequestScreenState extends State<ClaimRequestScreen> {
       child:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
-              : _claimRequests.isEmpty
-              ? Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.assignment, size: 64, color: Colors.brown),
-                    const SizedBox(height: 20),
-                    const Text(
-                      "You don't have any claim requests yet",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
+              : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
                     ),
-                  ],
-                ),
-              )
-              : RefreshIndicator(
-                onRefresh: _fetchClaimRequests,
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _claimRequests.length,
-                  itemBuilder: (context, index) {
-                    final claim = _claimRequests[index];
-                    final isExpanded = _expandedCards.contains(
-                      claim.claimRequestId,
-                    );
-
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      elevation: 6,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  claim
-                                          .insurancePolicy!
-                                          .insurancePackage!
-                                          .name ??
-                                      "-",
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                    child: DropdownButton<String>(
+                      value: _selectedStatus,
+                      isExpanded: true,
+                      items: const [
+                        DropdownMenuItem(value: 'All', child: Text('All')),
+                        DropdownMenuItem(
+                          value: 'Accepted',
+                          child: Text('Accepted'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Declined',
+                          child: Text('Declined'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'In progress',
+                          child: Text('In Progress'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedStatus = value!;
+                          _isLoading = true;
+                        });
+                        _fetchClaimRequests();
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child:
+                        _claimRequests.isEmpty
+                            ? Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.assignment,
+                                    size: 64,
                                     color: Colors.brown,
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            _buildStatusBadge(claim.status),
-                            SizedBox(height: 16),
-                            Row(
-                              children: [
-                                const Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    "Description:",
+                                  const SizedBox(height: 20),
+                                  const Text(
+                                    "You don't have any claim requests yet",
                                     style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black87,
+                                      fontSize: 18,
+                                      color: Colors.black54,
                                       fontWeight: FontWeight.w500,
                                     ),
+                                    textAlign: TextAlign.center,
                                   ),
-                                ),
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    claim.description ?? 'N/A',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                const Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    "Estimated Amount:",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    "\$${claim.estimatedAmount?.toStringAsFixed(2) ?? 'N/A'}",
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
+                            )
+                            : RefreshIndicator(
+                              onRefresh: _fetchClaimRequests,
+                              child: ListView.builder(
+                                padding: const EdgeInsets.all(16),
+                                itemCount: _claimRequests.length,
+                                itemBuilder: (context, index) {
+                                  final claim = _claimRequests[index];
+                                  final isExpanded = _expandedCards.contains(
+                                    claim.claimRequestId,
+                                  );
 
-                            const SizedBox(height: 12),
-                            if (claim.status?.toLowerCase() == "accepted" ||
-                                claim.status?.toLowerCase() == "declined") ...[
-                              Center(
-                                child: TextButton.icon(
-                                  onPressed: () {
-                                    setState(() {
-                                      if (isExpanded) {
-                                        _expandedCards.remove(
-                                          claim.claimRequestId,
-                                        );
-                                      } else {
-                                        _expandedCards.add(
-                                          claim.claimRequestId!,
-                                        );
-                                      }
-                                    });
-                                  },
-                                  icon: Icon(
-                                    isExpanded
-                                        ? Icons.expand_less
-                                        : Icons.expand_more,
-                                    color: Colors.blueGrey,
-                                  ),
-                                  label: Text(
-                                    isExpanded
-                                        ? "Hide Details"
-                                        : "Show Details",
-                                    style: const TextStyle(
-                                      color: Colors.blueGrey,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
+                                  return Card(
+                                    margin: const EdgeInsets.only(bottom: 16),
+                                    elevation: 6,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
                                     ),
-                                  ),
-                                ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                claim
+                                                        .insurancePolicy
+                                                        ?.insurancePackage
+                                                        ?.name ??
+                                                    "-",
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.brown,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 16),
+                                          _buildStatusBadge(claim.status),
+                                          const SizedBox(height: 16),
+                                          Row(
+                                            children: [
+                                              const Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  "Description:",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black87,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  claim.description ?? 'N/A',
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              const Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  "Estimated Amount:",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black87,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  "\$${claim.estimatedAmount?.toStringAsFixed(2) ?? 'N/A'}",
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 12),
+                                          if (claim.status?.toLowerCase() ==
+                                                  "accepted" ||
+                                              claim.status?.toLowerCase() ==
+                                                  "declined") ...[
+                                            Center(
+                                              child: TextButton.icon(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    if (isExpanded) {
+                                                      _expandedCards.remove(
+                                                        claim.claimRequestId,
+                                                      );
+                                                    } else {
+                                                      _expandedCards.add(
+                                                        claim.claimRequestId!,
+                                                      );
+                                                    }
+                                                  });
+                                                },
+                                                icon: Icon(
+                                                  isExpanded
+                                                      ? Icons.expand_less
+                                                      : Icons.expand_more,
+                                                  color: Colors.blueGrey,
+                                                ),
+                                                label: Text(
+                                                  isExpanded
+                                                      ? "Hide Details"
+                                                      : "Show Details",
+                                                  style: const TextStyle(
+                                                    color: Colors.blueGrey,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                          if (isExpanded &&
+                                              (claim.status?.toLowerCase() ==
+                                                      "accepted" ||
+                                                  claim.status?.toLowerCase() ==
+                                                      "declined") &&
+                                              (claim.comment != null &&
+                                                  claim
+                                                      .comment!
+                                                      .isNotEmpty)) ...[
+                                            const SizedBox(height: 12),
+                                            const Divider(thickness: 1),
+                                            Text(
+                                              "Comment:",
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.brown,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              claim.comment!,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            ],
-                            if (isExpanded &&
-                                (claim.comment != null &&
-                                    claim.comment!.isNotEmpty)) ...[
-                              const SizedBox(height: 12),
-                              const Divider(thickness: 1),
-                              Text(
-                                "Comment:",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.brown,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                claim.comment!,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                            ),
+                  ),
+                ],
               ),
     );
   }

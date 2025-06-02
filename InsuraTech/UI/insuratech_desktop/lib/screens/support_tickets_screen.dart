@@ -297,14 +297,16 @@ class _SupportTicketsScreenState extends State<SupportTicketsScreen> {
           },
         ),
         const SizedBox(width: 8),
-        IconButton(
+        ElevatedButton.icon(
           icon: const Icon(Icons.refresh),
-          tooltip: "Refresh",
-          onPressed: _fetchTickets,
-        ),
-        IconButton(
-          icon: const Icon(Icons.clear_all),
-          tooltip: "Reset Filters",
+          label: const Text("Reset All Filters"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.brown,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
           onPressed: () {
             setState(() {
               _dateFrom = null;

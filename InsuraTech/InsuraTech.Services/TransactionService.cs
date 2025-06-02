@@ -60,6 +60,8 @@ namespace InsuraTech.Services
         }
         public override async Task AfterInsertAsync(TransactionInsertRequest request, Transaction entity, CancellationToken cancellationToken = default)
         {
+            var policy = await Context.InsurancePolicies.FirstOrDefaultAsync(x=>x.InsurancePolicyId == request.InsurancePolicyId, cancellationToken);
+            policy.IsActive = true;
             var loyaltyProgram = await Context.LoyaltyPrograms
                 .FirstOrDefaultAsync(a => a.ClientId == entity.ClientId, cancellationToken);
 

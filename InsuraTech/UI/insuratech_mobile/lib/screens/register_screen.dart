@@ -32,7 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isPickingImage = false;
 
   Future<void> _pickImage() async {
-    if (_isPickingImage) return; // Spriječava višestruki odabir slike
+    if (_isPickingImage) return;
     setState(() => _isPickingImage = true);
 
     try {
@@ -47,7 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         });
       }
     } catch (e) {
-      showErrorAlert(context, "Error picking image: $e");
+      showErrorAlert(context, "Error picking image: ${e.toString()}");
     } finally {
       setState(() => _isPickingImage = false);
     }
