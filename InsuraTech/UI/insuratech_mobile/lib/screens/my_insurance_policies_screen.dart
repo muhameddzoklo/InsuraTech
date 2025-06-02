@@ -143,6 +143,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
                                         title: 'Confirm Deletion',
                                         text:
                                             'Are you sure you want to delete this policy?',
+                                        confirmBtnColor: Colors.red,
                                       );
                                       if (confirm == true) {
                                         try {
@@ -533,7 +534,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: Colors.blue.shade300,
-          borderRadius: BorderRadius.circular(20), // zaobljeni rubovi
+          borderRadius: BorderRadius.circular(20),
         ),
         child: InkWell(
           onTap: () => showAddReviewDialog(policy),
@@ -569,7 +570,7 @@ class _MyInsurancePoliciesScreenState extends State<MyInsurancePoliciesScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.orange.shade300,
-        borderRadius: BorderRadius.circular(20), // zaobljeni rubovi
+        borderRadius: BorderRadius.circular(20),
       ),
       child: InkWell(
         onTap: () => showEditReviewDialog(policy, feedback),

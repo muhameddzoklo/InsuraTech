@@ -6,8 +6,10 @@ import 'package:insuratech_desktop/screens/claim_requests_screen.dart';
 import 'package:insuratech_desktop/screens/client_feedbacks_screen.dart';
 import 'package:insuratech_desktop/screens/insurancepackages_screen.dart';
 import 'package:insuratech_desktop/screens/loyalty_program_screen.dart';
+import 'package:insuratech_desktop/screens/management_screen.dart';
 import 'package:insuratech_desktop/screens/my_profile_screen.dart';
 import 'package:insuratech_desktop/screens/notify_clients_screen.dart';
+import 'package:insuratech_desktop/screens/reports_screen.dart';
 import 'package:insuratech_desktop/screens/support_tickets_screen.dart';
 import 'package:insuratech_desktop/screens/users_screen.dart';
 
@@ -115,8 +117,9 @@ class _MasterScreenState extends State<MasterScreen> {
                           context,
                           "Reports",
                           Icons.edit_document,
-                          const Placeholder(),
+                          const ReportsScreen(),
                         ),
+
                         _buildSidebarItem(
                           context,
                           "Loyalty program",
@@ -127,7 +130,7 @@ class _MasterScreenState extends State<MasterScreen> {
                           context,
                           "Management",
                           Icons.settings,
-                          const Placeholder(),
+                          const ManagementScreen(),
                         ),
                       ],
                     ),
@@ -211,10 +214,13 @@ class _MasterScreenState extends State<MasterScreen> {
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    color: Colors.brown.shade50,
-                    child: widget.child,
+                  child: Material(
+                    color: Colors.transparent, // Da ne naruši boju, ni shadow
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      color: Colors.brown.shade50,
+                      child: widget.child,
+                    ),
                   ),
                 ),
               ],

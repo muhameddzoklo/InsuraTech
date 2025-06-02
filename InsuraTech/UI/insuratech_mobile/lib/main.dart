@@ -111,8 +111,8 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
-                        height: 100,
-                        width: 100,
+                        height: 150,
+                        width: 250,
                         child: Image.asset(
                           "assets/images/logo.jpg",
                           fit: BoxFit.contain,

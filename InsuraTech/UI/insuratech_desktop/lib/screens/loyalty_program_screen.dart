@@ -36,7 +36,10 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      showErrorAlert(context, "Error loading loyalty programs: $e");
+      showErrorAlert(
+        context,
+        "Error loading loyalty programs: ${e.toString()}",
+      );
       setState(() => _isLoading = false);
     }
   }
@@ -113,10 +116,7 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
 
   Widget _buildTierInfoCard() {
     return ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxWidth: 700,
-        minWidth: 700,
-      ), // Fiksna širina
+      constraints: const BoxConstraints(maxWidth: 700, minWidth: 700),
       child: Card(
         color: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -124,7 +124,7 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center, // Centriraj sve
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
                 "Loyalty Tier Details",
@@ -170,22 +170,47 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
     Color color,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start, // Centriraj redove
         children: [
-          Container(
-            width: 14,
-            height: 14,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          // Lijeva strana: tačka + naziv
+          SizedBox(
+            width: 110,
+            child: Row(
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                    fontSize: 15,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(width: 8),
+          // Poeni
+          SizedBox(
+            width: 110,
+            child: Text(
+              points,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ),
+          // Discount desno od poena
           Text(
-            "$name: ",
-            style: TextStyle(fontWeight: FontWeight.bold, color: color),
-            textAlign: TextAlign.center,
+            discount,
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
-          Text("$points ($discount)", textAlign: TextAlign.center),
         ],
       ),
     );
@@ -207,10 +232,7 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minWidth: 700,
-            maxWidth: 700,
-          ), // Fiksna širina
+          constraints: const BoxConstraints(minWidth: 700, maxWidth: 700),
           child: DataTable(
             columnSpacing: 10,
             columns: const [

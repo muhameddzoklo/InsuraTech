@@ -389,7 +389,7 @@ class _UsersScreenState extends State<UsersScreen> {
                             keyboardType: TextInputType.phone,
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return null; // Prazan broj je dozvoljen
+                                return null;
                               }
 
                               final phoneRegex = RegExp(r'^\d{9,10}$');
