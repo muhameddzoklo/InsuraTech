@@ -88,7 +88,8 @@ namespace InsuraTech.Services.Migrations
                             InsurancePolicyId = 2,
                             IsDeleted = false,
                             Status = "Declined",
-                            SubmittedAt = new DateTime(2025, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            SubmittedAt = new DateTime(2025, 5, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = 1
                         },
                         new
                         {
@@ -99,7 +100,8 @@ namespace InsuraTech.Services.Migrations
                             InsurancePolicyId = 3,
                             IsDeleted = false,
                             Status = "Accepted",
-                            SubmittedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            SubmittedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = 1
                         },
                         new
                         {
@@ -266,6 +268,76 @@ namespace InsuraTech.Services.Migrations
                     b.HasIndex("InsurancePolicyId");
 
                     b.ToTable("ClientFeedbacks");
+
+                    b.HasData(
+                        new
+                        {
+                            ClientFeedbackId = 1,
+                            ClientId = 1,
+                            Comment = "Great experience!",
+                            CreatedAt = new DateTime(2025, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsurancePackageId = 1,
+                            InsurancePolicyId = 1,
+                            IsDeleted = false,
+                            Rating = 5
+                        },
+                        new
+                        {
+                            ClientFeedbackId = 2,
+                            ClientId = 1,
+                            Comment = "Good service.",
+                            CreatedAt = new DateTime(2025, 5, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsurancePackageId = 2,
+                            InsurancePolicyId = 2,
+                            IsDeleted = false,
+                            Rating = 4
+                        },
+                        new
+                        {
+                            ClientFeedbackId = 3,
+                            ClientId = 2,
+                            Comment = "Average coverage.",
+                            CreatedAt = new DateTime(2025, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletionTime = new DateTime(2025, 6, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsurancePackageId = 3,
+                            InsurancePolicyId = 3,
+                            IsDeleted = true,
+                            Rating = 3
+                        },
+                        new
+                        {
+                            ClientFeedbackId = 4,
+                            ClientId = 2,
+                            Comment = "Family policy was useful.",
+                            CreatedAt = new DateTime(2025, 4, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsurancePackageId = 4,
+                            InsurancePolicyId = 4,
+                            IsDeleted = false,
+                            Rating = 4
+                        },
+                        new
+                        {
+                            ClientFeedbackId = 5,
+                            ClientId = 3,
+                            Comment = "Quick claim approval.",
+                            CreatedAt = new DateTime(2025, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DeletionTime = new DateTime(2025, 6, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsurancePackageId = 2,
+                            InsurancePolicyId = 5,
+                            IsDeleted = true,
+                            Rating = 5
+                        },
+                        new
+                        {
+                            ClientFeedbackId = 6,
+                            ClientId = 1,
+                            Comment = "Travel insurance was perfect!",
+                            CreatedAt = new DateTime(2025, 6, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            InsurancePackageId = 4,
+                            InsurancePolicyId = 7,
+                            IsDeleted = false,
+                            Rating = 5
+                        });
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.InsurancePackage", b =>
@@ -342,11 +414,11 @@ namespace InsuraTech.Services.Migrations
                         new
                         {
                             InsurancePackageId = 4,
-                            Description = "Covers medical emergencies, trip cancellations, and lost luggage during travel abroad.",
-                            DurationDays = 30,
+                            Description = "Travel safely with your family across Europe. Coverage for medical emergencies, trip cancellations, and lost luggage for up to 4 persons.",
+                            DurationDays = 7,
                             IsDeleted = false,
-                            Name = "Travel Insurance",
-                            Price = 129.99m,
+                            Name = "Travel Insurance Europe Family",
+                            Price = 179.99m,
                             StateMachine = "active"
                         },
                         new
@@ -362,16 +434,6 @@ namespace InsuraTech.Services.Migrations
                         new
                         {
                             InsurancePackageId = 6,
-                            Description = "Coverage for accidental damage, theft, and repairs for your electronic devices.",
-                            DurationDays = 365,
-                            IsDeleted = false,
-                            Name = "Electronics Protection Plan",
-                            Price = 59.99m,
-                            StateMachine = "active"
-                        },
-                        new
-                        {
-                            InsurancePackageId = 7,
                             Description = "Specialized coverage for motorcycle riders including collision and liability protection.",
                             DurationDays = 270,
                             IsDeleted = false,
@@ -381,13 +443,123 @@ namespace InsuraTech.Services.Migrations
                         },
                         new
                         {
-                            InsurancePackageId = 8,
+                            InsurancePackageId = 7,
                             Description = "Affordable health insurance tailored for students with coverage for regular checkups and emergencies.",
                             DurationDays = 180,
                             IsDeleted = false,
                             Name = "Student Health Plan",
                             Price = 179.99m,
                             StateMachine = "draft"
+                        },
+                        new
+                        {
+                            InsurancePackageId = 8,
+                            Description = "Comprehensive casco coverage for vehicles, including theft, vandalism, and natural disasters.",
+                            DurationDays = 365,
+                            IsDeleted = false,
+                            Name = "Casco Car Insurance",
+                            Price = 349.00m,
+                            StateMachine = "active"
+                        },
+                        new
+                        {
+                            InsurancePackageId = 9,
+                            Description = "Ultimate car protection: covers basic, casco, and additional roadside assistance and legal support.",
+                            DurationDays = 365,
+                            IsDeleted = false,
+                            Name = "Full Car Insurance",
+                            Price = 599.99m,
+                            StateMachine = "active"
+                        },
+                        new
+                        {
+                            InsurancePackageId = 10,
+                            Description = "Coverage for single travelers exploring Europe, including medical emergencies and trip interruptions.",
+                            DurationDays = 7,
+                            IsDeleted = false,
+                            Name = "Travel Insurance Europe Single",
+                            Price = 49.99m,
+                            StateMachine = "active"
+                        },
+                        new
+                        {
+                            InsurancePackageId = 11,
+                            Description = "Global coverage for individual travelers: medical, lost luggage, trip delay, and emergency evacuation.",
+                            DurationDays = 14,
+                            IsDeleted = false,
+                            Name = "Travel Insurance World Single",
+                            Price = 99.99m,
+                            StateMachine = "active"
+                        },
+                        new
+                        {
+                            InsurancePackageId = 12,
+                            Description = "Complete travel insurance for your family worldwide. Includes 4 persons: medical, trip cancellation, and lost luggage.",
+                            DurationDays = 14,
+                            IsDeleted = false,
+                            Name = "Travel Insurance World Family",
+                            Price = 189.99m,
+                            StateMachine = "active"
+                        },
+                        new
+                        {
+                            InsurancePackageId = 13,
+                            Description = "Protect your property from the financial consequences of flooding. Covers damage repair and replacement.",
+                            DurationDays = 180,
+                            IsDeleted = false,
+                            Name = "Flood Insurance",
+                            Price = 119.99m,
+                            StateMachine = "active"
+                        },
+                        new
+                        {
+                            InsurancePackageId = 14,
+                            Description = "Coverage against losses or damages caused by fire, including structural repairs and contents replacement.",
+                            DurationDays = 180,
+                            IsDeleted = false,
+                            Name = "Fire Insurance",
+                            Price = 109.99m,
+                            StateMachine = "active"
+                        },
+                        new
+                        {
+                            InsurancePackageId = 15,
+                            Description = "Financial protection for your home and belongings in case of burglary or forced entry.",
+                            DurationDays = 180,
+                            IsDeleted = false,
+                            Name = "Burglary Insurance",
+                            Price = 99.99m,
+                            StateMachine = "active"
+                        },
+                        new
+                        {
+                            InsurancePackageId = 16,
+                            Description = "Complete package covering fire, flood, and burglary for total home security and peace of mind.",
+                            DurationDays = 180,
+                            IsDeleted = false,
+                            Name = "Full Home Insurance",
+                            Price = 399.99m,
+                            StateMachine = "active"
+                        },
+                        new
+                        {
+                            InsurancePackageId = 17,
+                            Description = "Short-term coverage for essential home appliances such as refrigerators, washing machines, and ovens. Covers repair or replacement costs due to mechanical breakdowns.",
+                            DurationDays = 30,
+                            IsDeleted = false,
+                            Name = "Appliance Breakdown Insurance",
+                            Price = 39.99m,
+                            StateMachine = "active"
+                        },
+                        new
+                        {
+                            InsurancePackageId = 18,
+                            Description = "Protect your bicycle against theft and accidental damage with this affordable 30-day plan. Suitable for daily commuters and recreational cyclists.",
+                            DurationDays = 30,
+                            IsDeleted = false,
+                            Name = "Bicycle Theft & Damage Insurance",
+                            Price = 24.99m,
+                            StateMachine = "active"
                         });
                 });
 
@@ -447,7 +619,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePackageId = 1,
                             IsActive = true,
                             IsDeleted = false,
-                            IsNotificationSent = false,
+                            IsNotificationSent = true,
                             IsPaid = true,
                             StartDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -455,12 +627,12 @@ namespace InsuraTech.Services.Migrations
                         {
                             InsurancePolicyId = 2,
                             ClientId = 1,
-                            EndDate = new DateTime(2025, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 8, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             HasActiveClaimRequest = false,
                             InsurancePackageId = 2,
                             IsActive = true,
                             IsDeleted = false,
-                            IsNotificationSent = false,
+                            IsNotificationSent = true,
                             IsPaid = true,
                             StartDate = new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -473,7 +645,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePackageId = 3,
                             IsActive = true,
                             IsDeleted = false,
-                            IsNotificationSent = false,
+                            IsNotificationSent = true,
                             IsPaid = true,
                             StartDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -499,7 +671,7 @@ namespace InsuraTech.Services.Migrations
                             InsurancePackageId = 2,
                             IsActive = true,
                             IsDeleted = false,
-                            IsNotificationSent = false,
+                            IsNotificationSent = true,
                             IsPaid = true,
                             StartDate = new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -507,7 +679,7 @@ namespace InsuraTech.Services.Migrations
                         {
                             InsurancePolicyId = 6,
                             ClientId = 1,
-                            EndDate = new DateTime(2025, 3, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 3, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             HasActiveClaimRequest = false,
                             InsurancePackageId = 3,
                             IsActive = false,
@@ -515,6 +687,19 @@ namespace InsuraTech.Services.Migrations
                             IsNotificationSent = false,
                             IsPaid = false,
                             StartDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            InsurancePolicyId = 7,
+                            ClientId = 1,
+                            EndDate = new DateTime(2025, 7, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            HasActiveClaimRequest = false,
+                            InsurancePackageId = 4,
+                            IsActive = true,
+                            IsDeleted = false,
+                            IsNotificationSent = false,
+                            IsPaid = true,
+                            StartDate = new DateTime(2025, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -549,6 +734,35 @@ namespace InsuraTech.Services.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("LoyaltyPrograms");
+
+                    b.HasData(
+                        new
+                        {
+                            LoyaltyProgramId = 1,
+                            ClientId = 1,
+                            IsDeleted = false,
+                            LastUpdated = new DateTime(2025, 6, 2, 12, 32, 3, 0, DateTimeKind.Unspecified),
+                            Points = 34,
+                            Tier = 1
+                        },
+                        new
+                        {
+                            LoyaltyProgramId = 2,
+                            ClientId = 2,
+                            IsDeleted = false,
+                            LastUpdated = new DateTime(2025, 4, 1, 10, 52, 7, 0, DateTimeKind.Unspecified),
+                            Points = 29,
+                            Tier = 0
+                        },
+                        new
+                        {
+                            LoyaltyProgramId = 3,
+                            ClientId = 3,
+                            IsDeleted = false,
+                            LastUpdated = new DateTime(2024, 5, 20, 10, 14, 1, 0, DateTimeKind.Unspecified),
+                            Points = 17,
+                            Tier = 0
+                        });
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.Notification", b =>
@@ -592,6 +806,52 @@ namespace InsuraTech.Services.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
+
+                    b.HasData(
+                        new
+                        {
+                            NotificationId = 1,
+                            ClientId = 1,
+                            InsurancePolicyId = 2,
+                            IsDeleted = false,
+                            IsRead = false,
+                            Message = "Your policy is expiring on: 13.8.2025.",
+                            SentAt = new DateTime(2025, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = 1
+                        },
+                        new
+                        {
+                            NotificationId = 2,
+                            ClientId = 2,
+                            InsurancePolicyId = 3,
+                            IsDeleted = false,
+                            IsRead = false,
+                            Message = "Your policy is expiring on: 28.8.2025",
+                            SentAt = new DateTime(2025, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = 1
+                        },
+                        new
+                        {
+                            NotificationId = 3,
+                            ClientId = 3,
+                            InsurancePolicyId = 5,
+                            IsDeleted = false,
+                            IsRead = false,
+                            Message = "Your policy is expiring on: 18.8.2025.",
+                            SentAt = new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = 1
+                        },
+                        new
+                        {
+                            NotificationId = 4,
+                            ClientId = 1,
+                            InsurancePolicyId = 1,
+                            IsDeleted = false,
+                            IsRead = false,
+                            Message = "Your policy is expiring on: 1.1.2026.",
+                            SentAt = new DateTime(2025, 6, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = 1
+                        });
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.Role", b =>
@@ -690,6 +950,69 @@ namespace InsuraTech.Services.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("SupportTickets");
+
+                    b.HasData(
+                        new
+                        {
+                            SupportTicketId = 1,
+                            ClientId = 1,
+                            CreatedAt = new DateTime(2025, 5, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsAnswered = true,
+                            IsClosed = true,
+                            IsDeleted = false,
+                            Message = "Can you explain what is covered in my policy?",
+                            Reply = "Your policy covers vehicle damage, theft, and third-party liability.",
+                            Subject = "Policy Coverage Details",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            SupportTicketId = 2,
+                            ClientId = 1,
+                            CreatedAt = new DateTime(2025, 5, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsAnswered = false,
+                            IsClosed = true,
+                            IsDeleted = false,
+                            Message = "I’m facing issues while making payment through Stripe.",
+                            Subject = "Unable to make payment"
+                        },
+                        new
+                        {
+                            SupportTicketId = 3,
+                            ClientId = 1,
+                            CreatedAt = new DateTime(2025, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsAnswered = true,
+                            IsClosed = true,
+                            IsDeleted = false,
+                            Message = "What is the current status of my claim request?",
+                            Reply = "Your claim request is being processed and will be resolved within 3 business days.",
+                            Subject = "Claim Status",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            SupportTicketId = 4,
+                            ClientId = 2,
+                            CreatedAt = new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsAnswered = true,
+                            IsClosed = true,
+                            IsDeleted = false,
+                            Message = "How can I change my registered email address?",
+                            Reply = "Please navigate to the profile section to update your contact details.",
+                            Subject = "Update contact information",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            SupportTicketId = 5,
+                            ClientId = 3,
+                            CreatedAt = new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsAnswered = false,
+                            IsClosed = false,
+                            IsDeleted = false,
+                            Message = "Why did I not receive an alert before my policy expired?",
+                            Subject = "Policy expiration alert"
+                        });
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.Transaction", b =>
@@ -734,6 +1057,80 @@ namespace InsuraTech.Services.Migrations
                     b.HasIndex("InsurancePolicyId");
 
                     b.ToTable("Transactions");
+
+                    b.HasData(
+                        new
+                        {
+                            TransactionId = 1,
+                            Amount = 197.99000000000001,
+                            ClientId = 1,
+                            InsurancePolicyId = 1,
+                            IsDeleted = false,
+                            PayerId = "transactiontest",
+                            PaymentId = "transactiontest",
+                            PaymentMethod = "paypal",
+                            TransactionDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            TransactionId = 2,
+                            Amount = 346.0,
+                            ClientId = 1,
+                            InsurancePolicyId = 2,
+                            IsDeleted = false,
+                            PayerId = "transactiontest",
+                            PaymentId = "transactiontest",
+                            PaymentMethod = "paypal",
+                            TransactionDate = new DateTime(2025, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            TransactionId = 3,
+                            Amount = 494.0,
+                            ClientId = 2,
+                            InsurancePolicyId = 3,
+                            IsDeleted = false,
+                            PayerId = "transactiontest",
+                            PaymentId = "transactiontest",
+                            PaymentMethod = "paypal",
+                            TransactionDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            TransactionId = 4,
+                            Amount = 197.0,
+                            ClientId = 2,
+                            InsurancePolicyId = 4,
+                            IsDeleted = false,
+                            PayerId = "transactiontest",
+                            PaymentId = "transactiontest",
+                            PaymentMethod = "paypal",
+                            TransactionDate = new DateTime(2025, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            TransactionId = 5,
+                            Amount = 346.0,
+                            ClientId = 3,
+                            InsurancePolicyId = 5,
+                            IsDeleted = false,
+                            PayerId = "transactiontest",
+                            PaymentId = "transactiontest",
+                            PaymentMethod = "paypal",
+                            TransactionDate = new DateTime(2025, 5, 20, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            TransactionId = 6,
+                            Amount = 170.99000000000001,
+                            ClientId = 1,
+                            InsurancePolicyId = 7,
+                            IsDeleted = false,
+                            PayerId = "transactiontest",
+                            PaymentId = "transactiontest",
+                            PaymentMethod = "paypal",
+                            TransactionDate = new DateTime(2025, 6, 2, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("InsuraTech.Services.Database.User", b =>
@@ -791,53 +1188,40 @@ namespace InsuraTech.Services.Migrations
                         new
                         {
                             UserId = 1,
-                            Email = "1",
-                            FirstName = "1",
+                            Email = "admin@example.com",
+                            FirstName = "Liam",
                             IsActive = true,
                             IsDeleted = false,
-                            LastName = "1",
-                            PasswordHash = "XVDI7NKoOCtMiSrKR1uSSGWvA7o=",
-                            PasswordSalt = "NHVv+8KhAiQqFlz7k1P53Q==",
-                            PhoneNumber = "1",
-                            Username = "1"
+                            LastName = "Schneider",
+                            PasswordHash = "+zHjeAMut/qVPctS7uaREf4lN1w=",
+                            PasswordSalt = "sOQz4gFWKGh9SeOhqXpqyw==",
+                            PhoneNumber = "069000111",
+                            Username = "desktop"
                         },
                         new
                         {
                             UserId = 2,
-                            Email = "admin@mail.com",
-                            FirstName = "Admin",
+                            Email = "agent@example.com",
+                            FirstName = "Emily",
                             IsActive = true,
                             IsDeleted = false,
-                            LastName = "Admin",
-                            PasswordHash = "+zHjeAMut/qVPctS7uaREf4lN1w=",
-                            PasswordSalt = "sOQz4gFWKGh9SeOhqXpqyw==",
-                            PhoneNumber = "000000000",
-                            Username = "admin"
-                        },
-                        new
-                        {
-                            UserId = 3,
-                            Email = "agent@mail.com",
-                            FirstName = "Agent",
-                            IsActive = true,
-                            IsDeleted = false,
-                            LastName = "Agent",
+                            LastName = "Carter",
                             PasswordHash = "9hkvRabWkVOkr+Hqr52lzoMKiKo=",
                             PasswordSalt = "2ICZgybWHKj+fYpTc6/19g==",
-                            PhoneNumber = "000000001",
+                            PhoneNumber = "069000222",
                             Username = "agent"
                         },
                         new
                         {
-                            UserId = 4,
-                            Email = "assistant@mail.com",
-                            FirstName = "Assistant",
+                            UserId = 3,
+                            Email = "assistant@example.com",
+                            FirstName = "Sofia",
                             IsActive = true,
                             IsDeleted = false,
-                            LastName = "Assistant",
+                            LastName = "Alvarez",
                             PasswordHash = "sfrZuf7hqepHmMV6gt83a/RaB9g=",
                             PasswordSalt = "Ct53DBogAC4vUxlb2WodgQ==",
-                            PhoneNumber = "000000002",
+                            PhoneNumber = "069000333",
                             Username = "assistant"
                         });
                 });
@@ -887,7 +1271,7 @@ namespace InsuraTech.Services.Migrations
                             UserRoleId = 2,
                             ChangeDate = new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            RoleId = 1,
+                            RoleId = 2,
                             UserId = 2
                         },
                         new
@@ -895,16 +1279,8 @@ namespace InsuraTech.Services.Migrations
                             UserRoleId = 3,
                             ChangeDate = new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
-                            RoleId = 2,
-                            UserId = 3
-                        },
-                        new
-                        {
-                            UserRoleId = 4,
-                            ChangeDate = new DateTime(2025, 3, 23, 22, 48, 41, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
                             RoleId = 3,
-                            UserId = 4
+                            UserId = 3
                         });
                 });
 
