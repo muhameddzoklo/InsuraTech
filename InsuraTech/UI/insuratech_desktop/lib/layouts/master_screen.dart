@@ -30,6 +30,13 @@ class MasterScreen extends StatefulWidget {
 }
 
 class _MasterScreenState extends State<MasterScreen> {
+  bool get isAdmin {
+    return AuthProvider.userRoles?.any(
+          (role) => role.role?.roleName?.toLowerCase() == 'admin',
+        ) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,12 +90,15 @@ class _MasterScreenState extends State<MasterScreen> {
                           Icons.inventory,
                           const InsurancePackageScreen(),
                         ),
-                        _buildSidebarItem(
-                          context,
-                          "Users",
-                          Icons.person,
-                          const UsersScreen(),
-                        ),
+                        if (isAdmin) ...[
+                          _buildSidebarItem(
+                            context,
+                            "Users",
+                            Icons.person,
+                            const UsersScreen(),
+                          ),
+                        ],
+
                         _buildSidebarItem(
                           context,
                           "Claim Requests",
@@ -101,24 +111,27 @@ class _MasterScreenState extends State<MasterScreen> {
                           Icons.notifications,
                           const NotifyClientsScreen(),
                         ),
-                        _buildSidebarItem(
-                          context,
-                          "Support tickets",
-                          Icons.support_agent,
-                          const SupportTicketsScreen(),
-                        ),
-                        _buildSidebarItem(
-                          context,
-                          "Client Feedbacks",
-                          Icons.reviews,
-                          const ClientFeedbackScreen(),
-                        ),
-                        _buildSidebarItem(
-                          context,
-                          "Reports",
-                          Icons.edit_document,
-                          const ReportsScreen(),
-                        ),
+                        if (isAdmin) ...[
+                          _buildSidebarItem(
+                            context,
+                            "Support tickets",
+                            Icons.support_agent,
+                            const SupportTicketsScreen(),
+                          ),
+
+                          _buildSidebarItem(
+                            context,
+                            "Client Feedbacks",
+                            Icons.reviews,
+                            const ClientFeedbackScreen(),
+                          ),
+                          _buildSidebarItem(
+                            context,
+                            "Reports",
+                            Icons.edit_document,
+                            const ReportsScreen(),
+                          ),
+                        ],
 
                         _buildSidebarItem(
                           context,
@@ -126,12 +139,14 @@ class _MasterScreenState extends State<MasterScreen> {
                           Icons.loyalty,
                           const LoyaltyProgramScreen(),
                         ),
-                        _buildSidebarItem(
-                          context,
-                          "Management",
-                          Icons.settings,
-                          const ManagementScreen(),
-                        ),
+                        if (isAdmin) ...[
+                          _buildSidebarItem(
+                            context,
+                            "Management",
+                            Icons.settings,
+                            const ManagementScreen(),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -215,7 +230,7 @@ class _MasterScreenState extends State<MasterScreen> {
                 ),
                 Expanded(
                   child: Material(
-                    color: Colors.transparent, // Da ne naruši boju, ni shadow
+                    color: Colors.transparent,
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       color: Colors.brown.shade50,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_paypal_payment/flutter_paypal_payment.dart';
 import 'package:insuratech_mobile/layouts/master_screen.dart';
 import 'package:insuratech_mobile/models/insurance_policy.dart';
@@ -32,9 +33,12 @@ class PaypalScreen extends StatelessWidget {
     return PaypalCheckoutView(
       sandboxMode: true,
       clientId:
+          dotenv.env['PAYPAL_CLIENT_ID'] ??
           "AUioWKe4n7nFVCDOI-AC2lITkgg4AzSLhpk0FW0-97f146rI8LGznTUsVRuq3d-_usCms_CWK-zD8qFp",
       secretKey:
+          dotenv.env['PAYPAL_SECRET'] ??
           "EB4sDeZKe5ewKLO38ppQxHCv0jBl4u46mYLhG4xGFRCbmqhE70Ucg5YhloX8pcV1GYc9NoVsgh2VorWa",
+
       transactions: [
         {
           "amount": {

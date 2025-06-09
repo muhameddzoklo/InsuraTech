@@ -173,7 +173,6 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
-          // Lijeva strana: tačka + naziv
           SizedBox(
             width: 110,
             child: Row(
@@ -206,7 +205,6 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ),
-          // Discount desno od poena
           Text(
             discount,
             style: const TextStyle(fontSize: 14, color: Colors.grey),

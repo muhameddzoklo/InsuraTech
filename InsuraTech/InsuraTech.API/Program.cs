@@ -61,7 +61,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 DotNetEnv.Env.Load("../.env");
 
-var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
 builder.Services.AddDbContext<InsuraTechContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddMapster();

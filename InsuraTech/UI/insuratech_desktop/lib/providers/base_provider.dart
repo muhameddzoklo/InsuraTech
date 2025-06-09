@@ -14,7 +14,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
     _endpoint = endpoint;
     baseUrl = const String.fromEnvironment(
       "baseUrl",
-      defaultValue: "http://localhost:5273/api/",
+      defaultValue: "http://localhost:5200/api/",
     );
   }
 
@@ -169,8 +169,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
   Map<String, String> createHeaders() {
     String username = AuthProvider.username ?? "";
     String password = AuthProvider.password ?? "";
-
-    //print("passed creds: $username, $password");
 
     String basicAuth =
         "Basic ${base64Encode(utf8.encode('$username:$password'))}";
