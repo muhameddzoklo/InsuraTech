@@ -30,7 +30,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
   Future<Uint8List> _generatePdf({
     required Report report,
     required List<RevenuePerMonth> filteredProfit,
-    required List<TopPackage> filteredPackages, // ako filtriraš pakete
+    required List<TopPackage> filteredPackages,
   }) async {
     final pdf = pw.Document();
 
@@ -160,7 +160,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
               return true;
             }).toList();
 
-    // Slično za top packages, ako filtriraš po godini/mjesecu (možeš ignorisati ako ne)
     final filteredPackages = report?.topPackagesBySales ?? [];
     return MasterScreen(
       title: "Reports",

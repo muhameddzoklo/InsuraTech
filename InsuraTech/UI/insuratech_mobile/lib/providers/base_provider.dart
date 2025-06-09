@@ -14,7 +14,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
     _endpoint = endpoint;
     baseUrl = const String.fromEnvironment(
       "baseUrl",
-      defaultValue: "http://10.0.2.2:5273/api/",
+      defaultValue: "http://10.0.2.2:5200/api/",
     );
   }
 
@@ -43,10 +43,10 @@ abstract class BaseProvider<T> with ChangeNotifier {
       queryParams['retrieveAll'] = retrieveAll;
     }
     if (orderBy != null) {
-      queryParams['OrderBy'] = orderBy; // <<< VELIKA slova
+      queryParams['OrderBy'] = orderBy;
     }
     if (sortDirection != null) {
-      queryParams['SortDirection'] = sortDirection; // <<< VELIKA slova
+      queryParams['SortDirection'] = sortDirection;
     }
 
     if (includeTables != null) {

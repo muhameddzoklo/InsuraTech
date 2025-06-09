@@ -1,0 +1,91 @@
+version: '3.8'
+services:
+  insuratech-sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: insuratech-sql
+    restart: unless-stopped
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+      - MSSQL_PID=Developer
+    ports:
+      - 1401:1433
+    expose:
+        - 1433
+    networks:
+      - insuratech_net
+
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    container_name: rabbitmq
+    hostname: "rabbitmq"
+    labels:
+        NAME: "rabbitmq"
+    restart: unless-stopped
+    ports:
+      - "15672:15672"  # management ui
+      - "5672:5672"    # rabbitmq
+    expose:
+        - 5672
+        - 15672
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:15672"]
+        interval: 30s
+        timeout: 10s
+        retries: 10
+    networks:
+      - insuratech_net
+
+  insuratech-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: insuratech-api
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DATABASE_CONNECTION_STRING=Server=insuratech-sql,1433;Initial Catalog=${CATALOG};User=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+      - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
+      - PAYPAL_SECRET=${PAYPAL_SECRET}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - RABBIT_MQ=host=rabbitmq;username=guest;password=guest
+      - RABBIT_MQ_HOST=rabbitmq
+      - RABBIT_MQ_PORT=5672
+      - ENABLE_SSL=${ENABLE_SSL}
+    ports:
+      - "5200:5200"
+    depends_on:
+      - insuratech-sql
+      - rabbitmq
+    links:
+      - insuratech-sql
+    networks:
+      - insuratech_net
+
+  insuratech-subscriber:
+    build:
+      context: .
+      dockerfile: Dockerfile.subscriber
+    container_name: insuratech-subscriber
+    restart: on-failure
+    environment:
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - RABBIT_MQ=host=rabbitmq;username=guest;password=guest
+      - RABBIT_MQ_HOST=rabbitmq
+      - RABBIT_MQ_PORT=5672
+      - ENABLE_SSL=${ENABLE_SSL}
+    depends_on:
+      - rabbitmq
+    networks:
+      - insuratech_net
+
+networks:
+  insuratech_net:
+    driver: bridge

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InsuraTech.API.Controllers
 {
-    [ApiController]
+
     public class ClientController : BaseCRUDControllerAsync<ClientDTO, ClientSearchObject, ClientInsertRequest, ClientUpdateRequest>
     {
         public ClientController(IClientService service) : base(service)

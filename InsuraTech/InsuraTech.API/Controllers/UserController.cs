@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace InsuraTech.API.Controllers
 {
 
-    [ApiController]
+
     public class UserController : BaseCRUDControllerAsync<UserDTO, UserSearchObject, UserInsertRequest, UserUpdateRequest>
     {
         public UserController(IUserService service) : base(service)

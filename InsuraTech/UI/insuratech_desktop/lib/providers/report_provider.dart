@@ -7,7 +7,7 @@ import 'auth_provider.dart';
 class ReportProvider with ChangeNotifier {
   static String? baseUrl = const String.fromEnvironment(
     "baseUrl",
-    defaultValue: "http://localhost:5273/api/",
+    defaultValue: "http://localhost:5200/api/",
   );
 
   Report? _report;

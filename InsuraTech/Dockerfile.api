@@ -1,0 +1,18 @@
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 5200
+ENV ASPNETCORE_URLS=http://*:5200
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY . .
+RUN dotnet restore "InsuraTech.API/InsuraTech.API.csproj"
+RUN dotnet build "InsuraTech.API/InsuraTech.API.csproj" -c Release -o /app
+
+FROM build AS publish
+RUN dotnet publish "InsuraTech.API/InsuraTech.API.csproj" -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "InsuraTech.API.dll"]

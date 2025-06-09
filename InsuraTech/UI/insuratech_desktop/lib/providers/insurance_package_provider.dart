@@ -21,8 +21,7 @@ class InsurancePackageProvider extends BaseProvider<InsurancePackage> {
 
     var response = await http.put(uri, headers: headers);
     if (isValidResponse(response)) {
-      if (response.body.isEmpty)
-        return fromJson({}); // or return null if allowed
+      if (response.body.isEmpty) return fromJson({});
       var data = jsonDecode(response.body);
       return fromJson(data);
     }
