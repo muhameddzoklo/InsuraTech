@@ -1,3 +1,4 @@
+
 # InsuraTech
 Seminarski rad iz predmeta Razvoj softvera 2 na Fakultetu informacijskih tehnologija u Mostaru
 
@@ -32,4 +33,3 @@ Seminarski rad iz predmeta Razvoj softvera 2 na Fakultetu informacijskih tehnolo
 
 ## Mikroservis
 - **Rabbitmq je iskorišten za slanje mailova nakon što se doda novi uposlenik na desktop dijelu u screenu Users** 
-  
