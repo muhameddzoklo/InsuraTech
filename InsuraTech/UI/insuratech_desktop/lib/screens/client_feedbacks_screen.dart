@@ -62,6 +62,7 @@ class _ClientFeedbackScreenState extends State<ClientFeedbackScreen> {
       context,
       title: "Delete Feedback",
       text: "Do you want to delete this feedback?",
+      confirmBtnColor: Colors.red,
     );
 
     if (result == true) {

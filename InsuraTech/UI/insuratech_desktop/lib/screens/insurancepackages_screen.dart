@@ -655,6 +655,7 @@ class InsurancePackageCard extends StatelessWidget {
                               title: "Delete Package",
                               text:
                                   "Are you sure you want to delete this package?",
+                              confirmBtnColor: Colors.red,
                             );
                             if (result == true) {
                               try {
