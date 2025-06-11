@@ -1,78 +1,61 @@
-📦 InsuraTech_RS2
+InsuraTech_RS2
 Seminarski rad iz predmeta Razvoj softvera 2
-Fakultet informacijskih tehnologija, Univerzitet "Džemal Bijedić" Mostar
+Fakultet informacijskih tehnologija, Mostar
 
-🚀 Pokretanje Projekta
-🔧 Backend (.NET + Docker)
-Otvorite InsuraTech repozitorij.
+Upute za pokretanje
+Klonirajte InsuraTech repozitorij.
 
-Uđite u folder InsuraTech/InsuraTech.
+Otvorite folder InsuraTech unutar repozitorija.
 
-Locirajte arhivu:
-fit-build-2025-6-9-env.zip
+Locirajte arhivu fit-build-2025-6-9-env.zip.
 
-Izvršite extract .env fajla iz te arhive u isti folder:
-./InsuraTech/InsuraTech
+Iz arhive ekstraktujte .env file u isti folder (./InsuraTech/InsuraTech).
 
-U terminalu, pokrenite sljedeću komandu iz foldera InsuraTech/InsuraTech:
+.env mora biti u InsuraTech\InsuraTech folderu!
 
-bash
-Copy
-Edit
+U folderu InsuraTech\InsuraTech otvorite terminal i pokrenite:
+
 docker compose up --build
-Sačekajte da se sve uspješno build-a.
 
-🖥 Desktop aplikacija (Flutter)
-Vratite se u root folder InsuraTech.
+Sačekajte da se svi servisi buildaju i pokrenu.
 
-Locirajte arhivu:
+Vratite se u root InsuraTech folder i pronađite arhive:
+
 fit-build-2025-6-11-desktop.zip
 
-Uradite extract – dobit ćete folder Relase.
-
-Uđite u folder Relase i pokrenite:
-
-Copy
-Edit
-insuratech_desktop.exe
-📱 Mobilna aplikacija (Flutter APK)
-Locirajte arhivu:
 fit-build-2025-6-11-mobile.zip
 
-Uradite extract – dobit ćete folder flutter-apk.
+Iz obje arhive uradite extract.
+Trebate dobiti dva foldera: Relase i flutter-apk.
 
-U folderu flutter-apk, pronađite fajl:
+Otvorite folder Relase i pokrenite insuratech_desktop.exe.
 
-arduino
-Copy
-Edit
-app-release.apk
-Prenesite app-release.apk na emulator.
+Otvorite folder flutter-apk.
 
-Instalirajte aplikaciju.
-⚠️ Ako ste prethodno imali instaliranu verziju, obavezno je deinstalirajte prije instalacije nove!
+File app-release.apk prenesite na emulator i sačekajte instalaciju.
 
-🔐 Kredencijali za prijavu
-👤 Administrator (desktop aplikacija)
+Napomena: Ako je aplikacija već bila instalirana na emulatoru, prethodno je deinstalirajte!
+
+Nakon instalacije obje aplikacije, prijavite se koristeći kredencijale niže.
+
+Kredencijali za prijavu
+Administrator (desktop aplikacija)
 Korisničko ime: desktop
 
 Lozinka: test
 
-👤 Klijent (mobilna aplikacija)
+Klijent (mobilna aplikacija)
 Korisničko ime: mobile
 
 Lozinka: test
 
-💳 PayPal testni korisnik
-Plaćanje je omogućeno prilikom kreiranja polise na ekranu My Policies
-(polica se kreira na ekranu Packages)
-
+PayPal Sandbox kredencijali
 Email: sb-o9qtw42053555@personal.example.com
 
 Lozinka: l?J)jJ1P
 
-📡 Mikroservisi
-📬 RabbitMQ se koristi za slanje email obavijesti prilikom dodavanja novog uposlenika.
+Plaćanje je omogućeno kada se kreira nova polica na ekranu My Policies
+(polica se kreira preko ekrana Packages)
 
-Lokacija: ekran Users unutar desktop aplikacije.
-
+Mikroservis i RabbitMQ
+RabbitMQ se koristi za automatsko slanje emailova nakon dodavanja novog uposlenika na desktop aplikaciji (screen Users).
