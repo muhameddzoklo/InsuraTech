@@ -1,61 +1,35 @@
-InsuraTech_RS2
-Seminarski rad iz predmeta Razvoj softvera 2
-Fakultet informacijskih tehnologija, Mostar
 
-Upute za pokretanje
-Klonirajte InsuraTech repozitorij.
+# InsuraTech
+Seminarski rad iz predmeta Razvoj softvera 2 na Fakultetu informacijskih tehnologija u Mostaru
 
-Otvorite folder InsuraTech unutar repozitorija.
+# Upute za pokretanje
+- **Otvoriti InsuraTech repozitorij**
+- **Otvoriti folder InsuraTech unutar pomenutog repozitorija**
+- **Locirati fit-build-2025-6-9 - env.zip arhivu**
+- **Iz te arhive uraditi extract .env file-a u istom folderu (./InsuraTech/InsuraTech)**
+- **.env file treba biti u InsuraTech\InsuraTech folderu**
+- **Unutar InsuraTech\InsuraTech, otvoriti terminal i pokrenuti komandu docker compose up --build, te sačekati da se sve uspješno build-a.**
+- **Vratiti se u InsuraTech folder i locirati fit-build-2025-6-11-desktop.zip i fit-build-2025-6-11-mobile.zip arhive**
+- **Iz tih arhiva uraditi extract, gdje biste trebali dobiti dva foldera: Relase i flutter-apk.**
+- **Otvoriti Relase folder i iz njega otvoriti insuratech_desktop.exe**
+- **Otvoriti flutter-apk folder**
+- **File app-relase.apk prenijeti na emulator i sačekati da se instalira. (Deinstalirati aplikaciju sa emulatora ukoliko je prije bila instalirana!)**
+- **Nakon instaliranja obe aplikacije, na iste se možete prijaviti koristeći kredencijale ispod.**
 
-Locirajte arhivu fit-build-2025-6-9-env.zip.
+## Kredencijali za prijavu
 
-Iz arhive ekstraktujte .env file u isti folder (./InsuraTech/InsuraTech).
+### Administrator (desktop aplikacija):
+- **Korisničko ime:** `desktop`
+- **Lozinka:** `test`
 
-.env mora biti u InsuraTech\InsuraTech folderu!
+### Klijent (mobilna aplikacija):
+- **Korisničko ime:** `mobile`
+- **Lozinka:** `test`
 
-U folderu InsuraTech\InsuraTech otvorite terminal i pokrenite:
+## PayPal Kredencijali
+- **Email:** `sb-o9qtw42053555@personal.example.com`
+- **Lozinka:** `l?J)jJ1P`
+- **Plaćanje je omogućeno kada se polica kreira na ekranu my policies (polica se kreira na ekranu Packages)**
 
-docker compose up --build
-
-Sačekajte da se svi servisi buildaju i pokrenu.
-
-Vratite se u root InsuraTech folder i pronađite arhive:
-
-fit-build-2025-6-11-desktop.zip
-
-fit-build-2025-6-11-mobile.zip
-
-Iz obje arhive uradite extract.
-Trebate dobiti dva foldera: Relase i flutter-apk.
-
-Otvorite folder Relase i pokrenite insuratech_desktop.exe.
-
-Otvorite folder flutter-apk.
-
-File app-release.apk prenesite na emulator i sačekajte instalaciju.
-
-Napomena: Ako je aplikacija već bila instalirana na emulatoru, prethodno je deinstalirajte!
-
-Nakon instalacije obje aplikacije, prijavite se koristeći kredencijale niže.
-
-Kredencijali za prijavu
-Administrator (desktop aplikacija)
-Korisničko ime: desktop
-
-Lozinka: test
-
-Klijent (mobilna aplikacija)
-Korisničko ime: mobile
-
-Lozinka: test
-
-PayPal Sandbox kredencijali
-Email: sb-o9qtw42053555@personal.example.com
-
-Lozinka: l?J)jJ1P
-
-Plaćanje je omogućeno kada se kreira nova polica na ekranu My Policies
-(polica se kreira preko ekrana Packages)
-
-Mikroservis i RabbitMQ
-RabbitMQ se koristi za automatsko slanje emailova nakon dodavanja novog uposlenika na desktop aplikaciji (screen Users).
+## Mikroservis
+- **Rabbitmq je iskorišten za slanje mailova nakon što se doda novi uposlenik na desktop dijelu u screenu Users** 
