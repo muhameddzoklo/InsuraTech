@@ -233,7 +233,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
       showSuccessAlert(context, "Profile created successfully");
     } catch (e) {
-      showErrorAlert(context, "Username already exists");
+      showErrorAlert(context, "Username or email already exists");
     }
   }
 }

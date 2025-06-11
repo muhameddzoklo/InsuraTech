@@ -192,10 +192,7 @@ class _UsersScreenState extends State<UsersScreen> {
                     _loadEmployees();
                     showSuccessAlert(context, "Employee Added successfully");
                   } catch (e) {
-                    showErrorAlert(
-                      context,
-                      "Error creating Employee ${e.toString()}",
-                    );
+                    showErrorAlert(context, "Username or email already exist");
                   }
                 }
               },
@@ -654,6 +651,8 @@ class _UsersScreenState extends State<UsersScreen> {
                                                                 "Employee deletion",
                                                             text:
                                                                 "Do you want delete this employee?",
+                                                            confirmBtnColor:
+                                                                Colors.red,
                                                           );
                                                       if (result == true) {
                                                         try {
@@ -738,6 +737,8 @@ class _UsersScreenState extends State<UsersScreen> {
                                                                 "Client deletion",
                                                             text:
                                                                 "Do you want to delete this client?",
+                                                            confirmBtnColor:
+                                                                Colors.red,
                                                           );
                                                       if (result == true) {
                                                         try {

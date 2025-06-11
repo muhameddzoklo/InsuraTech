@@ -154,12 +154,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           labelText: "Phone Number",
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty)
-                            return 'Enter phone number';
-                          if (!RegExp(r'^\d{9,10}$').hasMatch(value)) {
+                          if (value == null || value.isEmpty) {
+                            return null;
+                          }
+                          if (!RegExp(r'^\d{9,10}$').hasMatch(value!)) {
                             return 'Enter 9-10 digits';
                           }
-                          return null;
                         },
                         onSaved: (value) => _phone = value!,
                       ),

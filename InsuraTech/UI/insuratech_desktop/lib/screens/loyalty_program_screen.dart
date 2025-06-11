@@ -197,7 +197,6 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
               ],
             ),
           ),
-          // Poeni
           SizedBox(
             width: 110,
             child: Text(
@@ -345,22 +344,35 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
     ).then((newTier) async {
       if (newTier != null) {
         await _provider.update(program.loyaltyProgramId!, {'Tier': newTier});
+        await showSuccessAlert(context, "Tier updated successfully.");
         _loadLoyaltyPrograms();
       }
     });
   }
 
   Future<void> _addPoints(LoyaltyProgram program) async {
-    int points = 0;
+    final _formKey = GlobalKey<FormState>();
+    final _controller = TextEditingController();
+
     int? newPoints = await showDialog<int>(
       context: context,
       builder:
           (_) => AlertDialog(
             title: const Text("Add Points"),
-            content: TextField(
-              decoration: const InputDecoration(labelText: "Points"),
-              keyboardType: TextInputType.number,
-              onChanged: (val) => points = int.tryParse(val) ?? 0,
+            content: Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: _controller,
+                decoration: const InputDecoration(labelText: "Points"),
+                keyboardType: TextInputType.number,
+                validator: (val) {
+                  if (val == null || val.trim().isEmpty)
+                    return "Points required";
+                  final parsed = int.tryParse(val);
+                  if (parsed == null || parsed <= 0) return "Enter a number";
+                  return null;
+                },
+              ),
             ),
             actions: [
               TextButton(
@@ -368,7 +380,11 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
                 child: const Text("Cancel"),
               ),
               ElevatedButton(
-                onPressed: () => Navigator.pop(context, points),
+                onPressed: () {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    Navigator.pop(context, int.parse(_controller.text));
+                  }
+                },
                 child: const Text("Add"),
               ),
             ],
@@ -378,21 +394,34 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
       await _provider.update(program.loyaltyProgramId!, {
         'Points': (program.points ?? 0) + newPoints,
       });
+      await showSuccessAlert(context, "Points added successfully");
       _loadLoyaltyPrograms();
     }
   }
 
   Future<void> _removePoints(LoyaltyProgram program) async {
-    int points = 0;
+    final _formKey = GlobalKey<FormState>();
+    final _controller = TextEditingController();
+
     int? removedPoints = await showDialog<int>(
       context: context,
       builder:
           (_) => AlertDialog(
             title: const Text("Remove Points"),
-            content: TextField(
-              decoration: const InputDecoration(labelText: "Points"),
-              keyboardType: TextInputType.number,
-              onChanged: (val) => points = int.tryParse(val) ?? 0,
+            content: Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: _controller,
+                decoration: const InputDecoration(labelText: "Points"),
+                keyboardType: TextInputType.number,
+                validator: (val) {
+                  if (val == null || val.trim().isEmpty)
+                    return "Points required";
+                  final parsed = int.tryParse(val);
+                  if (parsed == null || parsed <= 0) return "Enter a number";
+                  return null;
+                },
+              ),
             ),
             actions: [
               TextButton(
@@ -400,7 +429,11 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
                 child: const Text("Cancel"),
               ),
               ElevatedButton(
-                onPressed: () => Navigator.pop(context, points),
+                onPressed: () {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    Navigator.pop(context, int.parse(_controller.text));
+                  }
+                },
                 child: const Text("Remove"),
               ),
             ],
@@ -410,6 +443,7 @@ class _LoyaltyProgramScreenState extends State<LoyaltyProgramScreen> {
       int newTotal = (program.points ?? 0) - removedPoints;
       if (newTotal < 0) newTotal = 0;
       await _provider.update(program.loyaltyProgramId!, {'Points': newTotal});
+      await showSuccessAlert(context, "Points removed successfully");
       _loadLoyaltyPrograms();
     }
   }
